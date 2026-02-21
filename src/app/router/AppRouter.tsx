@@ -1,0 +1,52 @@
+import { Suspense } from 'react'
+
+import { IonRouterOutlet, IonSpinner } from '@ionic/react'
+import { IonReactRouter } from '@ionic/react-router'
+import { Redirect, Route } from 'react-router-dom'
+
+import { AppTabsLayout } from '@/app/layouts'
+import { NotFoundPage } from '@/app/pages'
+import { PrivateRoute, PublicOnlyRoute } from '@/app/router/Guards'
+import { LoginPage } from '@/features/auth'
+import { AppErrorBoundary } from '@/shared/ui'
+
+function RouteFallback() {
+  return (
+    <div className="app-route-loader" role="status" aria-live="polite">
+      <IonSpinner name="crescent" />
+      <span>Carregando...</span>
+    </div>
+  )
+}
+
+export function AppRouter() {
+  return (
+    <AppErrorBoundary>
+      <IonReactRouter>
+        <Suspense fallback={<RouteFallback />}>
+          <IonRouterOutlet>
+            <Route exact path="/">
+              <Redirect to="/tabs/home" />
+            </Route>
+
+            <Route path="/login" exact>
+              <PublicOnlyRoute>
+                <LoginPage />
+              </PublicOnlyRoute>
+            </Route>
+
+            <Route path="/tabs">
+              <PrivateRoute>
+                <AppTabsLayout />
+              </PrivateRoute>
+            </Route>
+
+            <Route>
+              <NotFoundPage />
+            </Route>
+          </IonRouterOutlet>
+        </Suspense>
+      </IonReactRouter>
+    </AppErrorBoundary>
+  )
+}

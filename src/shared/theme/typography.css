@@ -1,0 +1,26 @@
+:root {
+  --fq-font-sans: 'Avenir Next', 'Segoe UI', 'Helvetica Neue', sans-serif;
+}
+
+html,
+body,
+ion-app,
+ion-content,
+ion-title,
+ion-label,
+ion-text {
+  font-family: var(--fq-font-sans);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.fq-headline {
+  font-size: clamp(1.35rem, 2.2vw, 1.9rem);
+  font-weight: 700;
+}
