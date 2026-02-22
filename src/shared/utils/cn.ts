@@ -1,3 +1,3 @@
-export function cn(...tokens: Array<string | false | null | undefined>) {
-  return tokens.filter(Boolean).join(' ')
-}
+import { cx } from './cx'
+
+export const cn = cx

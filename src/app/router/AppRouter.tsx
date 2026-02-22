@@ -5,7 +5,7 @@ import { IonReactRouter } from '@ionic/react-router'
 import { Redirect, Route } from 'react-router-dom'
 
 import { AppTabsLayout } from '@/app/layouts'
-import { NotFoundPage } from '@/app/pages'
+import { ComponentsPage, NotFoundPage } from '@/app/pages'
 import { PrivateRoute, PublicOnlyRoute } from '@/app/router/Guards'
 import { LoginPage } from '@/features/auth'
 import { AppErrorBoundary } from '@/shared/ui'
@@ -27,6 +27,10 @@ export function AppRouter() {
           <IonRouterOutlet>
             <Route exact path="/">
               <Redirect to="/tabs/home" />
+            </Route>
+
+            <Route exact path="/components">
+              <ComponentsPage />
             </Route>
 
             <Route path="/login" exact>
