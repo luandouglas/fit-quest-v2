@@ -25,6 +25,19 @@ export function ExerciseRow({ exercise, onSetCurrent, onToggleDone }: ExerciseRo
         'grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-xl border p-4 shadow-sm md:grid-cols-[40px_minmax(0,1fr)_120px_150px]',
         stateClassMap[exercise.status],
       )}
+      role={isDone ? undefined : 'button'}
+      tabIndex={isDone ? -1 : 0}
+      onClick={isDone ? undefined : () => onSetCurrent(exercise.id)}
+      onKeyDown={
+        isDone
+          ? undefined
+          : (event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault()
+                onSetCurrent(exercise.id)
+              }
+            }
+      }
     >
       <span className="hidden h-10 w-10 items-center justify-center rounded-lg bg-accent text-accent-foreground md:inline-flex">
         <FqIcon name={exercise.iconName ?? 'dumbbell'} size={16} />
@@ -44,15 +57,38 @@ export function ExerciseRow({ exercise, onSetCurrent, onToggleDone }: ExerciseRo
 
       <div className="flex items-center justify-end gap-2">
         {isDone ? (
-          <FqButton tone="success" variant="outline" leftIcon="check" onClick={() => onToggleDone(exercise.id)}>
+          <FqButton
+            tone="success"
+            variant="outline"
+            leftIcon="check"
+            onClick={(event) => {
+              event.stopPropagation()
+              onToggleDone(exercise.id)
+            }}
+          >
             Concluído
           </FqButton>
         ) : isCurrent ? (
           <>
-            <FqButton tone="primary" leftIcon="check" onClick={() => onToggleDone(exercise.id)}>
+            <FqButton
+              tone="primary"
+              leftIcon="check"
+              onClick={(event) => {
+                event.stopPropagation()
+                onToggleDone(exercise.id)
+              }}
+            >
               Marcar feito
             </FqButton>
-            <FqButton tone="secondary" variant="outline" leftIcon="play" onClick={() => onSetCurrent(exercise.id)}>
+            <FqButton
+              tone="secondary"
+              variant="outline"
+              leftIcon="play"
+              onClick={(event) => {
+                event.stopPropagation()
+                onSetCurrent(exercise.id)
+              }}
+            >
               Retomar
             </FqButton>
           </>
@@ -61,7 +97,15 @@ export function ExerciseRow({ exercise, onSetCurrent, onToggleDone }: ExerciseRo
             <FqTag tone="neutral" className="rounded-lg px-2 py-1 text-xs">
               #{exercise.order}
             </FqTag>
-            <FqButton tone="secondary" variant="outline" leftIcon="play" onClick={() => onSetCurrent(exercise.id)}>
+            <FqButton
+              tone="secondary"
+              variant="outline"
+              leftIcon="play"
+              onClick={(event) => {
+                event.stopPropagation()
+                onSetCurrent(exercise.id)
+              }}
+            >
               Próximo
             </FqButton>
           </>
