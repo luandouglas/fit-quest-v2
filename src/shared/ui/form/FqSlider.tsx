@@ -10,12 +10,12 @@ type FqSliderProps = FqBaseProps &
   }
 
 const toneMap: Record<FqTone, string> = {
-  primary: 'accent-blue-600',
-  secondary: 'accent-slate-600',
-  success: 'accent-emerald-600',
-  warning: 'accent-amber-500',
-  danger: 'accent-rose-600',
-  neutral: 'accent-zinc-900',
+  primary: 'accent-primary',
+  secondary: 'accent-secondary',
+  success: 'accent-success',
+  warning: 'accent-warning',
+  danger: 'accent-destructive',
+  neutral: 'accent-foreground',
 }
 
 export function FqSlider({
@@ -31,11 +31,11 @@ export function FqSlider({
 
   return (
     <label className="flex w-full flex-col gap-2" htmlFor={sliderId}>
-      {label ? <span className="text-sm font-medium text-zinc-700">{label}</span> : null}
+      {label ? <span className="text-sm font-medium text-foreground">{label}</span> : null}
       <input
         id={sliderId}
         type="range"
-        className={cx('h-2 w-full cursor-pointer rounded-lg bg-zinc-200', toneMap[tone], className)}
+        className={cx('h-2 w-full cursor-pointer rounded-lg bg-muted', toneMap[tone], className)}
        
         data-testid={testId}
         {...rest}

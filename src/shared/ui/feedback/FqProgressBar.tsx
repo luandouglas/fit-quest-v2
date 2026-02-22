@@ -7,15 +7,15 @@ const toneMap: Record<FqTone, string> = {
   primary:
     '[&::-webkit-progress-value]:bg-primary [&::-moz-progress-bar]:bg-primary',
   secondary:
-    '[&::-webkit-progress-value]:bg-slate-600 [&::-moz-progress-bar]:bg-slate-600',
+    '[&::-webkit-progress-value]:bg-secondary [&::-moz-progress-bar]:bg-secondary',
   success:
-    '[&::-webkit-progress-value]:bg-emerald-600 [&::-moz-progress-bar]:bg-emerald-600',
+    '[&::-webkit-progress-value]:bg-success [&::-moz-progress-bar]:bg-success',
   warning:
-    '[&::-webkit-progress-value]:bg-amber-500 [&::-moz-progress-bar]:bg-amber-500',
+    '[&::-webkit-progress-value]:bg-warning [&::-moz-progress-bar]:bg-warning',
   danger:
-    '[&::-webkit-progress-value]:bg-rose-600 [&::-moz-progress-bar]:bg-rose-600',
+    '[&::-webkit-progress-value]:bg-destructive [&::-moz-progress-bar]:bg-destructive',
   neutral:
-    '[&::-webkit-progress-value]:bg-zinc-900 [&::-moz-progress-bar]:bg-zinc-900',
+    '[&::-webkit-progress-value]:bg-foreground [&::-moz-progress-bar]:bg-foreground',
 }
 
 type FqProgressBarProps = FqBaseProps &
@@ -41,12 +41,12 @@ export function FqProgressBar({
         max={100}
         value={safeValue}
         className={cx(
-          'h-2.5 w-full overflow-hidden rounded-full [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-bar]:bg-zinc-200',
+          'h-2.5 w-full overflow-hidden rounded-full [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-bar]:bg-muted',
           '[&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:transition-all',
           toneMap[tone],
         )}
       />
-      {showLabel ? <p className="text-xs text-zinc-500">{safeValue}%</p> : null}
+      {showLabel ? <p className="text-xs text-muted-foreground">{safeValue}%</p> : null}
     </div>
   )
 }

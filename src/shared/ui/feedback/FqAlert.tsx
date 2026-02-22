@@ -5,12 +5,12 @@ import type { FqBaseProps, FqTone } from '@/shared/ui/types'
 import { cx } from '@/shared/utils'
 
 const toneMap: Record<FqTone, string> = {
-  primary: 'border-blue-200 bg-blue-50 text-blue-900',
-  secondary: 'border-slate-200 bg-slate-50 text-slate-900',
-  success: 'border-emerald-200 bg-emerald-50 text-emerald-900',
-  warning: 'border-amber-200 bg-amber-50 text-amber-900',
-  danger: 'border-rose-200 bg-rose-50 text-rose-900',
-  neutral: 'border-zinc-200 bg-zinc-50 text-zinc-900',
+  primary: 'border-primary/30 bg-primary/10 text-foreground',
+  secondary: 'border-secondary/30 bg-secondary/10 text-foreground',
+  success: 'border-success/30 bg-success/10 text-foreground',
+  warning: 'border-warning/40 bg-warning/15 text-warning-foreground',
+  danger: 'border-destructive/30 bg-destructive/10 text-foreground',
+  neutral: 'border-border bg-muted/60 text-foreground',
 }
 
 const iconToneMap: Record<FqTone, IconName> = {
@@ -32,7 +32,6 @@ export function FqAlert({
   tone = 'neutral',
   title,
   className,
-  
   testId,
   children,
   ...rest
@@ -41,7 +40,6 @@ export function FqAlert({
     <div
       role="alert"
       className={cx('flex items-start gap-3 rounded-xl border p-3 text-sm', toneMap[tone], className)}
-     
       data-testid={testId}
       {...rest}
     >
