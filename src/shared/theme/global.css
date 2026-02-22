@@ -3,89 +3,129 @@
 
 @layer base {
   :root {
-    --background: #f9fafb;
-    --foreground: #181d25;
+    --background: #f8f9fa;
+    --foreground: #1f2937;
 
     --card: #ffffff;
-    --card-foreground: #181d25;
+    --card-foreground: #1f2937;
 
     --popover: #ffffff;
-    --popover-foreground: #181d25;
+    --popover-foreground: #1f2937;
 
-    --primary: #30a66f;
+    --primary: #2f8f5b;
     --primary-foreground: #ffffff;
 
-    --secondary: #2d77d2;
+    --secondary: #2f6fbd;
     --secondary-foreground: #ffffff;
 
-    --muted: #f0f2f4;
-    --muted-foreground: #676f7e;
+    --tertiary: #6f4db6;
+    --tertiary-foreground: #ffffff;
 
-    --accent: #7b4dcb;
-    --accent-foreground: #ffffff;
+    --gamification: #6f4db6;
+    --gamification-foreground: #ffffff;
 
-    --destructive: #dd3c3c;
+    --muted: #eef1f4;
+    --muted-foreground: #5f6b7a;
+
+    --accent: #e9edf2;
+    --accent-foreground: #1f2937;
+
+    --surface-subtle: #eef2f6;
+
+    --destructive: #d64545;
     --destructive-foreground: #ffffff;
 
-    --border: #e2e6e9;
-    --input: #e2e6e9;
-    --ring: #30a66f;
+    --border: #d8dee6;
+    --input: #d8dee6;
+    --ring: #2f8f5b;
+
+    --success: #2f8f5b;
+    --success-foreground: #ffffff;
+    --info: #2f6fbd;
+    --info-foreground: #ffffff;
+    --warning: #d98a15;
+    --warning-foreground: #1f2937;
+
+    --star: #d08a12;
+    --star-foreground: #1f2937;
 
     --radius: 0.625rem;
 
-    --sidebar-background: #ffffff;
-    --sidebar-foreground: #181d25;
-    --sidebar-primary: #30a66f;
+    --sidebar-background: #f8f9fa;
+    --sidebar-foreground: #1f2937;
+    --sidebar-primary: #2f8f5b;
     --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #f0f2f4;
-    --sidebar-accent-foreground: #181d25;
-    --sidebar-border: #e2e6e9;
-    --sidebar-ring: #30a66f;
-
-    --success: #30a66f;
-    --success-foreground: #ffffff;
-    --info: #2d77d2;
-    --info-foreground: #ffffff;
-    --warning: #f59f0a;
-    --warning-foreground: #ffffff;
+    --sidebar-accent: #e9edf2;
+    --sidebar-accent-foreground: #1f2937;
+    --sidebar-border: #d8dee6;
+    --sidebar-ring: #2f8f5b;
 
     font-family: "Plus Jakarta Sans", system-ui, sans-serif;
   }
 
   .dark {
-    --background: #101318;
-    --foreground: #f0f2f5;
-    --card: #181d25;
-    --card-foreground: #f0f2f5;
-    --popover: #181d25;
-    --popover-foreground: #f0f2f5;
-    --primary: #34b277;
+    --background: #0f141b;
+    --foreground: #e8edf5;
+
+    --card: #161d26;
+    --card-foreground: #e8edf5;
+
+    --popover: #161d26;
+    --popover-foreground: #e8edf5;
+
+    --primary: #38a26a;
     --primary-foreground: #ffffff;
-    --secondary: #286bbd;
+
+    --secondary: #3a80d1;
     --secondary-foreground: #ffffff;
-    --muted: #272c35;
-    --muted-foreground: #8f96a3;
-    --accent: #7b4dcb;
-    --accent-foreground: #ffffff;
-    --destructive: #7f1d1d;
+
+    --tertiary: #8a67cf;
+    --tertiary-foreground: #ffffff;
+
+    --gamification: #8a67cf;
+    --gamification-foreground: #ffffff;
+
+    --muted: #222b36;
+    --muted-foreground: #9aa6b8;
+
+    --accent: #2b3542;
+    --accent-foreground: #e8edf5;
+
+    --surface-subtle: #1d2733;
+
+    --destructive: #e05757;
     --destructive-foreground: #ffffff;
-    --border: #2b303b;
-    --input: #2b303b;
-    --ring: #34b277;
-    --sidebar-background: #14181f;
-    --sidebar-foreground: #f0f2f5;
-    --sidebar-primary: #34b277;
+
+    --border: #2e3a47;
+    --input: #2e3a47;
+    --ring: #38a26a;
+
+    --success: #38a26a;
+    --success-foreground: #ffffff;
+    --info: #3a80d1;
+    --info-foreground: #ffffff;
+    --warning: #e8a23a;
+    --warning-foreground: #1f2937;
+
+    --star: #e0a327;
+    --star-foreground: #1f2937;
+
+    --sidebar-background: #131b24;
+    --sidebar-foreground: #e8edf5;
+    --sidebar-primary: #38a26a;
     --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #272c35;
-    --sidebar-accent-foreground: #f0f2f5;
-    --sidebar-border: #2b303b;
-    --sidebar-ring: #34b277;
+    --sidebar-accent: #25303d;
+    --sidebar-accent-foreground: #e8edf5;
+    --sidebar-border: #2e3a47;
+    --sidebar-ring: #38a26a;
   }
 }
+
 @layer base {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
     font-family: "Plus Jakarta Sans", system-ui, sans-serif;
@@ -99,32 +139,19 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
   .safe-bottom {
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
-}
-
-body {
-  background:
-    radial-gradient(
-      circle at top left,
-      rgba(34, 197, 94, 0.13),
-      transparent 35%
-    ),
-    radial-gradient(
-      circle at bottom right,
-      rgba(14, 165, 233, 0.12),
-      transparent 32%
-    ),
-    var(--fq-color-surface);
 }
 
 #root,
 ion-app,
 ion-router-outlet,
 ion-content {
-  background: transparent;
+  background: var(--background);
 }

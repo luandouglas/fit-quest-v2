@@ -22,42 +22,42 @@ export const fqToneVariantMap = {
     ghost: 'text-primary hover:bg-primary/10 focus-visible:ring-ring',
   },
   secondary: {
-    solid: 'bg-slate-700 text-white hover:bg-slate-600 focus-visible:ring-slate-500',
+    solid: 'bg-secondary text-secondary-foreground hover:bg-secondary/90 focus-visible:ring-secondary',
     outline:
-      'border border-slate-300 text-slate-700 hover:bg-slate-50 focus-visible:ring-slate-500',
-    ghost: 'text-slate-700 hover:bg-slate-50 focus-visible:ring-slate-500',
+      'border border-secondary/40 text-secondary hover:bg-secondary/10 focus-visible:ring-secondary',
+    ghost: 'text-secondary hover:bg-secondary/10 focus-visible:ring-secondary',
   },
   success: {
-    solid: 'bg-emerald-600 text-white hover:bg-emerald-500 focus-visible:ring-emerald-500',
+    solid: 'bg-success text-success-foreground hover:bg-success/90 focus-visible:ring-success',
     outline:
-      'border border-emerald-300 text-emerald-700 hover:bg-emerald-50 focus-visible:ring-emerald-500',
-    ghost: 'text-emerald-700 hover:bg-emerald-50 focus-visible:ring-emerald-500',
+      'border border-success/40 text-success hover:bg-success/10 focus-visible:ring-success',
+    ghost: 'text-success hover:bg-success/10 focus-visible:ring-success',
   },
   warning: {
-    solid: 'bg-amber-500 text-amber-950 hover:bg-amber-400 focus-visible:ring-amber-500',
+    solid: 'bg-warning text-warning-foreground hover:bg-warning/90 focus-visible:ring-warning',
     outline:
-      'border border-amber-300 text-amber-700 hover:bg-amber-50 focus-visible:ring-amber-500',
-    ghost: 'text-amber-700 hover:bg-amber-50 focus-visible:ring-amber-500',
+      'border border-warning/40 text-warning hover:bg-warning/10 focus-visible:ring-warning',
+    ghost: 'text-warning hover:bg-warning/10 focus-visible:ring-warning',
   },
   danger: {
-    solid: 'bg-rose-600 text-white hover:bg-rose-500 focus-visible:ring-rose-500',
+    solid: 'bg-destructive text-destructive-foreground hover:bg-destructive/90 focus-visible:ring-destructive',
     outline:
-      'border border-rose-300 text-rose-700 hover:bg-rose-50 focus-visible:ring-rose-500',
-    ghost: 'text-rose-700 hover:bg-rose-50 focus-visible:ring-rose-500',
+      'border border-destructive/40 text-destructive hover:bg-destructive/10 focus-visible:ring-destructive',
+    ghost: 'text-destructive hover:bg-destructive/10 focus-visible:ring-destructive',
   },
   neutral: {
-    solid: 'bg-zinc-900 text-white hover:bg-zinc-800 focus-visible:ring-zinc-500',
+    solid: 'bg-foreground text-background hover:opacity-90 focus-visible:ring-ring',
     outline:
-      'border border-zinc-300 text-zinc-700 hover:bg-zinc-50 focus-visible:ring-zinc-500',
-    ghost: 'text-zinc-700 hover:bg-zinc-100 focus-visible:ring-zinc-500',
+      'border border-border text-foreground hover:bg-accent focus-visible:ring-ring',
+    ghost: 'text-foreground hover:bg-accent focus-visible:ring-ring',
   },
 } satisfies Record<FqTone, Record<FqVariant, string>>
 
 export const fqBadgeToneMap = {
-  primary: 'bg-blue-100 text-blue-700',
-  secondary: 'bg-slate-100 text-slate-700',
-  success: 'bg-emerald-100 text-emerald-700',
-  warning: 'bg-amber-100 text-amber-700',
-  danger: 'bg-rose-100 text-rose-700',
-  neutral: 'bg-zinc-100 text-zinc-700',
+  primary: 'bg-primary/15 text-primary',
+  secondary: 'bg-secondary/15 text-secondary',
+  success: 'bg-success/15 text-success',
+  warning: 'bg-warning/20 text-warning-foreground',
+  danger: 'bg-destructive/15 text-destructive',
+  neutral: 'bg-muted text-foreground',
 } satisfies Record<FqTone, string>

@@ -33,6 +33,14 @@ module.exports = {
           DEFAULT: "var(--secondary)",
           foreground: "var(--secondary-foreground)",
         },
+        tertiary: {
+          DEFAULT: "var(--tertiary)",
+          foreground: "var(--tertiary-foreground)",
+        },
+        gamification: {
+          DEFAULT: "var(--gamification)",
+          foreground: "var(--gamification-foreground)",
+        },
         muted: {
           DEFAULT: "var(--muted)",
           foreground: "var(--muted-foreground)",
@@ -44,6 +52,25 @@ module.exports = {
         destructive: {
           DEFAULT: "var(--destructive)",
           foreground: "var(--destructive-foreground)",
+        },
+        success: {
+          DEFAULT: "var(--success)",
+          foreground: "var(--success-foreground)",
+        },
+        info: {
+          DEFAULT: "var(--info)",
+          foreground: "var(--info-foreground)",
+        },
+        warning: {
+          DEFAULT: "var(--warning)",
+          foreground: "var(--warning-foreground)",
+        },
+        star: {
+          DEFAULT: "var(--star)",
+          foreground: "var(--star-foreground)",
+        },
+        surface: {
+          subtle: "var(--surface-subtle)",
         },
         border: "var(--border)",
         input: "var(--input)",
