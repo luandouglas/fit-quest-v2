@@ -8,6 +8,7 @@ import { AppTabsLayout } from '@/app/layouts'
 import { ComponentsPage, NotFoundPage } from '@/app/pages'
 import { PrivateRoute, PublicOnlyRoute } from '@/app/router/Guards'
 import { LoginPage } from '@/features/auth'
+import { TrainingSessionPage } from '@/pages/training-plan'
 import { AppErrorBoundary } from '@/shared/ui'
 
 function RouteFallback() {
@@ -42,6 +43,12 @@ export function AppRouter() {
             <Route path="/tabs">
               <PrivateRoute>
                 <AppTabsLayout />
+              </PrivateRoute>
+            </Route>
+
+            <Route path="/treinos/sessao" exact>
+              <PrivateRoute>
+                <TrainingSessionPage />
               </PrivateRoute>
             </Route>
 

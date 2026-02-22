@@ -3,6 +3,7 @@ import { Redirect, Route, NavLink, Switch, useLocation } from 'react-router-dom'
 
 import { HomePage } from '@/features/home'
 import { ProfilePage } from '@/features/profile'
+import { TrainingPlanPage } from '@/pages/training-plan'
 import { useAuth } from '@/shared/hooks'
 import { FqButton, FqIcon, FqText } from '@/shared/ui'
 import type { IconName } from '@/shared/ui'
@@ -203,9 +204,7 @@ export function AppTabsLayout() {
 
         <div className="px-4 pb-5 pt-20 lg:p-5">
           <Switch>
-            <Route path="/tabs/workouts" exact>
-              <SidebarSectionPage title="Treinos" />
-            </Route>
+            <Route path="/tabs/workouts" component={TrainingPlanPage} exact />
             <Route path="/tabs/run" exact>
               <SidebarSectionPage title="Corrida" />
             </Route>
