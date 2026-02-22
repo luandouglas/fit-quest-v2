@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added semantic theme tokens for `gamification`, `star`, and `surface-subtle`, plus Tailwind color mappings for `success`, `info`, and `warning`.
 - Added a new Training Plan experience under `/tabs/workouts` with modular page components in `src/pages/training-plan`, including weekly calendar, workout hero, exercise list, and desktop summary panel.
 - Added a private placeholder route `/treinos/sessao` for workout session flow entry.
+- Added a full student Nutrition experience under `/tabs/nutrition`, including daily meal plan, meal check-in, macro and hydration progress, date switching, quick-register sheet, and meal-detail modal/sheet.
+- Added Nutrition feature modules in `src/features/nutrition` with typed mocks (`NutritionDay`, `Meal`, `MealItem`, `WaterLog`) and reusable page components for summary, water tracking, meals list, history, and loading states.
+- Added a 7-day nutrition history view with completion status, kcal/water summary, and day navigation.
 
 ### Changed
 - Updated global theme tokens and base styles to a refreshed FitQuest visual system, including revised color scales, typography defaults, and utility classes.
@@ -23,6 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated accent semantics to neutral surfaces and reserved purple hues for gamification contexts.
 - Updated authenticated layout and key feature pages to consume semantic tokens (`background`, `card`, `border`, `muted`, `sidebar`, etc.) instead of hardcoded component colors.
 - Updated workouts navigation target to the new responsive Training Plan page with mobile and desktop-specific structure (desktop 3/6/3 layout).
+- Updated app providers to include `FqToastProvider` globally, enabling nutrition check-in and hydration feedback toasts.
+- Updated tabs routing to replace the Nutrition placeholder with the new production-ready Nutrition page and optional history/meal-detail paths.
 
 ### Fixed
 - Replaced local `react-router-dom` module typing overrides with official package typings to improve type reliability.
