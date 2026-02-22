@@ -254,8 +254,8 @@ export function TrainingPlanPage() {
         </div>
       </header>
 
-      <div className="grid gap-5 lg:grid-cols-12">
-        <div className="space-y-4 lg:col-span-3">
+      <div className="grid items-start gap-5 lg:grid-cols-12 xl:gap-6">
+        <div className="space-y-4 lg:col-span-3 lg:sticky lg:top-5 lg:h-fit">
           <WeeklyCalendarCard days={mockWeek} />
 
           <div className="rounded-xl border border-border bg-card p-4">
