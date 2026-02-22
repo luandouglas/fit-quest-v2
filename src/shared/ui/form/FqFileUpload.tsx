@@ -88,7 +88,7 @@ export function FqFileUpload({
           applyFiles(event.dataTransfer.files)
         }}
         className={cx(
-          'flex min-h-28 w-full flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 px-4 py-5 text-zinc-600 transition',
+          'flex min-h-28 w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-zinc-300 bg-zinc-50 px-4 py-5 text-zinc-600 transition',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
           isDragging ? 'border-blue-500 bg-blue-50 text-blue-700' : null,
           isDisabled ? 'cursor-not-allowed opacity-60' : null,

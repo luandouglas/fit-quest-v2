@@ -20,7 +20,7 @@ export function FqSection({
 }: FqSectionProps) {
   return (
     <section
-      className={cx('space-y-4 rounded-2xl border border-zinc-200 bg-white p-5', className)}
+      className={cx('space-y-4 rounded-xl border border-zinc-200 bg-white p-5', className)}
      
       data-testid={testId}
       {...rest}

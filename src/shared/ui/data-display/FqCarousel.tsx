@@ -32,7 +32,7 @@ export function FqCarousel({
 
   return (
     <div
-      className={cx('space-y-3 rounded-2xl border border-zinc-200 bg-white p-4', className)}
+      className={cx('space-y-3 rounded-xl border border-zinc-200 bg-white p-4', className)}
      
       data-testid={testId}
       {...rest}

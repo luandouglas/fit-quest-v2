@@ -29,7 +29,7 @@ export function FqNavbar({
   return (
     <nav
       className={cx(
-        'flex w-full items-center justify-between gap-3 rounded-2xl border border-zinc-200 bg-white px-4 py-3',
+        'flex w-full items-center justify-between gap-3 rounded-xl border border-zinc-200 bg-white px-4 py-3',
         className,
       )}
      

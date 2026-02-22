@@ -403,14 +403,14 @@ export function renderComponentPreview({
 
     case 'FqPage':
       return (
-        <FqPage className="min-h-[240px] rounded-2xl border border-zinc-200 bg-zinc-50 p-4">
+        <FqPage className="min-h-[240px] rounded-xl border border-zinc-200 bg-zinc-50 p-4">
           {asString(props.children, 'Page content')}
         </FqPage>
       )
 
     case 'FqContent':
       return (
-        <FqContent className="max-w-3xl rounded-2xl border border-zinc-200 bg-white">
+        <FqContent className="max-w-3xl rounded-xl border border-zinc-200 bg-white">
           {asString(props.children, 'Content')}
         </FqContent>
       )
@@ -518,7 +518,7 @@ export function renderComponentPreview({
 
     case 'FqDrawer':
       return (
-        <div className="relative h-80 overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-50 p-4">
+        <div className="relative h-80 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50 p-4">
           <FqButton
             onClick={() => onPropChange('open', true)}
             leftIcon="menu"
@@ -550,7 +550,7 @@ export function renderComponentPreview({
 
     case 'FqModal':
       return (
-        <div className="relative h-80 overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-50 p-4">
+        <div className="relative h-80 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50 p-4">
           <FqButton onClick={() => onPropChange('open', true)}>Abrir modal</FqButton>
           <FqModal
             {...props}
@@ -567,7 +567,7 @@ export function renderComponentPreview({
 
     case 'FqDialog':
       return (
-        <div className="relative h-80 overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-50 p-4">
+        <div className="relative h-80 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50 p-4">
           <FqButton onClick={() => onPropChange('open', true)}>Abrir dialog</FqButton>
           <FqDialog
             {...props}

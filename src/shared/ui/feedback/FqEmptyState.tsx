@@ -30,7 +30,7 @@ export function FqEmptyState({
   return (
     <div
       className={cx(
-        'flex w-full flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 p-6 text-center',
+        'flex w-full flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-zinc-300 bg-zinc-50 p-6 text-center',
         className,
       )}
      

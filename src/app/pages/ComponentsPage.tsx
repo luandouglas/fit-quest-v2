@@ -234,7 +234,7 @@ export function ComponentsPage() {
         <main className="flex-1 overflow-y-auto p-4">
           {activeComponentMeta ? (
             <div className="space-y-4">
-              <div className="rounded-2xl border border-zinc-200 bg-white p-4">
+              <div className="rounded-xl border border-zinc-200 bg-white p-4">
                 <div className="mb-4 flex flex-wrap items-center justify-between gap-2 border-b border-zinc-100 pb-3">
                   <div>
                     <h2 className="text-base font-semibold">{activeComponentMeta.name}</h2>
@@ -290,7 +290,7 @@ export function ComponentsPage() {
               </div>
             </div>
           ) : (
-            <div className="rounded-2xl border border-zinc-200 bg-white p-6 text-sm text-zinc-500">
+            <div className="rounded-xl border border-zinc-200 bg-white p-6 text-sm text-zinc-500">
               Nenhum componente selecionado.
             </div>
           )}

@@ -33,7 +33,7 @@ export function FqWorkoutCard({
 }: FqWorkoutCardProps) {
   return (
     <article
-      className={cx('rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm', className)}
+      className={cx('rounded-xl border border-zinc-200 bg-white p-4 shadow-sm', className)}
      
       data-testid={testId}
       {...rest}

@@ -25,7 +25,7 @@ export function FqAchievementCard({
   return (
     <article
       className={cx(
-        'rounded-2xl border p-4 transition',
+        'rounded-xl border p-4 transition',
         unlocked ? 'border-amber-300 bg-amber-50' : 'border-zinc-200 bg-white',
         className,
       )}
