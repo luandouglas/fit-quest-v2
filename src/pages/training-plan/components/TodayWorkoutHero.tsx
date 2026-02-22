@@ -1,6 +1,6 @@
 import { FqButton, FqCard, FqIcon, FqProgressBar, FqTag, FqText } from '@/shared/ui'
 
-import type { TodayWorkout } from '../TrainingPlanPage'
+import type { TodayWorkout } from '../types'
 
 type TodayWorkoutHeroProps = {
   workout: TodayWorkout
@@ -22,7 +22,7 @@ export function TodayWorkoutHero({ workout, onStart }: TodayWorkoutHeroProps) {
             </FqText>
           </div>
 
-          <FqButton leftIcon="play" onClick={onStart}>
+          <FqButton leftIcon="play" onClick={onStart} className="w-full sm:w-auto">
             Iniciar treino
           </FqButton>
         </div>

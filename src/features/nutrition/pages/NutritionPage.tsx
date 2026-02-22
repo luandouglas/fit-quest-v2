@@ -509,6 +509,8 @@ export function NutritionPage() {
 
     return isDayComplete(currentDay)
   }, [currentDay])
+  const isTodaySelected = selectedDate === todayDate
+  const isMealRegistrationLocked = !isTodaySelected
 
   const insightMessage = useMemo(() => {
     if (!currentDay) {
@@ -575,6 +577,11 @@ export function NutritionPage() {
   }
 
   function handleRegisterMeal(mealId: string) {
+    if (isMealRegistrationLocked) {
+      pushToast('Registro indisponivel', 'Voce so pode registrar refeicoes do dia de hoje.', 'warning')
+      return
+    }
+
     if (isOffline) {
       pushToast('Sem conexao', 'Conecte-se para registrar refeicoes.', 'warning')
       return
@@ -596,6 +603,11 @@ export function NutritionPage() {
 
   function handleToggleMealSkipped(mealId: string) {
     if (!currentDay) {
+      return
+    }
+
+    if (isMealRegistrationLocked) {
+      pushToast('Registro indisponivel', 'Voce so pode registrar refeicoes do dia de hoje.', 'warning')
       return
     }
 
@@ -840,7 +852,7 @@ export function NutritionPage() {
           leftIcon="plus"
           tone="primary"
           onClick={() => setIsQuickRegisterOpen(true)}
-          isDisabled={isOffline}
+          isDisabled={isOffline || isMealRegistrationLocked}
           className="min-h-11"
         >
           Registrar
@@ -850,6 +862,12 @@ export function NutritionPage() {
       {isOffline ? (
         <FqAlert tone="warning" title="Voce esta offline">
           Algumas acoes serao bloqueadas ate a conexao voltar.
+        </FqAlert>
+      ) : null}
+
+      {isMealRegistrationLocked ? (
+        <FqAlert tone="warning" title="Registro bloqueado para esta data">
+          O aluno pode registrar refeicoes somente no dia atual.
         </FqAlert>
       ) : null}
 
@@ -890,6 +908,7 @@ export function NutritionPage() {
             <MealsList
               meals={currentDay.meals}
               isOffline={isOffline}
+              isDateLocked={isMealRegistrationLocked}
               onRegisterMeal={handleRegisterMeal}
               onToggleMealSkipped={handleToggleMealSkipped}
               onOpenMeal={handleOpenMealDetails}
@@ -957,6 +976,7 @@ export function NutritionPage() {
         meal={selectedMeal}
         note={selectedMeal?.note ?? ''}
         isOffline={isOffline}
+        isDateLocked={isMealRegistrationLocked}
         onOpenChange={(open) => {
           setIsMealSheetOpen(open)
           if (!open) {
@@ -998,7 +1018,8 @@ export function NutritionPage() {
                   handleRegisterMeal(meal.id)
                   setIsQuickRegisterOpen(false)
                 }}
-                className="flex w-full items-center justify-between rounded-xl border border-border bg-background px-3 py-3 text-left transition hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                disabled={isOffline || isMealRegistrationLocked}
+                className="flex w-full items-center justify-between rounded-xl border border-border bg-background px-3 py-3 text-left transition hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
                 aria-label={`Registrar ${meal.name}`}
               >
                 <div>

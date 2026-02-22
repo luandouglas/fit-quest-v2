@@ -7,6 +7,7 @@ type MealDetailSheetProps = {
   meal: Meal | null
   note: string
   isOffline?: boolean
+  isDateLocked?: boolean
   onOpenChange: (open: boolean) => void
   onNoteChange: (value: string) => void
   onMarkDone: () => void
@@ -30,6 +31,7 @@ export function MealDetailSheet({
   meal,
   note,
   isOffline = false,
+  isDateLocked = false,
   onOpenChange,
   onNoteChange,
   onMarkDone,
@@ -96,11 +98,17 @@ export function MealDetailSheet({
           Somente seu nutricionista pode alterar itens e macros do plano alimentar.
         </FqAlert>
 
+        {isDateLocked ? (
+          <FqAlert tone="warning" title="Registro bloqueado">
+            Voce pode registrar refeicoes somente no dia de hoje.
+          </FqAlert>
+        ) : null}
+
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-          <FqButton leftIcon="check" onClick={onMarkDone} isDisabled={isOffline}>
+          <FqButton leftIcon="check" onClick={onMarkDone} isDisabled={isOffline || isDateLocked}>
             Marcar como feita
           </FqButton>
-          <FqButton tone="warning" variant="outline" onClick={onMarkSkipped} isDisabled={isOffline}>
+          <FqButton tone="warning" variant="outline" onClick={onMarkSkipped} isDisabled={isOffline || isDateLocked}>
             Marcar como pulada
           </FqButton>
         </div>

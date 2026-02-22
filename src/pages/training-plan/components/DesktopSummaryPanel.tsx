@@ -16,7 +16,7 @@ export function DesktopSummaryPanel({
   onStart,
 }: DesktopSummaryPanelProps) {
   return (
-    <aside className="space-y-4 lg:sticky lg:top-5 lg:h-fit">
+    <aside className="space-y-4 xl:sticky xl:top-5 xl:h-fit">
       <FqCard className="border-border bg-card">
         <div className="space-y-4">
           <FqText as="p" className="text-sm text-muted-foreground">

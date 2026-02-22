@@ -1,7 +1,7 @@
 import { FqButton, FqIcon, FqTag } from '@/shared/ui'
 import { cx } from '@/shared/utils'
 
-import type { ExerciseItem } from '../TrainingPlanPage'
+import type { ExerciseItem } from '../types'
 
 type ExerciseRowProps = {
   exercise: ExerciseItem
@@ -10,9 +10,9 @@ type ExerciseRowProps = {
 }
 
 const stateClassMap = {
-  done: 'border-success/40 bg-card',
-  current: 'border-secondary/50 bg-card',
-  upcoming: 'border-border bg-card',
+  done: 'border-success/35 bg-success/5',
+  current: 'border-secondary/45 bg-secondary/5',
+  upcoming: 'border-border bg-background',
 } as const
 
 export function ExerciseRow({ exercise, onSetCurrent, onToggleDone }: ExerciseRowProps) {
@@ -22,7 +22,8 @@ export function ExerciseRow({ exercise, onSetCurrent, onToggleDone }: ExerciseRo
   return (
     <article
       className={cx(
-        'grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-xl border p-4 shadow-sm md:grid-cols-[40px_minmax(0,1fr)_120px_150px]',
+        'flex flex-col gap-3 rounded-xl border px-3 py-3 transition md:grid md:grid-cols-[44px_minmax(0,1fr)_120px_auto] md:items-center md:gap-4 md:px-4',
+        !isDone ? 'hover:border-border hover:bg-accent/35' : null,
         stateClassMap[exercise.status],
       )}
       role={isDone ? undefined : 'button'}
@@ -39,28 +40,45 @@ export function ExerciseRow({ exercise, onSetCurrent, onToggleDone }: ExerciseRo
             }
       }
     >
-      <span className="hidden h-10 w-10 items-center justify-center rounded-lg bg-accent text-accent-foreground md:inline-flex">
-        <FqIcon name={exercise.iconName ?? 'dumbbell'} size={16} />
+      <span className="hidden h-11 w-11 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground md:inline-flex">
+        <FqIcon name={exercise.iconName ?? 'dumbbell'} size={15} />
       </span>
 
-      <div className="min-w-0">
-        <p className={cx('truncate text-base font-semibold text-foreground', isDone ? 'line-through opacity-70' : null)}>{exercise.name}</p>
-        <p className="text-sm text-muted-foreground">
-          {exercise.sets} sets x {exercise.reps} reps
-        </p>
+      <div className="min-w-0 space-y-1">
+        <div className="flex items-start justify-between gap-2 md:block">
+          <p className={cx('truncate text-base font-semibold text-foreground', isDone ? 'line-through opacity-70' : null)}>
+            {exercise.name}
+          </p>
+          <p className="inline-flex items-center gap-1 text-xs text-muted-foreground md:hidden">
+            <FqIcon name="clock" size={12} />
+            {exercise.durationMin} min
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center gap-1.5">
+          <FqTag tone="neutral" className="rounded-md px-2 py-0.5 text-xs">
+            {exercise.sets} sets x {exercise.reps} reps
+          </FqTag>
+          {isCurrent ? (
+            <FqTag tone="secondary" className="rounded-md px-2 py-0.5 text-xs">
+              Em execução
+            </FqTag>
+          ) : null}
+        </div>
       </div>
 
-      <p className="hidden items-center gap-1 text-sm text-muted-foreground md:inline-flex">
+      <p className="hidden items-center justify-end gap-1 text-sm text-muted-foreground md:inline-flex">
         <FqIcon name="clock" size={12} />
         {exercise.durationMin} min
       </p>
 
-      <div className="flex items-center justify-end gap-2">
+      <div className="flex flex-wrap items-center gap-2 md:justify-end">
         {isDone ? (
           <FqButton
             tone="success"
             variant="outline"
             leftIcon="check"
+            size="md"
+            className="w-full sm:w-auto"
             onClick={(event) => {
               event.stopPropagation()
               onToggleDone(exercise.id)
@@ -73,6 +91,8 @@ export function ExerciseRow({ exercise, onSetCurrent, onToggleDone }: ExerciseRo
             <FqButton
               tone="primary"
               leftIcon="check"
+              size="md"
+              className="w-full sm:w-auto"
               onClick={(event) => {
                 event.stopPropagation()
                 onToggleDone(exercise.id)
@@ -84,6 +104,8 @@ export function ExerciseRow({ exercise, onSetCurrent, onToggleDone }: ExerciseRo
               tone="secondary"
               variant="outline"
               leftIcon="play"
+              size="md"
+              className="w-full sm:w-auto"
               onClick={(event) => {
                 event.stopPropagation()
                 onSetCurrent(exercise.id)
@@ -101,6 +123,8 @@ export function ExerciseRow({ exercise, onSetCurrent, onToggleDone }: ExerciseRo
               tone="secondary"
               variant="outline"
               leftIcon="play"
+              size="md"
+              className="w-full sm:w-auto"
               onClick={(event) => {
                 event.stopPropagation()
                 onSetCurrent(exercise.id)

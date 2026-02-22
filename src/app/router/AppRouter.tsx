@@ -52,6 +52,28 @@ export function AppRouter() {
               </PrivateRoute>
             </Route>
 
+            <Route
+              path="/nutrition/meal/:mealId"
+              exact
+              render={({ match }) => (
+                <PrivateRoute>
+                  <Redirect to={`/tabs/nutrition/meal/${match.params.mealId}`} />
+                </PrivateRoute>
+              )}
+            />
+
+            <Route path="/nutrition/history" exact>
+              <PrivateRoute>
+                <Redirect to="/tabs/nutrition/history" />
+              </PrivateRoute>
+            </Route>
+
+            <Route path="/nutrition" exact>
+              <PrivateRoute>
+                <Redirect to="/tabs/nutrition" />
+              </PrivateRoute>
+            </Route>
+
             <Route>
               <NotFoundPage />
             </Route>

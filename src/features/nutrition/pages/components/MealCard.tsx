@@ -6,6 +6,7 @@ import type { Meal } from '../NutritionPage'
 type MealCardProps = {
   meal: Meal
   isOffline?: boolean
+  isDateLocked?: boolean
   onRegister: (mealId: string) => void
   onToggleSkipped: (mealId: string) => void
   onOpenDetails: (mealId: string) => void
@@ -29,8 +30,16 @@ const statusCardClassMap = {
   skipped: 'border-warning/40 bg-warning/10',
 } as const
 
-export function MealCard({ meal, isOffline = false, onRegister, onToggleSkipped, onOpenDetails }: MealCardProps) {
+export function MealCard({
+  meal,
+  isOffline = false,
+  isDateLocked = false,
+  onRegister,
+  onToggleSkipped,
+  onOpenDetails,
+}: MealCardProps) {
   const mealMacro = meal.targetMacros
+  const isActionDisabled = isOffline || isDateLocked
 
   return (
     <FqCard className={cx('border transition-colors', statusCardClassMap[meal.status])}>
@@ -62,7 +71,7 @@ export function MealCard({ meal, isOffline = false, onRegister, onToggleSkipped,
                 tone="primary"
                 leftIcon="check"
                 onClick={() => onRegister(meal.id)}
-                isDisabled={isOffline}
+                isDisabled={isActionDisabled}
                 className="flex-1"
               >
                 Registrar
@@ -71,7 +80,7 @@ export function MealCard({ meal, isOffline = false, onRegister, onToggleSkipped,
                 tone="warning"
                 variant="outline"
                 onClick={() => onToggleSkipped(meal.id)}
-                isDisabled={isOffline}
+                isDisabled={isActionDisabled}
               >
                 Pular
               </FqButton>
@@ -89,7 +98,7 @@ export function MealCard({ meal, isOffline = false, onRegister, onToggleSkipped,
               tone="warning"
               variant="outline"
               onClick={() => onToggleSkipped(meal.id)}
-              isDisabled={isOffline}
+              isDisabled={isActionDisabled}
               className="flex-1"
             >
               Desfazer pulo
