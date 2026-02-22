@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Redirect, Route, NavLink, Switch, useLocation } from 'react-router-dom'
+import { useState } from 'react'
+import { Redirect, Route, NavLink, Switch } from 'react-router-dom'
 
 import { HomePage } from '@/features/home'
 import { NutritionPage } from '@/features/nutrition'
@@ -176,11 +176,6 @@ function MobileSidebar({
 
 export function AppTabsLayout() {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
-  const { pathname } = useLocation()
-
-  useEffect(() => {
-    setIsMobileSidebarOpen(false)
-  }, [pathname])
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">

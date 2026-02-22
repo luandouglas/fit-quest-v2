@@ -723,7 +723,7 @@ export function NutritionPage() {
             Nutricao
           </FqText>
           <FqText as="p" className="text-sm text-muted-foreground">
-            Plano do dia, macros e hidratacao.
+            Acompanhe sua alimentacao diaria.
           </FqText>
         </header>
 
@@ -753,7 +753,7 @@ export function NutritionPage() {
             Nutricao
           </FqText>
           <FqText as="p" className="text-sm text-muted-foreground">
-            Plano do dia, macros e hidratacao.
+            Acompanhe sua alimentacao diaria.
           </FqText>
         </header>
 
@@ -788,7 +788,7 @@ export function NutritionPage() {
             Nutricao
           </FqText>
           <FqText as="p" className="text-sm text-muted-foreground">
-            Plano do dia, macros e hidratacao.
+            Acompanhe sua alimentacao diaria.
           </FqText>
         </header>
 
@@ -832,20 +832,19 @@ export function NutritionPage() {
             Nutricao
           </FqText>
           <FqText as="p" className="text-sm text-muted-foreground">
-            Registre refeicoes, acompanhe macros e hidrate-se melhor.
+            Acompanhe sua alimentacao diaria.
           </FqText>
         </div>
 
-        <div className="lg:hidden">
-          <FqButton
-            leftIcon="plus"
-            tone="primary"
-            onClick={() => setIsQuickRegisterOpen(true)}
-            isDisabled={isOffline}
-          >
-            Registrar refeicao
-          </FqButton>
-        </div>
+        <FqButton
+          leftIcon="plus"
+          tone="primary"
+          onClick={() => setIsQuickRegisterOpen(true)}
+          isDisabled={isOffline}
+          className="min-h-11"
+        >
+          Registrar
+        </FqButton>
       </header>
 
       {isOffline ? (
@@ -868,6 +867,8 @@ export function NutritionPage() {
 
       <div className="grid gap-6 lg:grid-cols-12">
         <div className="order-2 space-y-4 lg:order-1 lg:col-span-8">
+          <DailySummaryCard day={currentDay} mealCompletionPct={mealCompletionPct} isDayComplete={dayCompleted} />
+
           <div className="grid grid-cols-2 gap-2 lg:hidden">
             <FqButton
               variant={mobileSection === 'plan' ? 'solid' : 'outline'}
@@ -909,8 +910,6 @@ export function NutritionPage() {
         </div>
 
         <aside className="order-1 space-y-4 lg:order-2 lg:col-span-4 lg:sticky lg:top-5 lg:h-fit">
-          <DailySummaryCard day={currentDay} mealCompletionPct={mealCompletionPct} isDayComplete={dayCompleted} />
-
           <WaterCard
             consumedMl={currentDay.consumed.waterMl}
             goalMl={currentDay.goals.waterMl}
