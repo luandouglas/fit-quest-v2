@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Redirect, Route, NavLink, Switch, useLocation } from 'react-router-dom'
 
 import { HomePage } from '@/features/home'
+import { NutritionPage } from '@/features/nutrition'
 import { ProfilePage } from '@/features/profile'
 import { TrainingPlanPage } from '@/pages/training-plan'
 import { useAuth } from '@/shared/hooks'
@@ -208,9 +209,9 @@ export function AppTabsLayout() {
             <Route path="/tabs/run" exact>
               <SidebarSectionPage title="Corrida" />
             </Route>
-            <Route path="/tabs/nutrition" exact>
-              <SidebarSectionPage title="Nutricao" />
-            </Route>
+            <Route path="/tabs/nutrition/meal/:mealId" component={NutritionPage} exact />
+            <Route path="/tabs/nutrition/history" component={NutritionPage} exact />
+            <Route path="/tabs/nutrition" component={NutritionPage} exact />
             <Route path="/tabs/progress" exact>
               <SidebarSectionPage title="Progresso" />
             </Route>
