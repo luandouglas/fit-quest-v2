@@ -8,6 +8,7 @@ import { AppTabsLayout } from '@/app/layouts'
 import { ComponentsPage, NotFoundPage } from '@/app/pages'
 import { PrivateRoute, PublicOnlyRoute } from '@/app/router/Guards'
 import { LoginPage } from '@/features/auth'
+import { FitQuestExperiencePage } from '@/features/experience'
 import { TrainingSessionPage } from '@/pages/training-plan'
 import { AppErrorBoundary } from '@/shared/ui'
 
@@ -32,6 +33,10 @@ export function AppRouter() {
 
             <Route exact path="/components">
               <ComponentsPage />
+            </Route>
+
+            <Route path="/landing" exact>
+              <FitQuestExperiencePage mode="landing" />
             </Route>
 
             <Route path="/login" exact>

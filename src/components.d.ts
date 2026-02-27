@@ -15,6 +15,7 @@ declare global{
 	const PageContainer: typeof import('./shared/ui/PageContainer')['PageContainer']
 	const StatusCard: typeof import('./shared/ui/StatusCard')['StatusCard']
 	const LoginPage: typeof import('./features/auth/pages/LoginPage')['LoginPage']
+	const FitQuestExperiencePage: typeof import('./features/experience/pages/FitQuestExperiencePage')['FitQuestExperiencePage']
 	const HomePage: typeof import('./features/home/pages/HomePage')['HomePage']
 	const NutritionPage: typeof import('./features/nutrition/pages/NutritionPage')['NutritionPage']
 	const ProfilePage: typeof import('./features/profile/pages/ProfilePage')['ProfilePage']
