@@ -1,7 +1,12 @@
 import type { ExerciseItem } from '@/pages/training-plan/types'
-import type { WorkoutPlanSnapshot } from '@/shared/services/contracts/workout'
+import type {
+  WorkoutPlanSnapshot,
+  WorkoutSession,
+  WorkoutSessionSummary,
+} from '@/shared/services/contracts/workout'
 import { httpClient } from '@/shared/services/http'
 import { workoutMockRepository } from '@/shared/services/repositories/workoutMockRepository'
+import { workoutSessionMockRepository } from '@/shared/services/repositories/workoutSessionMockRepository'
 
 export const workoutService = {
   getWeekSnapshot() {
@@ -18,5 +23,24 @@ export const workoutService = {
   },
   async updateExerciseStatus(params: { id: string; status: ExerciseItem['status'] }): Promise<void> {
     await httpClient.patch('/workouts/exercises/status', params)
+  },
+  getActiveSessionSnapshot() {
+    return workoutSessionMockRepository.getActiveSession()
+  },
+  getLastSessionSummary() {
+    return workoutSessionMockRepository.getLastSummary()
+  },
+  async startSession(): Promise<WorkoutSession> {
+    return httpClient.post<WorkoutSession>('/workouts/session/start')
+  },
+  async saveSessionProgress(session: WorkoutSession): Promise<WorkoutSession> {
+    return httpClient.patch<WorkoutSession, { session: WorkoutSession }>('/workouts/session/progress', {
+      session,
+    })
+  },
+  async completeSession(session: WorkoutSession): Promise<WorkoutSessionSummary> {
+    return httpClient.post<WorkoutSessionSummary, { session: WorkoutSession }>('/workouts/session/complete', {
+      session,
+    })
   },
 }

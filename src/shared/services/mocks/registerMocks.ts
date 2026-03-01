@@ -1,9 +1,11 @@
 import type { AuthSession, AuthUser } from '@/shared/types'
 import type { NutritionDaysMap } from '@/shared/services/contracts/nutrition'
+import type { WorkoutSession, WorkoutSessionSummary } from '@/shared/services/contracts/workout'
 import { HttpError } from '@/shared/services/http'
 import { registerMockHandler } from '@/shared/services/http'
 import { createNutritionMockDays } from '@/shared/services/mocks/nutritionMockData'
 import { workoutMockRepository } from '@/shared/services/repositories/workoutMockRepository'
+import { workoutSessionMockRepository } from '@/shared/services/repositories/workoutSessionMockRepository'
 import { storage } from '@/shared/services/storage'
 
 type LoginRequest = {
@@ -25,6 +27,56 @@ function toIsoDate(date: Date) {
   const day = String(date.getDate()).padStart(2, '0')
 
   return `${year}-${month}-${day}`
+}
+
+function createWorkoutSession(): WorkoutSession {
+  const exercises = workoutMockRepository.getExercises()
+  const setsDoneByExerciseId = exercises.reduce<Record<string, number>>((acc, exercise) => {
+    acc[exercise.id] = 0
+    return acc
+  }, {})
+
+  return {
+    sessionId: crypto.randomUUID(),
+    startedAt: new Date().toISOString(),
+    status: 'active',
+    title: 'Upper Body Day',
+    exercises,
+    setsDoneByExerciseId,
+    totalElapsedSec: 0,
+    restTimerSec: 45,
+  }
+}
+
+function createWorkoutSummary(session: WorkoutSession): WorkoutSessionSummary {
+  const completedAt = new Date().toISOString()
+  const durationSec = Math.max(
+    session.totalElapsedSec,
+    Math.max(Math.round((Date.parse(completedAt) - Date.parse(session.startedAt)) / 1000), 0),
+  )
+
+  const totalSets = session.exercises.reduce((total, exercise) => total + exercise.sets, 0)
+  const completedSets = session.exercises.reduce((total, exercise) => {
+    const done = session.setsDoneByExerciseId[exercise.id] ?? 0
+    return total + Math.min(done, exercise.sets)
+  }, 0)
+
+  const completedExercises = session.exercises.filter((exercise) => {
+    const done = session.setsDoneByExerciseId[exercise.id] ?? 0
+    return done >= exercise.sets
+  }).length
+
+  return {
+    sessionId: session.sessionId,
+    title: session.title,
+    startedAt: session.startedAt,
+    completedAt,
+    durationSec,
+    totalExercises: session.exercises.length,
+    completedExercises,
+    totalSets,
+    completedSets,
+  }
 }
 
 let isRegistered = false
@@ -98,6 +150,62 @@ export function registerMockHandlers() {
         todayWorkout: workoutMockRepository.getTodayWorkout(progressPct, doneCount, totalCount),
       },
     }
+  })
+
+  registerMockHandler<WorkoutSession>('POST', '/workouts/session/start', () => {
+    const existingSession = workoutSessionMockRepository.getActiveSession()
+
+    if (existingSession && existingSession.status !== 'completed') {
+      return { data: existingSession }
+    }
+
+    const session = createWorkoutSession()
+    workoutSessionMockRepository.saveActiveSession(session)
+
+    return { data: session }
+  })
+
+  registerMockHandler<WorkoutSession>('PATCH', '/workouts/session/progress', (request) => {
+    const body = (request.body ?? {}) as { session?: WorkoutSession }
+
+    if (!body.session) {
+      throw new HttpError('Session payload is required', {
+        status: 400,
+        code: 'http_error',
+        data: { message: 'Session payload is required' },
+        request,
+      })
+    }
+
+    workoutSessionMockRepository.saveActiveSession(body.session)
+
+    return { data: body.session }
+  })
+
+  registerMockHandler<WorkoutSessionSummary>('POST', '/workouts/session/complete', (request) => {
+    const body = (request.body ?? {}) as { session?: WorkoutSession }
+
+    if (!body.session) {
+      throw new HttpError('Session payload is required', {
+        status: 400,
+        code: 'http_error',
+        data: { message: 'Session payload is required' },
+        request,
+      })
+    }
+
+    const completedSession: WorkoutSession = {
+      ...body.session,
+      status: 'completed',
+      completedAt: new Date().toISOString(),
+    }
+
+    const summary = createWorkoutSummary(completedSession)
+
+    workoutSessionMockRepository.saveLastSummary(summary)
+    workoutSessionMockRepository.clearActiveSession()
+
+    return { data: summary }
   })
 
   isRegistered = true
