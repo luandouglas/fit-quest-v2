@@ -1,4 +1,5 @@
 import { AuthProvider } from './AuthProvider'
+import { AppQueryProvider } from './QueryProvider'
 import { FqToastProvider } from '@/shared/ui'
 
 type AppProvidersProps = {
@@ -7,8 +8,10 @@ type AppProvidersProps = {
 
 export function AppProviders({ children }: AppProvidersProps) {
   return (
-    <AuthProvider>
-      <FqToastProvider>{children}</FqToastProvider>
-    </AuthProvider>
+    <AppQueryProvider>
+      <AuthProvider>
+        <FqToastProvider>{children}</FqToastProvider>
+      </AuthProvider>
+    </AppQueryProvider>
   )
 }

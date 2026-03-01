@@ -8,6 +8,7 @@ declare global{
 	const NotFoundPage: typeof import('./app/pages/NotFoundPage')['NotFoundPage']
 	const AppProviders: typeof import('./app/providers/AppProviders')['AppProviders']
 	const AuthProvider: typeof import('./app/providers/AuthProvider')['AuthProvider']
+	const AppQueryProvider: typeof import('./app/providers/QueryProvider')['AppQueryProvider']
 	const AppRouter: typeof import('./app/router/AppRouter')['AppRouter']
 	const TrainingPlanPage: typeof import('./pages/training-plan/TrainingPlanPage')['TrainingPlanPage']
 	const TrainingSessionPage: typeof import('./pages/training-plan/TrainingSessionPage')['TrainingSessionPage']
