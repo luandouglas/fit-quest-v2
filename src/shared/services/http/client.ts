@@ -186,6 +186,15 @@ async function request<TResponse, TBody = unknown>(config: HttpRequestConfig<TBo
       ? await mockRequest<TResponse>(requestContext)
       : await fetchRequest<TResponse>(requestContext)
 
+    if (response.status >= 400) {
+      throw new HttpError(`HTTP ${response.status} for ${requestContext.method} ${requestContext.path}`, {
+        status: response.status,
+        code: 'http_error',
+        data: response.data,
+        request: requestContext,
+      })
+    }
+
     const handledResponse = await runResponseMiddlewares(response)
     return handledResponse.data
   } catch (error) {

@@ -1,6 +1,6 @@
-import type { AuthUser } from '@/shared/types'
-import { AUTH_STORAGE_KEY, AUTH_TOKEN_STORAGE_KEY } from '@/shared/constants'
+import type { AuthSession, AuthUser } from '@/shared/types'
 import type { NutritionDaysMap } from '@/shared/services/contracts/nutrition'
+import { HttpError } from '@/shared/services/http'
 import { registerMockHandler } from '@/shared/services/http'
 import { createNutritionMockDays } from '@/shared/services/mocks/nutritionMockData'
 import { workoutMockRepository } from '@/shared/services/repositories/workoutMockRepository'
@@ -12,9 +12,7 @@ type LoginRequest = {
 }
 
 type LoginResponse = {
-  user: AuthUser
-  accessToken: string
-  refreshToken: string
+  session: AuthSession
 }
 
 type NutritionDaysResponse = {
@@ -39,27 +37,37 @@ export function registerMockHandlers() {
   registerMockHandler<LoginResponse>('POST', '/auth/login', (request) => {
     const body = (request.body ?? {}) as Partial<LoginRequest>
     const email = body.email?.trim() ?? 'atleta@fitquest.app'
-    const displayName = email.split('@')[0]?.trim() || 'atleta'
+    const password = body.password?.trim() ?? ''
 
-    const response: LoginResponse = {
-      user: {
-        id: crypto.randomUUID(),
-        name: displayName,
-      },
-      accessToken: `mock-access-${crypto.randomUUID()}`,
-      refreshToken: `mock-refresh-${crypto.randomUUID()}`,
+    if (password.toLowerCase() === 'invalid') {
+      throw new HttpError('Invalid credentials', {
+        status: 401,
+        code: 'http_error',
+        data: { message: 'Invalid credentials' },
+        request,
+      })
     }
 
-    storage.set(AUTH_STORAGE_KEY, response.user)
-    storage.set(AUTH_TOKEN_STORAGE_KEY, response.accessToken)
+    const displayName = email.split('@')[0]?.trim() || 'atleta'
+
+    const user: AuthUser = {
+      id: crypto.randomUUID(),
+      name: displayName,
+    }
+
+    const response: LoginResponse = {
+      session: {
+        accessToken: `mock-access-${crypto.randomUUID()}`,
+        refreshToken: `mock-refresh-${crypto.randomUUID()}`,
+        expiresAt: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+        user,
+      },
+    }
 
     return { data: response }
   })
 
   registerMockHandler<null>('POST', '/auth/logout', () => {
-    storage.remove(AUTH_STORAGE_KEY)
-    storage.remove(AUTH_TOKEN_STORAGE_KEY)
-
     return { data: null }
   })
 
