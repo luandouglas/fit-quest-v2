@@ -14,7 +14,8 @@
     "cap:ios": "npx cap open ios",
     "typecheck": "tsc -b --pretty false",
     "lint": "eslint .",
-    "test": "vitest run"
+    "test": "vitest run",
+    "build:report": "ANALYZE=true npm run build"
   },
   "dependencies": {
     "@capacitor/android": "^8.1.0",
@@ -54,6 +55,7 @@
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
     "jsdom": "^27.0.1",
+    "rollup-plugin-visualizer": "^7.0.0",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.48.0",
     "unplugin-auto-import": "^21.0.0",
