@@ -22,6 +22,18 @@ const NutritionPage = lazy(() =>
   })),
 )
 
+const ProgressPage = lazy(() =>
+  import('@/features/progress/pages/ProgressPage').then((module) => ({
+    default: module.ProgressPage,
+  })),
+)
+
+const GamificationPage = lazy(() =>
+  import('@/features/gamification/pages/GamificationPage').then((module) => ({
+    default: module.GamificationPage,
+  })),
+)
+
 type SidebarItem = {
   label: string
   icon: IconName
@@ -315,12 +327,24 @@ export function AppTabsLayout() {
                 </Suspense>
               )}
             />
-            <Route path="/tabs/progress" exact>
-              <SidebarSectionPage title="Progresso" />
-            </Route>
-            <Route path="/tabs/gamification" exact>
-              <SidebarSectionPage title="Gamificacao" />
-            </Route>
+            <Route
+              path="/tabs/progress"
+              exact
+              render={() => (
+                <Suspense fallback={<TabsRouteFallback />}>
+                  <ProgressPage />
+                </Suspense>
+              )}
+            />
+            <Route
+              path="/tabs/gamification"
+              exact
+              render={() => (
+                <Suspense fallback={<TabsRouteFallback />}>
+                  <GamificationPage />
+                </Suspense>
+              )}
+            />
             <Route path="/tabs/ranking" exact>
               <SidebarSectionPage title="Ranking" />
             </Route>
