@@ -22,13 +22,13 @@ const NutritionPage = lazy(() =>
   })),
 )
 
-const ProgressPage = lazy(() =>
+const ProgressTabLazy = lazy(() =>
   import('@/features/progress/pages/ProgressPage').then((module) => ({
     default: module.ProgressPage,
   })),
 )
 
-const GamificationPage = lazy(() =>
+const GamificationTabLazy = lazy(() =>
   import('@/features/gamification/pages/GamificationPage').then((module) => ({
     default: module.GamificationPage,
   })),
@@ -332,7 +332,7 @@ export function AppTabsLayout() {
               exact
               render={() => (
                 <Suspense fallback={<TabsRouteFallback />}>
-                  <ProgressPage />
+                  <ProgressTabLazy />
                 </Suspense>
               )}
             />
@@ -341,7 +341,7 @@ export function AppTabsLayout() {
               exact
               render={() => (
                 <Suspense fallback={<TabsRouteFallback />}>
-                  <GamificationPage />
+                  <GamificationTabLazy />
                 </Suspense>
               )}
             />
