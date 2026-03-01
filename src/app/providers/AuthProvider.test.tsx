@@ -5,7 +5,7 @@ import { AUTH_SESSION_STORAGE_KEY } from '@/shared/constants'
 import { AuthProvider, useAuthContext } from './AuthProvider'
 
 function AuthProbe() {
-  const { login, status, isAuthenticated, user, error } = useAuthContext()
+  const { login, logout, status, isAuthenticated, user, error } = useAuthContext()
 
   return (
     <div>
@@ -36,6 +36,15 @@ function AuthProbe() {
         }}
       >
         Login Fail
+      </button>
+
+      <button
+        type="button"
+        onClick={() => {
+          void logout()
+        }}
+      >
+        Logout
       </button>
     </div>
   )
@@ -79,6 +88,30 @@ describe('AuthProvider session flow', () => {
       expect(screen.getByTestId('status')).toHaveTextContent('anonymous')
       expect(screen.getByTestId('auth-flag')).toHaveTextContent('false')
       expect(screen.getByTestId('error')).toHaveTextContent('Invalid credentials')
+    })
+
+    expect(window.localStorage.getItem(AUTH_SESSION_STORAGE_KEY)).toBeNull()
+  })
+
+  it('logs out and clears persisted session', async () => {
+    render(
+      <AuthProvider>
+        <AuthProbe />
+      </AuthProvider>,
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: 'Login Success' }))
+
+    await waitFor(() => {
+      expect(screen.getByTestId('status')).toHaveTextContent('authenticated')
+    })
+
+    fireEvent.click(screen.getByRole('button', { name: 'Logout' }))
+
+    await waitFor(() => {
+      expect(screen.getByTestId('status')).toHaveTextContent('anonymous')
+      expect(screen.getByTestId('auth-flag')).toHaveTextContent('false')
+      expect(screen.getByTestId('user-name')).toHaveTextContent('')
     })
 
     expect(window.localStorage.getItem(AUTH_SESSION_STORAGE_KEY)).toBeNull()
