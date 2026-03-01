@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useHistory, useLocation, useRouteMatch } from 'react-router-dom'
 
 import {
@@ -16,16 +16,21 @@ import {
   FqToast,
   type FqToastItem,
 } from '@/shared/ui'
-import {
-  nutritionService,
-  type Macros,
-  type Meal,
-  type NutritionDay,
-  type NutritionHistoryDay,
-  type WaterLogEntry,
-} from '@/shared/services'
+import { type Meal, type NutritionDay } from '@/shared/services'
 import { cx } from '@/shared/utils'
 
+import { useMealsHistory } from '../hooks/useMealsHistory'
+import { useNutritionSummary } from '../hooks/useNutritionSummary'
+import {
+  addDays,
+  calculateMealCompletionPct,
+  cloneDay,
+  getInsightMessage,
+  getNowIso,
+  isDayComplete,
+  recalculateDay,
+  toIsoDate,
+} from '../hooks/nutritionUtils'
 import { DailySummaryCard } from './components/DailySummaryCard'
 import { DateSwitcher } from './components/DateSwitcher'
 import { MealDetailSheet } from './components/MealDetailSheet'
@@ -36,154 +41,12 @@ import { WaterCard } from './components/WaterCard'
 
 export type { Macros, Meal, MealItem, NutritionDay, NutritionHistoryDay, WaterLogEntry } from '@/shared/services'
 
-type UiState = 'loading' | 'ready' | 'empty' | 'error'
 type MobileSection = 'plan' | 'history'
-
-const LOAD_DELAY_MS = 320
-
-function toIsoDate(date: Date) {
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-
-  return `${year}-${month}-${day}`
-}
-
-function addDays(isoDate: string, offset: number) {
-  const date = new Date(`${isoDate}T12:00:00`)
-  date.setDate(date.getDate() + offset)
-
-  return toIsoDate(date)
-}
-
-function getNowIso() {
-  return new Date().toISOString()
-}
 
 function getNutritionBasePath(pathname: string) {
   return pathname.startsWith('/nutrition') ? '/nutrition' : '/tabs/nutrition'
 }
 
-function calculateMacrosFromMeals(meals: Meal[]) {
-  return meals.reduce<Macros>(
-    (acc, meal) => {
-      if (meal.status !== 'done') {
-        return acc
-      }
-
-      return {
-        calories: acc.calories + meal.targetMacros.calories,
-        protein: acc.protein + meal.targetMacros.protein,
-        carbs: acc.carbs + meal.targetMacros.carbs,
-        fat: acc.fat + meal.targetMacros.fat,
-      }
-    },
-    {
-      calories: 0,
-      protein: 0,
-      carbs: 0,
-      fat: 0,
-    },
-  )
-}
-
-function calculateWater(entries: WaterLogEntry[]) {
-  return entries.reduce((total, entry) => total + entry.ml, 0)
-}
-
-function recalculateDay(day: NutritionDay): NutritionDay {
-  const mealMacros = calculateMacrosFromMeals(day.meals)
-  const waterMl = calculateWater(day.waterLog.entries)
-
-  return {
-    ...day,
-    consumed: {
-      calories: mealMacros.calories,
-      protein: mealMacros.protein,
-      carbs: mealMacros.carbs,
-      fat: mealMacros.fat,
-      waterMl,
-    },
-  }
-}
-
-function cloneDay(day: NutritionDay): NutritionDay {
-  return {
-    ...day,
-    goals: { ...day.goals },
-    consumed: { ...day.consumed },
-    meals: day.meals.map((meal) => ({
-      ...meal,
-      targetMacros: { ...meal.targetMacros },
-      items: meal.items.map((item) => ({
-        ...item,
-        macros: item.macros ? { ...item.macros } : undefined,
-      })),
-    })),
-    waterLog: {
-      entries: day.waterLog.entries.map((entry) => ({ ...entry })),
-    },
-  }
-}
-
-function calculateMealCompletionPct(day: NutritionDay) {
-  if (!day.meals.length) {
-    return 0
-  }
-
-  const doneCount = day.meals.filter((meal) => meal.status === 'done').length
-  return Math.round((doneCount / day.meals.length) * 100)
-}
-
-function isDayComplete(day: NutritionDay) {
-  const hasMeals = day.meals.length > 0
-  const allMealsDone = hasMeals && day.meals.every((meal) => meal.status === 'done')
-  const waterDone = day.consumed.waterMl >= day.goals.waterMl
-
-  return allMealsDone && waterDone
-}
-
-function buildHistory(daysByDate: Record<string, NutritionDay>, anchorDate: string): NutritionHistoryDay[] {
-  return Array.from({ length: 7 }, (_, index) => addDays(anchorDate, -index)).map((date) => {
-    const day = daysByDate[date]
-
-    if (!day) {
-      return {
-        date,
-        mealsDonePct: 0,
-        calories: 0,
-        waterMl: 0,
-        status: 'pending',
-      }
-    }
-
-    const mealsDonePct = calculateMealCompletionPct(day)
-    const status = isDayComplete(day) ? 'ok' : 'pending'
-
-    return {
-      date,
-      mealsDonePct,
-      calories: day.consumed.calories,
-      waterMl: day.consumed.waterMl,
-      status,
-    }
-  })
-}
-
-function getInsightMessage(day: NutritionDay) {
-  const proteinLeft = Math.max(day.goals.protein - day.consumed.protein, 0)
-  const waterLeft = Math.max(day.goals.waterMl - day.consumed.waterMl, 0)
-
-  if (proteinLeft > 0) {
-    return `Voce esta a ${proteinLeft}g de proteina da meta diaria.`
-  }
-
-  if (waterLeft > 0) {
-    return `Faltam ${waterLeft} ml de agua para bater sua hidratacao.`
-  }
-
-  return 'Otimo ritmo hoje. Continue consistente nas proximas refeicoes.'
-}
 
 export function NutritionPage() {
   const history = useHistory()
@@ -194,14 +57,7 @@ export function NutritionPage() {
   const todayDate = useMemo(() => toIsoDate(new Date()), [])
   const yesterdayDate = useMemo(() => addDays(todayDate, -1), [todayDate])
   const tomorrowDate = useMemo(() => addDays(todayDate, 1), [todayDate])
-  const transientErrorDate = useMemo(() => addDays(todayDate, -5), [todayDate])
-
-  const [daysByDate, setDaysByDate] = useState<Record<string, NutritionDay>>(() => nutritionService.getDaysSnapshot(todayDate))
   const [selectedDate, setSelectedDate] = useState(todayDate)
-  const [uiState, setUiState] = useState<UiState>('loading')
-  const [currentDay, setCurrentDay] = useState<NutritionDay | null>(null)
-  const [reloadKey, setReloadKey] = useState(0)
-  const [failedDates, setFailedDates] = useState<string[]>([])
   const [mobileSectionState, setMobileSectionState] = useState<MobileSection>('plan')
 
   const [isMealSheetOpenState, setIsMealSheetOpenState] = useState(false)
@@ -217,23 +73,10 @@ export function NutritionPage() {
   const [isOffline, setIsOffline] = useState(typeof navigator !== 'undefined' ? !navigator.onLine : false)
 
   const [toastItem, setToastItem] = useState<FqToastItem | null>(null)
-
-  const loadTimerRef = useRef<number | null>(null)
-  const toastTimerRef = useRef<number | null>(null)
-  const failedDatesRef = useRef<string[]>(failedDates)
-  const daysByDateRef = useRef<Record<string, NutritionDay>>(daysByDate)
-
-  useEffect(() => {
-    daysByDateRef.current = daysByDate
-  }, [daysByDate])
-
-  useEffect(() => {
-    nutritionService.saveDaysSnapshot(daysByDate)
-  }, [daysByDate])
-
-  useEffect(() => {
-    failedDatesRef.current = failedDates
-  }, [failedDates])
+  const { daysByDate, currentDay, uiState, refresh, updateDaysByDate, invalidate } = useNutritionSummary({
+    anchorDate: todayDate,
+    selectedDate,
+  })
 
   useEffect(() => {
     const onOnline = () => setIsOffline(false)
@@ -249,61 +92,22 @@ export function NutritionPage() {
   }, [])
 
   useEffect(() => {
-    if (loadTimerRef.current) {
-      window.clearTimeout(loadTimerRef.current)
-    }
-
-    loadTimerRef.current = window.setTimeout(() => {
-      if (selectedDate === transientErrorDate && !failedDatesRef.current.includes(selectedDate)) {
-        setFailedDates((prev) => [...prev, selectedDate])
-        setCurrentDay(null)
-        setUiState('error')
-        return
-      }
-
-      const storedDay = daysByDateRef.current[selectedDate]
-
-      if (!storedDay) {
-        setCurrentDay(null)
-        setUiState('empty')
-        return
-      }
-
-      const normalizedDay = recalculateDay(cloneDay(storedDay))
-      setCurrentDay(normalizedDay)
-      setUiState(normalizedDay.meals.length ? 'ready' : 'empty')
-    }, LOAD_DELAY_MS)
-
-    return () => {
-      if (loadTimerRef.current) {
-        window.clearTimeout(loadTimerRef.current)
-      }
-    }
-  }, [reloadKey, selectedDate, transientErrorDate])
-
-  useEffect(() => {
     if (!toastItem) {
       return
     }
 
-    if (toastTimerRef.current) {
-      window.clearTimeout(toastTimerRef.current)
-    }
-
     const duration = toastItem.duration ?? 2600
 
-    toastTimerRef.current = window.setTimeout(() => {
+    const timeoutId = window.setTimeout(() => {
       setToastItem(null)
     }, duration)
 
     return () => {
-      if (toastTimerRef.current) {
-        window.clearTimeout(toastTimerRef.current)
-      }
+      window.clearTimeout(timeoutId)
     }
   }, [toastItem])
 
-  const historyDays = useMemo(() => buildHistory(daysByDate, todayDate), [daysByDate, todayDate])
+  const historyDays = useMealsHistory(daysByDate, todayDate)
   const routeMealId = mealMatch?.params.mealId ?? null
   const activeMealId = routeMealId ?? activeMealIdState
   const isMealSheetOpen = routeMealId ? true : isMealSheetOpenState
@@ -369,12 +173,10 @@ export function NutritionPage() {
     const draft = cloneDay(currentDay)
     const updated = recalculateDay(mutator(draft))
 
-    setCurrentDay(updated)
-    setDaysByDate((prev) => ({
-      ...prev,
+    updateDaysByDate((previous) => ({
+      ...previous,
       [updated.date]: updated,
     }))
-    setUiState(updated.meals.length ? 'ready' : 'empty')
 
     return updated
   }
@@ -397,7 +199,6 @@ export function NutritionPage() {
   }
 
   function handleSelectDate(date: string) {
-    setUiState('loading')
     setSelectedDate(date)
     setMobileSectionState('plan')
 
@@ -408,8 +209,7 @@ export function NutritionPage() {
   }
 
   function handleRetry() {
-    setUiState('loading')
-    setReloadKey((value) => value + 1)
+    void refresh()
   }
 
   function handleRegisterMeal(mealId: string) {
@@ -431,10 +231,12 @@ export function NutritionPage() {
 
     if (isDayComplete(updatedDay)) {
       pushToast('Dia completo', `Parabens. +${updatedDay.starsEarned ?? 0} estrelas liberadas.`, 'success')
+      void invalidate()
       return
     }
 
     pushToast('Refeicao registrada', 'Registro salvo para o plano de hoje.', 'success')
+    void invalidate()
   }
 
   function handleToggleMealSkipped(mealId: string) {
@@ -470,6 +272,7 @@ export function NutritionPage() {
       nextStatus === 'skipped' ? 'Voce pode retomar esse check-in a qualquer momento.' : 'Status voltou para pendente.',
       nextStatus === 'skipped' ? 'warning' : 'neutral',
     )
+    void invalidate()
   }
 
   function handleOpenMealDetails(mealId: string) {
@@ -516,6 +319,7 @@ export function NutritionPage() {
     }
 
     pushToast('Hidratacao registrada', `+${ml} ml adicionados.`, 'secondary')
+    void invalidate()
   }
 
   function handleAddCustomWater() {
@@ -557,11 +361,11 @@ export function NutritionPage() {
     }
 
     pushToast('Ultimo registro removido', 'A hidratacao foi ajustada.', 'neutral')
+    void invalidate()
   }
 
   function handleApplyCalendarDate() {
     setIsCalendarOpen(false)
-    setUiState('loading')
     setSelectedDate(calendarDraftDate)
     setMobileSectionState('plan')
   }
@@ -771,7 +575,6 @@ export function NutritionPage() {
               days={historyDays}
               selectedDate={selectedDate}
               onOpenDay={(date) => {
-                setUiState('loading')
                 setSelectedDate(date)
                 setMobileSectionState('plan')
                 const basePath = getNutritionBasePath(location.pathname)
