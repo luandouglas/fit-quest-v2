@@ -2,7 +2,6 @@ import { type FormEvent, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import { useAuth } from '@/shared/hooks'
-import { authService } from '@/shared/services'
 import { FqButton, FqIcon, FqIconButton, FqInput, FqText } from '@/shared/ui'
 
 const MIN_PASSWORD_LENGTH = 6
@@ -15,7 +14,7 @@ export function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  const { login } = useAuth()
+  const { login, clearError } = useAuth()
 
   const isDisabled = useMemo(() => {
     return !isEmailValid(email.trim()) || password.trim().length < MIN_PASSWORD_LENGTH
@@ -26,16 +25,19 @@ export function LoginPage() {
       return
     }
 
-    const nextUser = await authService.login({
-      email: email.trim(),
-      password: password.trim(),
-    })
-
-    login(nextUser)
+    try {
+      await login({
+        email: email.trim(),
+        password: password.trim(),
+      })
+    } catch {
+      // AuthProvider already stores the error state.
+    }
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    clearError()
     void handleLogin()
   }
 
