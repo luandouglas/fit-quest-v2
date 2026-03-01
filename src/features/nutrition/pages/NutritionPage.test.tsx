@@ -72,4 +72,25 @@ describe('NutritionPage routes', () => {
 
     expect(history.location.pathname).toBe('/tabs/nutrition/meal/breakfast')
   })
+
+  it('checks in a meal and opens history tab', async () => {
+    const history = renderNutritionAt('/tabs/nutrition')
+
+    await screen.findByRole('heading', { name: 'Nutricao' })
+    await screen.findByRole('button', { name: 'Historico' })
+    await screen.findByText('Refeicoes')
+
+    const registerButtons = await screen.findAllByRole('button', { name: 'Registrar' })
+    fireEvent.click(registerButtons[1])
+
+    await screen.findByText('Refeicao registrada')
+
+    fireEvent.click(screen.getByRole('button', { name: 'Historico' }))
+
+    await waitFor(() => {
+      expect(history.location.pathname).toBe('/tabs/nutrition/history')
+    })
+
+    expect(screen.getByText('Historico (7 dias)')).toBeInTheDocument()
+  })
 })

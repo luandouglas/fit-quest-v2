@@ -83,8 +83,29 @@ describe('TrainingSessionPage', () => {
 
     await screen.findByRole('heading', { name: 'Sessao de treino' })
 
+    expect(workoutService.startSession).toHaveBeenCalledTimes(1)
     expect(screen.getByText('1. Bench Press')).toBeInTheDocument()
     expect(screen.getByText('2. Shoulder Press')).toBeInTheDocument()
+  })
+
+  it('starts session and persists execution state', async () => {
+    renderPage()
+
+    await screen.findByRole('heading', { name: 'Sessao de treino' })
+
+    fireEvent.click(screen.getByRole('button', { name: 'Iniciar sessao' }))
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Pausar' })).toBeInTheDocument()
+    })
+
+    expect(workoutService.saveSessionProgress).toHaveBeenCalledTimes(1)
+    expect(workoutService.saveSessionProgress).toHaveBeenCalledWith(
+      expect.objectContaining({
+        sessionId: sessionFixture.sessionId,
+        status: 'active',
+      }),
+    )
   })
 
   it('completes session and shows summary modal', async () => {
