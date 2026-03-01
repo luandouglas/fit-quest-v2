@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useHistory, useLocation, useRouteMatch } from 'react-router-dom'
 
 import {
   FqAlert,
@@ -100,6 +101,10 @@ function addDays(isoDate: string, offset: number) {
 
 function getNowIso() {
   return new Date().toISOString()
+}
+
+function getNutritionBasePath(pathname: string) {
+  return pathname.startsWith('/nutrition') ? '/nutrition' : '/tabs/nutrition'
 }
 
 function calculateMacrosFromMeals(meals: Meal[]) {
@@ -368,6 +373,11 @@ function getInsightMessage(day: NutritionDay) {
 }
 
 export function NutritionPage() {
+  const history = useHistory()
+  const location = useLocation()
+  const historyMatch = useRouteMatch(['/tabs/nutrition/history', '/nutrition/history'])
+  const mealMatch = useRouteMatch<{ mealId: string }>(['/tabs/nutrition/meal/:mealId', '/nutrition/meal/:mealId'])
+
   const todayDate = useMemo(() => toIsoDate(new Date()), [])
   const yesterdayDate = useMemo(() => addDays(todayDate, -1), [todayDate])
   const tomorrowDate = useMemo(() => addDays(todayDate, 1), [todayDate])
@@ -379,10 +389,10 @@ export function NutritionPage() {
   const [currentDay, setCurrentDay] = useState<NutritionDay | null>(null)
   const [reloadKey, setReloadKey] = useState(0)
   const [failedDates, setFailedDates] = useState<string[]>([])
-  const [mobileSection, setMobileSection] = useState<MobileSection>('plan')
+  const [mobileSectionState, setMobileSectionState] = useState<MobileSection>('plan')
 
-  const [isMealSheetOpen, setIsMealSheetOpen] = useState(false)
-  const [activeMealId, setActiveMealId] = useState<string | null>(null)
+  const [isMealSheetOpenState, setIsMealSheetOpenState] = useState(false)
+  const [activeMealIdState, setActiveMealIdState] = useState<string | null>(null)
   const [isQuickRegisterOpen, setIsQuickRegisterOpen] = useState(false)
 
   const [isWaterEditorOpen, setIsWaterEditorOpen] = useState(false)
@@ -477,6 +487,10 @@ export function NutritionPage() {
   }, [toastItem])
 
   const historyDays = useMemo(() => buildHistory(daysByDate, todayDate), [daysByDate, todayDate])
+  const routeMealId = mealMatch?.params.mealId ?? null
+  const activeMealId = routeMealId ?? activeMealIdState
+  const isMealSheetOpen = routeMealId ? true : isMealSheetOpenState
+  const mobileSection = historyMatch ? 'history' : mobileSectionState
 
   const selectedMeal = useMemo(() => {
     if (!currentDay || !activeMealId) {
@@ -568,7 +582,12 @@ export function NutritionPage() {
   function handleSelectDate(date: string) {
     setUiState('loading')
     setSelectedDate(date)
-    setMobileSection('plan')
+    setMobileSectionState('plan')
+
+    const basePath = getNutritionBasePath(location.pathname)
+    if (location.pathname !== basePath) {
+      history.replace(basePath)
+    }
   }
 
   function handleRetry() {
@@ -637,8 +656,11 @@ export function NutritionPage() {
   }
 
   function handleOpenMealDetails(mealId: string) {
-    setActiveMealId(mealId)
-    setIsMealSheetOpen(true)
+    setActiveMealIdState(mealId)
+    setIsMealSheetOpenState(true)
+
+    const basePath = getNutritionBasePath(location.pathname)
+    history.replace(`${basePath}/meal/${mealId}`)
   }
 
   function handleMealNoteChange(value: string) {
@@ -724,7 +746,7 @@ export function NutritionPage() {
     setIsCalendarOpen(false)
     setUiState('loading')
     setSelectedDate(calendarDraftDate)
-    setMobileSection('plan')
+    setMobileSectionState('plan')
   }
 
   if (uiState === 'loading') {
@@ -891,14 +913,26 @@ export function NutritionPage() {
             <FqButton
               variant={mobileSection === 'plan' ? 'solid' : 'outline'}
               tone={mobileSection === 'plan' ? 'primary' : 'neutral'}
-              onClick={() => setMobileSection('plan')}
+              onClick={() => {
+                setMobileSectionState('plan')
+                const basePath = getNutritionBasePath(location.pathname)
+                if (location.pathname !== basePath) {
+                  history.replace(basePath)
+                }
+              }}
             >
               Plano
             </FqButton>
             <FqButton
               variant={mobileSection === 'history' ? 'solid' : 'outline'}
               tone={mobileSection === 'history' ? 'secondary' : 'neutral'}
-              onClick={() => setMobileSection('history')}
+              onClick={() => {
+                setMobileSectionState('history')
+                const basePath = getNutritionBasePath(location.pathname)
+                if (location.pathname !== `${basePath}/history`) {
+                  history.replace(`${basePath}/history`)
+                }
+              }}
             >
               Historico
             </FqButton>
@@ -922,7 +956,11 @@ export function NutritionPage() {
               onOpenDay={(date) => {
                 setUiState('loading')
                 setSelectedDate(date)
-                setMobileSection('plan')
+                setMobileSectionState('plan')
+                const basePath = getNutritionBasePath(location.pathname)
+                if (location.pathname !== basePath) {
+                  history.replace(basePath)
+                }
               }}
             />
           </div>
@@ -978,9 +1016,14 @@ export function NutritionPage() {
         isOffline={isOffline}
         isDateLocked={isMealRegistrationLocked}
         onOpenChange={(open) => {
-          setIsMealSheetOpen(open)
+          setIsMealSheetOpenState(open)
           if (!open) {
-            setActiveMealId(null)
+            setActiveMealIdState(null)
+            const basePath = getNutritionBasePath(location.pathname)
+            const nextPath = mobileSection === 'history' ? `${basePath}/history` : basePath
+            if (location.pathname !== nextPath) {
+              history.replace(nextPath)
+            }
           }
         }}
         onNoteChange={handleMealNoteChange}
