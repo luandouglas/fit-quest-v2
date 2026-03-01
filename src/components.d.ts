@@ -11,7 +11,6 @@ declare global{
 	const AppQueryProvider: typeof import('./app/providers/QueryProvider')['AppQueryProvider']
 	const AppRouter: typeof import('./app/router/AppRouter')['AppRouter']
 	const TrainingPlanPage: typeof import('./pages/training-plan/TrainingPlanPage')['TrainingPlanPage']
-	const TrainingSessionPage: typeof import('./pages/training-plan/TrainingSessionPage')['TrainingSessionPage']
 	const PageContainer: typeof import('./shared/ui/PageContainer')['PageContainer']
 	const StatusCard: typeof import('./shared/ui/StatusCard')['StatusCard']
 	const LoginPage: typeof import('./features/auth/pages/LoginPage')['LoginPage']
