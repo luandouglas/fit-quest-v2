@@ -1,8 +1,7 @@
 import { createContext, useCallback, useContext, useMemo, useState } from 'react'
 
 import type { AuthContextValue, AuthUser } from '@/shared/types'
-import { AUTH_STORAGE_KEY } from '@/shared/constants'
-import { storage } from '@/shared/services'
+import { authService } from '@/shared/services'
 
 type AuthProviderProps = {
   children: React.ReactNode
@@ -11,7 +10,7 @@ type AuthProviderProps = {
 const AuthContext = createContext<AuthContextValue | null>(null)
 
 function getInitialUser() {
-  return storage.get<AuthUser>(AUTH_STORAGE_KEY)
+  return authService.getStoredUser()
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
@@ -19,12 +18,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const login = useCallback((nextUser: AuthUser) => {
     setUser(nextUser)
-    storage.set(AUTH_STORAGE_KEY, nextUser)
+    authService.persistLocalSession(nextUser)
   }, [])
 
   const logout = useCallback(() => {
     setUser(null)
-    storage.remove(AUTH_STORAGE_KEY)
+    void authService.logout()
   }, [])
 
   const value = useMemo<AuthContextValue>(

@@ -1,7 +1,7 @@
 import { useHistory } from 'react-router-dom'
 
+import { workoutService } from '@/shared/services'
 import { FqButton, FqIcon, FqText } from '@/shared/ui'
-import { mockWeek } from './data/mockTrainingPlan'
 import {
   DesktopSummaryPanel,
   ExerciseList,
@@ -17,6 +17,7 @@ import { useTrainingPlanState } from './hooks/useTrainingPlanState'
 
 export function TrainingPlanPage() {
   const history = useHistory()
+  const week = workoutService.getWeekSnapshot()
   const {
     uiState,
     hasWorkoutToday,
@@ -104,7 +105,7 @@ export function TrainingPlanPage() {
 
       <div className="grid items-start gap-5 lg:grid-cols-12 xl:gap-6">
         <div className="order-3 space-y-4 lg:order-1 lg:col-span-3 lg:sticky lg:top-5 lg:h-fit">
-          <WeeklyCalendarCard days={mockWeek} />
+          <WeeklyCalendarCard days={week} />
 
           <div className="rounded-xl border border-border bg-card p-4">
             <p className="text-sm text-muted-foreground">Atalhos</p>

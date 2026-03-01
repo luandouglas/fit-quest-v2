@@ -2,6 +2,7 @@ import { type FormEvent, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import { useAuth } from '@/shared/hooks'
+import { authService } from '@/shared/services'
 import { FqButton, FqIcon, FqIconButton, FqInput, FqText } from '@/shared/ui'
 
 const MIN_PASSWORD_LENGTH = 6
@@ -20,18 +21,22 @@ export function LoginPage() {
     return !isEmailValid(email.trim()) || password.trim().length < MIN_PASSWORD_LENGTH
   }, [email, password])
 
-  function handleLogin() {
+  async function handleLogin() {
     if (isDisabled) {
       return
     }
 
-    const displayName = email.split('@')[0]?.trim() || 'atleta'
-    login({ id: crypto.randomUUID(), name: displayName })
+    const nextUser = await authService.login({
+      email: email.trim(),
+      password: password.trim(),
+    })
+
+    login(nextUser)
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    handleLogin()
+    void handleLogin()
   }
 
   return (

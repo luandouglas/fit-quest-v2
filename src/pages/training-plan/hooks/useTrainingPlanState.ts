@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 
-import { mockExercises } from '../data/mockTrainingPlan'
+import { workoutService } from '@/shared/services'
 import type { ExerciseItem, TrainingPlanUiState, TodayWorkout } from '../types'
 
 const LOADING_DELAY_MS = 450
@@ -8,7 +8,7 @@ const LOADING_DELAY_MS = 450
 export function useTrainingPlanState() {
   const [uiState, setUiState] = useState<TrainingPlanUiState>('loading')
   const [hasWorkoutToday, setHasWorkoutToday] = useState(true)
-  const [exercises, setExercises] = useState<ExerciseItem[]>(mockExercises)
+  const [exercises, setExercises] = useState<ExerciseItem[]>(() => workoutService.getExercisesSnapshot())
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
@@ -26,15 +26,7 @@ export function useTrainingPlanState() {
   const progressPct = Math.round((doneCount / Math.max(totalCount, 1)) * 100)
 
   const todayWorkout: TodayWorkout = useMemo(
-    () => ({
-      title: 'Upper Body Day',
-      durationMin: 44,
-      calories: 285,
-      stars: 25,
-      progressPct,
-      completedCount: doneCount,
-      totalCount,
-    }),
+    () => workoutService.getTodayWorkoutSnapshot(progressPct, doneCount, totalCount),
     [doneCount, totalCount, progressPct],
   )
 
