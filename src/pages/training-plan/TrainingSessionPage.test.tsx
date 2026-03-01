@@ -123,4 +123,15 @@ describe('TrainingSessionPage', () => {
 
     expect(workoutService.completeSession).toHaveBeenCalledTimes(1)
   })
+
+  it('shows error state when session loading fails', async () => {
+    vi.spyOn(workoutService, 'startSession').mockRejectedValueOnce(new Error('request failed'))
+
+    renderPage()
+
+    await screen.findByRole('alert')
+
+    expect(screen.getByText('Falha ao carregar a sessao')).toBeInTheDocument()
+    expect(screen.getByText('request failed')).toBeInTheDocument()
+  })
 })
