@@ -1,16 +1,25 @@
-import { Suspense } from 'react'
+import { Suspense, createElement, lazy } from 'react'
 
 import { IonRouterOutlet, IonSpinner } from '@ionic/react'
 import { IonReactRouter } from '@ionic/react-router'
 import { Redirect, Route } from 'react-router-dom'
 
 import { AppTabsLayout } from '@/app/layouts'
-import { ComponentsPage, NotFoundPage } from '@/app/pages'
+import { NotFoundPage } from '@/app/pages/NotFoundPage'
 import { PrivateRoute, PublicOnlyRoute } from '@/app/router/Guards'
 import { LoginPage } from '@/features/auth'
-import { FitQuestExperiencePage } from '@/features/experience'
 import { TrainingSessionPage } from '@/pages/training-plan'
 import { AppErrorBoundary } from '@/shared/ui'
+
+const LazyComponentsPageRoute = lazy(() =>
+  import('@/app/pages/ComponentsPage').then((module) => ({ default: module.ComponentsPage })),
+)
+
+const LazyFitQuestExperiencePageRoute = lazy(() =>
+  import('@/features/experience/pages/FitQuestExperiencePage').then((module) => ({
+    default: module.FitQuestExperiencePage,
+  })),
+)
 
 function RouteFallback() {
   return (
@@ -32,11 +41,11 @@ export function AppRouter() {
             </Route>
 
             <Route exact path="/components">
-              <ComponentsPage />
+              {createElement(LazyComponentsPageRoute)}
             </Route>
 
             <Route path="/landing" exact>
-              <FitQuestExperiencePage mode="landing" />
+              {createElement(LazyFitQuestExperiencePageRoute, { mode: 'landing' })}
             </Route>
 
             <Route path="/login" exact>

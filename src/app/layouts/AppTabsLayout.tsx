@@ -1,14 +1,26 @@
-import { useState } from 'react'
+import { Suspense, lazy, useState } from 'react'
+
+import { IonSpinner } from '@ionic/react'
 import { Redirect, Route, NavLink, Switch } from 'react-router-dom'
 
 import { HomePage } from '@/features/home'
-import { NutritionPage } from '@/features/nutrition'
 import { ProfilePage } from '@/features/profile'
-import { TrainingPlanPage } from '@/pages/training-plan'
 import { useAuth } from '@/shared/hooks'
 import { FqButton, FqIcon, FqText } from '@/shared/ui'
 import type { IconName } from '@/shared/ui'
 import { cx } from '@/shared'
+
+const TrainingPlanPage = lazy(() =>
+  import('@/pages/training-plan/TrainingPlanPage').then((module) => ({
+    default: module.TrainingPlanPage,
+  })),
+)
+
+const NutritionPage = lazy(() =>
+  import('@/features/nutrition/pages/NutritionPage').then((module) => ({
+    default: module.NutritionPage,
+  })),
+)
 
 type SidebarItem = {
   label: string
@@ -37,6 +49,17 @@ function SidebarSectionPage({ title }: { title: string }) {
         {title}
       </FqText>
       <FqText className="mt-2 text-muted-foreground">Essa area ainda esta em desenvolvimento.</FqText>
+    </section>
+  )
+}
+
+function TabsRouteFallback() {
+  return (
+    <section className="rounded-xl border bg-card p-6 shadow-sm">
+      <div className="flex items-center gap-2 text-muted-foreground">
+        <IonSpinner name="crescent" />
+        <FqText>Carregando modulo...</FqText>
+      </div>
     </section>
   )
 }
@@ -253,13 +276,45 @@ export function AppTabsLayout() {
 
         <div className="px-4 pb-5 pt-20 lg:p-5">
           <Switch>
-            <Route path="/tabs/workouts" component={TrainingPlanPage} exact />
+            <Route
+              path="/tabs/workouts"
+              exact
+              render={() => (
+                <Suspense fallback={<TabsRouteFallback />}>
+                  <TrainingPlanPage />
+                </Suspense>
+              )}
+            />
             <Route path="/tabs/run" exact>
               <SidebarSectionPage title="Corrida" />
             </Route>
-            <Route path="/tabs/nutrition/meal/:mealId" component={NutritionPage} exact />
-            <Route path="/tabs/nutrition/history" component={NutritionPage} exact />
-            <Route path="/tabs/nutrition" component={NutritionPage} exact />
+            <Route
+              path="/tabs/nutrition/meal/:mealId"
+              exact
+              render={() => (
+                <Suspense fallback={<TabsRouteFallback />}>
+                  <NutritionPage />
+                </Suspense>
+              )}
+            />
+            <Route
+              path="/tabs/nutrition/history"
+              exact
+              render={() => (
+                <Suspense fallback={<TabsRouteFallback />}>
+                  <NutritionPage />
+                </Suspense>
+              )}
+            />
+            <Route
+              path="/tabs/nutrition"
+              exact
+              render={() => (
+                <Suspense fallback={<TabsRouteFallback />}>
+                  <NutritionPage />
+                </Suspense>
+              )}
+            />
             <Route path="/tabs/progress" exact>
               <SidebarSectionPage title="Progresso" />
             </Route>
