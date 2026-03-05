@@ -25,25 +25,25 @@ type FqSelectProps = FqBaseProps &
   }
 
 const sizeMap: Record<FqSize, string> = {
-  xs: 'h-8 px-2 text-xs',
-  sm: 'h-9 px-3 text-sm',
-  md: 'h-10 px-3 text-sm',
-  lg: 'h-12 px-4 text-base',
+  xs: 'h-8 px-3 text-xs',
+  sm: 'h-10 px-4 text-sm',
+  md: 'h-12 px-4 text-sm',
+  lg: 'h-14 px-5 text-base',
 }
 
 const variantMap: Record<FqVariant, string> = {
-  solid: 'border-transparent bg-zinc-100 hover:bg-zinc-200',
-  outline: 'border border-zinc-300 bg-white',
+  solid: 'border border-transparent bg-muted/80 hover:bg-muted',
+  outline: 'border border-input bg-card shadow-sm',
   ghost: 'border-transparent bg-transparent',
 }
 
 const toneMap: Record<FqTone, string> = {
-  primary: 'focus-visible:ring-blue-500 focus-visible:border-blue-500',
-  secondary: 'focus-visible:ring-slate-500 focus-visible:border-slate-500',
-  success: 'focus-visible:ring-emerald-500 focus-visible:border-emerald-500',
-  warning: 'focus-visible:ring-amber-500 focus-visible:border-amber-500',
-  danger: 'focus-visible:ring-rose-500 focus-visible:border-rose-500',
-  neutral: 'focus-visible:ring-zinc-500 focus-visible:border-zinc-500',
+  primary: 'focus-visible:ring-ring focus-visible:border-primary',
+  secondary: 'focus-visible:ring-secondary focus-visible:border-secondary',
+  success: 'focus-visible:ring-success focus-visible:border-success',
+  warning: 'focus-visible:ring-warning focus-visible:border-warning',
+  danger: 'focus-visible:ring-destructive focus-visible:border-destructive',
+  neutral: 'focus-visible:ring-ring focus-visible:border-foreground/30',
 }
 
 export function FqSelect({
@@ -67,25 +67,25 @@ export function FqSelect({
   const selectId = id ?? `fq-select-${testId ?? crypto.randomUUID()}`
 
   return (
-    <label className="flex w-full flex-col gap-1.5" htmlFor={selectId}>
-      {label ? <span className="text-sm font-medium text-zinc-700">{label}</span> : null}
+    <label className="flex w-full flex-col gap-2" htmlFor={selectId}>
+      {label ? <span className="text-sm font-medium text-foreground">{label}</span> : null}
       <span className="relative flex items-center">
         {leftIcon ? (
-          <span className="pointer-events-none absolute left-3 text-zinc-500">
+          <span className="pointer-events-none absolute left-3 text-muted-foreground">
             <FqIcon name={leftIcon} size={16} />
           </span>
         ) : null}
         <select
           id={selectId}
           className={cx(
-            'w-full appearance-none rounded-xl text-zinc-900 outline-none transition disabled:cursor-not-allowed disabled:opacity-60',
-            'focus-visible:ring-2 focus-visible:ring-offset-1',
+            'w-full appearance-none rounded-xl text-foreground outline-none transition duration-200 disabled:cursor-not-allowed disabled:opacity-60',
+            'focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-background',
             sizeMap[size],
             variantMap[variant],
             toneMap[tone],
             leftIcon ? 'pl-10' : null,
             'pr-10',
-            errorMessage ? 'border-rose-500 focus-visible:ring-rose-500' : null,
+            errorMessage ? 'border-destructive focus-visible:ring-destructive' : null,
             className,
           )}
          
@@ -102,15 +102,15 @@ export function FqSelect({
           ))}
         </select>
         {rightIcon ? (
-          <span className="pointer-events-none absolute right-3 text-zinc-500">
+          <span className="pointer-events-none absolute right-3 text-muted-foreground">
             <FqIcon name={rightIcon} size={16} />
           </span>
         ) : null}
       </span>
       {errorMessage ? (
-        <span className="text-xs text-rose-600">{errorMessage}</span>
+        <span className="text-xs text-destructive">{errorMessage}</span>
       ) : helperText ? (
-        <span className="text-xs text-zinc-500">{helperText}</span>
+        <span className="text-xs text-muted-foreground/90">{helperText}</span>
       ) : null}
     </label>
   )

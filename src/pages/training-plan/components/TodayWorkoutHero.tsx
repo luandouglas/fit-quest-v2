@@ -8,6 +8,8 @@ type TodayWorkoutHeroProps = {
 }
 
 export function TodayWorkoutHero({ workout, onStart }: TodayWorkoutHeroProps) {
+  const hasWorkout = workout.durationMin > 0
+
   return (
     <FqCard className="border-border bg-card">
       <div className="space-y-4">
@@ -22,7 +24,7 @@ export function TodayWorkoutHero({ workout, onStart }: TodayWorkoutHeroProps) {
             </FqText>
           </div>
 
-          <FqButton leftIcon="play" onClick={onStart} className="w-full sm:w-auto">
+          <FqButton leftIcon="play" onClick={onStart} className="w-full sm:w-auto" isDisabled={!hasWorkout}>
             Iniciar treino
           </FqButton>
         </div>

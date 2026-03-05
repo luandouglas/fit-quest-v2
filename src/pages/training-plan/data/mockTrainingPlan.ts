@@ -7,6 +7,7 @@ export const mockWeek: TrainingPlanDay[] = [
     isToday: false,
     isCompleted: true,
     hasWorkout: true,
+    status: 'completed',
   },
   {
     date: '2026-02-17',
@@ -14,6 +15,7 @@ export const mockWeek: TrainingPlanDay[] = [
     isToday: false,
     isCompleted: true,
     hasWorkout: true,
+    status: 'completed',
   },
   {
     date: '2026-02-18',
@@ -21,6 +23,7 @@ export const mockWeek: TrainingPlanDay[] = [
     isToday: false,
     isCompleted: true,
     hasWorkout: true,
+    status: 'completed',
   },
   {
     date: '2026-02-19',
@@ -28,6 +31,7 @@ export const mockWeek: TrainingPlanDay[] = [
     isToday: true,
     isCompleted: false,
     hasWorkout: true,
+    status: 'pending',
   },
   {
     date: '2026-02-20',
@@ -35,6 +39,7 @@ export const mockWeek: TrainingPlanDay[] = [
     isToday: false,
     isCompleted: false,
     hasWorkout: true,
+    status: 'pending',
   },
   {
     date: '2026-02-21',
@@ -42,6 +47,7 @@ export const mockWeek: TrainingPlanDay[] = [
     isToday: false,
     isCompleted: false,
     hasWorkout: false,
+    status: 'rest',
   },
   {
     date: '2026-02-22',
@@ -49,6 +55,7 @@ export const mockWeek: TrainingPlanDay[] = [
     isToday: false,
     isCompleted: false,
     hasWorkout: false,
+    status: 'rest',
   },
 ]
 

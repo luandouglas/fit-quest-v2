@@ -6,6 +6,8 @@ import type { NutritionHistoryDay } from '../NutritionPage'
 type NutritionHistoryProps = {
   days: NutritionHistoryDay[]
   selectedDate: string
+  filter: 'all' | 'ok' | 'pending'
+  onFilterChange: (filter: 'all' | 'ok' | 'pending') => void
   onOpenDay: (date: string) => void
 }
 
@@ -17,13 +19,46 @@ function formatHistoryDate(date: string) {
   }).format(new Date(`${date}T12:00:00`))
 }
 
-export function NutritionHistory({ days, selectedDate, onOpenDay }: NutritionHistoryProps) {
+export function NutritionHistory({ days, selectedDate, filter, onFilterChange, onOpenDay }: NutritionHistoryProps) {
   return (
     <FqCard className="border-border bg-card">
       <div className="space-y-3">
         <div className="flex items-center justify-between gap-2">
           <h3 className="text-lg font-semibold text-foreground">Historico (7 dias)</h3>
           <p className="text-sm text-muted-foreground">Ultimos registros</p>
+        </div>
+
+        <div className="grid grid-cols-3 gap-2">
+          <button
+            type="button"
+            onClick={() => onFilterChange('all')}
+            className={cx(
+              'rounded-lg border px-2 py-1.5 text-xs font-semibold transition',
+              filter === 'all' ? 'border-secondary bg-secondary/10 text-secondary' : 'border-border bg-background text-muted-foreground',
+            )}
+          >
+            Todos
+          </button>
+          <button
+            type="button"
+            onClick={() => onFilterChange('ok')}
+            className={cx(
+              'rounded-lg border px-2 py-1.5 text-xs font-semibold transition',
+              filter === 'ok' ? 'border-success bg-success/10 text-success' : 'border-border bg-background text-muted-foreground',
+            )}
+          >
+            Ok
+          </button>
+          <button
+            type="button"
+            onClick={() => onFilterChange('pending')}
+            className={cx(
+              'rounded-lg border px-2 py-1.5 text-xs font-semibold transition',
+              filter === 'pending' ? 'border-warning bg-warning/15 text-warning-foreground' : 'border-border bg-background text-muted-foreground',
+            )}
+          >
+            Pendente
+          </button>
         </div>
 
         <div className="space-y-2">

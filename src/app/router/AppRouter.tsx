@@ -6,7 +6,7 @@ import { Redirect, Route } from 'react-router-dom'
 
 import { AppTabsLayout } from '@/app/layouts'
 import { NotFoundPage } from '@/app/pages/NotFoundPage'
-import { PrivateRoute, PublicOnlyRoute } from '@/app/router/Guards'
+import { PrivateRoute, PublicOnlyRoute, RoleGuard } from '@/app/router/Guards'
 import { LoginPage } from '@/features/auth'
 import { TrainingSessionPage } from '@/pages/training-plan'
 import { AppErrorBoundary } from '@/shared/ui'
@@ -60,9 +60,27 @@ export function AppRouter() {
               </PrivateRoute>
             </Route>
 
+            <Route path="/personal" exact>
+              <PrivateRoute>
+                <RoleGuard allowedRoles={['PERSONAL']}>
+                  <Redirect to="/tabs/personal/dashboard" />
+                </RoleGuard>
+              </PrivateRoute>
+            </Route>
+
+            <Route path="/nutritionist" exact>
+              <PrivateRoute>
+                <RoleGuard allowedRoles={['NUTRITIONIST']}>
+                  <Redirect to="/tabs/nutritionist/dashboard" />
+                </RoleGuard>
+              </PrivateRoute>
+            </Route>
+
             <Route path="/treinos/sessao" exact>
               <PrivateRoute>
-                <TrainingSessionPage />
+                <RoleGuard allowedRoles={['STUDENT', 'PERSONAL']}>
+                  <TrainingSessionPage />
+                </RoleGuard>
               </PrivateRoute>
             </Route>
 
@@ -71,20 +89,26 @@ export function AppRouter() {
               exact
               render={({ match }) => (
                 <PrivateRoute>
-                  <Redirect to={`/tabs/nutrition/meal/${match.params.mealId}`} />
+                  <RoleGuard allowedRoles={['STUDENT']}>
+                    <Redirect to={`/tabs/nutrition/meal/${match.params.mealId}`} />
+                  </RoleGuard>
                 </PrivateRoute>
               )}
             />
 
             <Route path="/nutrition/history" exact>
               <PrivateRoute>
-                <Redirect to="/tabs/nutrition/history" />
+                <RoleGuard allowedRoles={['STUDENT']}>
+                  <Redirect to="/tabs/nutrition/history" />
+                </RoleGuard>
               </PrivateRoute>
             </Route>
 
             <Route path="/nutrition" exact>
               <PrivateRoute>
-                <Redirect to="/tabs/nutrition" />
+                <RoleGuard allowedRoles={['STUDENT']}>
+                  <Redirect to="/tabs/nutrition" />
+                </RoleGuard>
               </PrivateRoute>
             </Route>
 

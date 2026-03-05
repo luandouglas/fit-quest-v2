@@ -109,6 +109,10 @@ export function LoginPage() {
               Entrar
             </FqButton>
 
+            <p className="rounded-xl border border-border bg-muted/20 p-3 text-xs text-muted-foreground">
+              Perfis de teste: aluno@fitquest.app, personal@fitquest.app, nutri@fitquest.app (senha valida qualquer valor com 6+ caracteres).
+            </p>
+
             <p className="pt-7 text-center text-sm text-muted-foreground">
               Nao tem conta?{' '}
               <Link to="/login" className="font-medium text-primary hover:underline">

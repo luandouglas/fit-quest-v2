@@ -1,6 +1,7 @@
 export * from './FqAchievementCard'
 export * from './FqCalendarHeatmap'
 export * from './FqExerciseItem'
+export * from './FqGoalRing'
 export * from './FqLevelBadge'
 export * from './FqProgressRing'
 export * from './FqStarRating'

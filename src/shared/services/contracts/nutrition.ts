@@ -52,3 +52,14 @@ export type NutritionHistoryDay = {
 }
 
 export type NutritionDaysMap = Record<string, NutritionDay>
+
+export type NutritionPermissions = {
+  hasActiveNutritionist: boolean
+  canEditPlan: boolean
+  canRegisterConsumption: boolean
+}
+
+export type NutritionDaysPayload = {
+  daysByDate: NutritionDaysMap
+  permissions: NutritionPermissions
+}

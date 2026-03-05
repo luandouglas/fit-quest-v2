@@ -12,7 +12,9 @@ export function useGamificationOverview() {
   const query = useQuery({
     queryKey: gamificationQueryKeys.overview,
     queryFn: () => gamificationService.getOverview(),
-    staleTime: 30_000,
+    staleTime: 10_000,
+    refetchInterval: 20_000,
+    refetchOnWindowFocus: true,
   })
 
   const overview = useMemo(() => query.data ?? null, [query.data])

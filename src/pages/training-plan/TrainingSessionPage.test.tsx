@@ -1,8 +1,11 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { QueryClientProvider } from '@tanstack/react-query'
 import { createMemoryHistory } from 'history'
 import { Route, Router } from 'react-router-dom'
 
+import { createAppQueryClient } from '@/app/providers'
 import { workoutService, type WorkoutSession, type WorkoutSessionSummary } from '@/shared/services'
+import { FqToastProvider } from '@/shared/ui'
 
 import { TrainingSessionPage } from './TrainingSessionPage'
 
@@ -51,17 +54,34 @@ const summaryFixture: WorkoutSessionSummary = {
   completedExercises: 1,
   totalSets: 4,
   completedSets: 2,
+  loadVolumeKg: 960,
+  exerciseRecords: [
+    {
+      exerciseId: 'bench-press',
+      exerciseName: 'Bench Press',
+      loadVolumeKg: 720,
+    },
+    {
+      exerciseId: 'shoulder-press',
+      exerciseName: 'Shoulder Press',
+      loadVolumeKg: 240,
+    },
+  ],
 }
 
-function renderPage() {
-  const history = createMemoryHistory({ initialEntries: ['/treinos/sessao'] })
+function renderPage(state?: { workoutId?: string }) {
+  const history = createMemoryHistory({ initialEntries: [{ pathname: '/treinos/sessao', state }] })
 
   render(
-    <Router history={history}>
-      <Route path="/treinos/sessao">
-        <TrainingSessionPage />
-      </Route>
-    </Router>,
+    <FqToastProvider>
+      <QueryClientProvider client={createAppQueryClient()}>
+        <Router history={history}>
+          <Route path="/treinos/sessao">
+            <TrainingSessionPage />
+          </Route>
+        </Router>
+      </QueryClientProvider>
+    </FqToastProvider>,
   )
 
   return history
@@ -84,8 +104,16 @@ describe('TrainingSessionPage', () => {
     await screen.findByRole('heading', { name: 'Sessao de treino' })
 
     expect(workoutService.startSession).toHaveBeenCalledTimes(1)
-    expect(screen.getByText('1. Bench Press')).toBeInTheDocument()
-    expect(screen.getByText('2. Shoulder Press')).toBeInTheDocument()
+    expect(screen.getAllByText('1. Bench Press').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('2. Shoulder Press').length).toBeGreaterThan(0)
+  })
+
+  it('starts session using selected workout id from route state', async () => {
+    renderPage({ workoutId: 'workout-123' })
+
+    await screen.findByRole('heading', { name: 'Sessao de treino' })
+
+    expect(workoutService.startSession).toHaveBeenCalledWith({ workoutId: 'workout-123' })
   })
 
   it('starts session and persists execution state', async () => {

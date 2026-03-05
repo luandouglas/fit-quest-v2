@@ -1,8 +1,22 @@
 import { httpClient } from '@/shared/services/http'
-import type { ProgressOverview } from '@/shared/services/contracts/progress'
+import type { BodyMeasurements, ProgressOverview, ProgressRange } from '@/shared/services/contracts/progress'
 
 export const progressService = {
-  async getOverview(): Promise<ProgressOverview> {
-    return httpClient.get<ProgressOverview>('/progress/overview')
+  async getOverview(range: ProgressRange = '7d'): Promise<ProgressOverview> {
+    return httpClient.get<ProgressOverview>('/progress/overview', {
+      query: { range },
+    })
+  },
+  async registerWeight(params: { weightKg: number; date?: string }): Promise<{ saved: boolean }> {
+    return httpClient.post<{ saved: boolean }, { weightKg: number; date?: string }>('/progress/weight', params)
+  },
+  async registerBodyMeasurements(params: { measurements: BodyMeasurements; date?: string; comment?: string }): Promise<{ saved: boolean }> {
+    return httpClient.post<{ saved: boolean }, { measurements: BodyMeasurements; date?: string; comment?: string }>(
+      '/progress/measurements',
+      params,
+    )
+  },
+  async requestMeasurementsUpdate(params?: { note?: string }): Promise<{ sent: boolean }> {
+    return httpClient.post<{ sent: boolean }, { note?: string }>('/progress/measurements/request-update', params)
   },
 }

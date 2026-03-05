@@ -1,0 +1,9 @@
+{
+  "porte_fisico": "medio",
+  "biotipo": "ectomorfo",
+  "sexo": "masculino",
+  "objetivo": "hipertrofia",
+  "experiencia": "iniciante",
+  "foco_muscular": ["peito", "triceps"],
+  "equipamentos_permitidos": ["barra", "halter", "maquina", "cabo"]
+}

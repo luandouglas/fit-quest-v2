@@ -1,4 +1,6 @@
-import { FqAlert, FqButton, FqDivider, FqDrawer, FqTag, FqTextarea } from '@/shared/ui'
+import { useState } from 'react'
+
+import { FqAlert, FqButton, FqDivider, FqDrawer, FqInput, FqTag, FqTextarea } from '@/shared/ui'
 
 import type { Meal } from '../NutritionPage'
 
@@ -8,10 +10,14 @@ type MealDetailSheetProps = {
   note: string
   isOffline?: boolean
   isDateLocked?: boolean
+  isPlanEditingLocked?: boolean
   onOpenChange: (open: boolean) => void
-  onNoteChange: (value: string) => void
+  onSaveMeal: (patch: { name: string; time: string; note?: string }) => void
+  onDeleteMeal: () => void
   onMarkDone: () => void
   onMarkSkipped: () => void
+  isSaving?: boolean
+  isDeleting?: boolean
 }
 
 const statusToneMap = {
@@ -32,11 +38,19 @@ export function MealDetailSheet({
   note,
   isOffline = false,
   isDateLocked = false,
+  isPlanEditingLocked = false,
   onOpenChange,
-  onNoteChange,
+  onSaveMeal,
+  onDeleteMeal,
   onMarkDone,
   onMarkSkipped,
+  isSaving = false,
+  isDeleting = false,
 }: MealDetailSheetProps) {
+  const [name, setName] = useState(meal?.name ?? '')
+  const [time, setTime] = useState(meal?.time ?? '')
+  const [noteValue, setNoteValue] = useState(note)
+
   if (!meal) {
     return null
   }
@@ -65,6 +79,22 @@ export function MealDetailSheet({
           </p>
         </div>
 
+        <div className="grid gap-2 sm:grid-cols-2">
+          <FqInput
+            label="Nome da refeicao"
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+            isDisabled={isOffline || isDateLocked || isPlanEditingLocked}
+          />
+          <FqInput
+            label="Horario"
+            value={time}
+            onChange={(event) => setTime(event.target.value)}
+            placeholder="Ex.: 12:30"
+            isDisabled={isOffline || isDateLocked || isPlanEditingLocked}
+          />
+        </div>
+
         <div className="space-y-2">
           <p className="text-sm font-medium text-foreground">Itens da refeicao</p>
           <div className="rounded-xl border border-border">
@@ -88,15 +118,22 @@ export function MealDetailSheet({
         <FqTextarea
           label="Observacao"
           placeholder="Ex.: ajustei a porcao de carboidrato."
-          value={note}
-          onChange={(event) => onNoteChange(event.target.value)}
+          value={noteValue}
+          onChange={(event) => setNoteValue(event.target.value)}
           variant="outline"
           tone="secondary"
+          isDisabled={isOffline || isDateLocked || isPlanEditingLocked}
         />
 
         <FqAlert tone="neutral" title="Plano somente leitura">
-          Somente seu nutricionista pode alterar itens e macros do plano alimentar.
+          Macros e itens do plano continuam protegidos.
         </FqAlert>
+
+        {isPlanEditingLocked ? (
+          <FqAlert tone="secondary" title="Edicao bloqueada">
+            Este plano foi definido pelo nutricionista. Voce pode apenas registrar consumo.
+          </FqAlert>
+        ) : null}
 
         {isDateLocked ? (
           <FqAlert tone="warning" title="Registro bloqueado">
@@ -105,6 +142,24 @@ export function MealDetailSheet({
         ) : null}
 
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <FqButton
+            tone="secondary"
+            variant="outline"
+            onClick={() => onSaveMeal({ name, time, note: noteValue })}
+            isDisabled={isOffline || isDateLocked || isPlanEditingLocked}
+            isLoading={isSaving}
+          >
+            Salvar edicao
+          </FqButton>
+          <FqButton
+            tone="danger"
+            variant="outline"
+            onClick={onDeleteMeal}
+            isDisabled={isOffline || isDateLocked || isPlanEditingLocked}
+            isLoading={isDeleting}
+          >
+            Excluir refeicao
+          </FqButton>
           <FqButton leftIcon="check" onClick={onMarkDone} isDisabled={isOffline || isDateLocked}>
             Marcar como feita
           </FqButton>

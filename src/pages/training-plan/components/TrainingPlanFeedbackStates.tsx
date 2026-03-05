@@ -10,11 +10,13 @@ type ErrorStateProps = {
 
 type EmptyStateProps = FeedbackStateProps & {
   onShowPlans: () => void
+  canShowPlans?: boolean
+  showPlansReason?: string
 }
 
 export function TrainingPlanLoadingState() {
   return (
-    <section className="mx-auto w-full space-y-5">
+    <section className="fq-page-shell">
       <FqSkeleton className="h-10 w-52" rounded="lg" />
       <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-12">
         <div className="space-y-4 md:col-span-2 lg:col-span-6">
@@ -31,7 +33,7 @@ export function TrainingPlanLoadingState() {
 
 export function TrainingPlanErrorState({ onRetry }: ErrorStateProps) {
   return (
-    <section className="mx-auto w-full space-y-4">
+    <section className="fq-page-shell">
       <FqAlert tone="danger" title="Não foi possível carregar seus treinos">
         Verifique sua conexão e tente novamente.
       </FqAlert>
@@ -42,9 +44,14 @@ export function TrainingPlanErrorState({ onRetry }: ErrorStateProps) {
   )
 }
 
-export function TrainingPlanEmptyState({ onBack, onShowPlans }: EmptyStateProps) {
+export function TrainingPlanEmptyState({
+  onBack,
+  onShowPlans,
+  canShowPlans = true,
+  showPlansReason,
+}: EmptyStateProps) {
   return (
-    <section className="mx-auto w-full space-y-4">
+    <section className="fq-page-shell">
       <header className="flex items-center gap-3">
         <button
           type="button"
@@ -62,10 +69,19 @@ export function TrainingPlanEmptyState({ onBack, onShowPlans }: EmptyStateProps)
       <FqEmptyState
         icon="dumbbell"
         title="Sem treino atribuído para hoje"
-        description="Você pode explorar os planos disponíveis e escolher um treino para continuar evoluindo."
-        actionLabel="Ver planos"
-        onAction={onShowPlans}
+        description={
+          canShowPlans
+            ? 'Você pode explorar os planos disponíveis e escolher um treino para continuar evoluindo.'
+            : 'Aguarde seu personal atribuir o treino do dia para iniciar a sessao.'
+        }
+        actionLabel={canShowPlans ? 'Ver planos' : undefined}
+        onAction={canShowPlans ? onShowPlans : undefined}
       />
+      {!canShowPlans && showPlansReason ? (
+        <FqText as="p" className="text-xs text-muted-foreground">
+          {showPlansReason}
+        </FqText>
+      ) : null}
     </section>
   )
 }

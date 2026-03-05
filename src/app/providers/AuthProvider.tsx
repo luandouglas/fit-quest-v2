@@ -18,6 +18,7 @@ type AuthAction =
   | { type: 'login_success'; session: AuthSession }
   | { type: 'login_error'; message: string }
   | { type: 'logout' }
+  | { type: 'session_user_updated'; session: AuthSession }
   | { type: 'clear_error' }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -58,6 +59,11 @@ function authReducer(state: AuthState, action: AuthAction): AuthState {
         status: 'anonymous',
         error: null,
       }
+    case 'session_user_updated':
+      return {
+        ...state,
+        session: action.session,
+      }
     case 'clear_error':
       return {
         ...state,
@@ -96,6 +102,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
     dispatch({ type: 'logout' })
   }, [])
 
+  const updateUser = useCallback((patch: Partial<AuthSession['user']>) => {
+    const nextSession = authService.updateStoredSessionUser(patch)
+
+    if (!nextSession) {
+      return
+    }
+
+    dispatch({ type: 'session_user_updated', session: nextSession })
+  }, [])
+
   const clearError = useCallback(() => {
     dispatch({ type: 'clear_error' })
   }, [])
@@ -109,9 +125,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
       error: state.error,
       login,
       logout,
+      updateUser,
       clearError,
     }),
-    [state, login, logout, clearError],
+    [state, login, logout, updateUser, clearError],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

@@ -6,6 +6,7 @@ import { Route, Router } from 'react-router-dom'
 import { createAppQueryClient } from '@/app/providers'
 import { createNutritionMockDays } from '@/shared/services/mocks/nutritionMockData'
 import { nutritionService } from '@/shared/services'
+import { FqToastProvider } from '@/shared/ui'
 
 import { NutritionPage } from './NutritionPage'
 
@@ -22,75 +23,88 @@ function renderNutritionAt(pathname: string) {
 
   render(
     <QueryClientProvider client={createAppQueryClient()}>
-      <Router history={history}>
-        <Route path={['/tabs/nutrition/meal/:mealId', '/tabs/nutrition/history', '/tabs/nutrition', '/nutrition/meal/:mealId', '/nutrition/history', '/nutrition']}>
-          <NutritionPage />
-        </Route>
-      </Router>
+      <FqToastProvider>
+        <Router history={history}>
+          <Route path={['/tabs/nutrition/meal/:mealId', '/tabs/nutrition/history', '/tabs/nutrition', '/nutrition/meal/:mealId', '/nutrition/history', '/nutrition']}>
+            <NutritionPage />
+          </Route>
+        </Router>
+      </FqToastProvider>
     </QueryClientProvider>,
   )
 
   return history
 }
 
-describe('NutritionPage routes', () => {
+describe('NutritionPage V2', () => {
   beforeEach(() => {
     const today = toIsoDate(new Date())
-    vi.spyOn(nutritionService, 'fetchDays').mockResolvedValue(createNutritionMockDays(today))
+    vi.spyOn(nutritionService, 'fetchDays').mockResolvedValue({
+      daysByDate: createNutritionMockDays(today),
+      permissions: {
+        hasActiveNutritionist: true,
+        canEditPlan: false,
+        canRegisterConsumption: true,
+      },
+    })
   })
 
   afterEach(() => {
     vi.restoreAllMocks()
   })
 
-  it('renders nutrition page at base route', async () => {
-    const history = renderNutritionAt('/tabs/nutrition')
+  it('renders internal tabs and readonly plan', async () => {
+    renderNutritionAt('/tabs/nutrition')
 
     await screen.findByRole('heading', { name: 'Nutricao' })
 
-    expect(history.location.pathname).toBe('/tabs/nutrition')
+    expect(screen.getByRole('button', { name: 'Plano' })).toBeInTheDocument()
+    expect(screen.getAllByRole('button', { name: 'Registrar' }).length).toBeGreaterThan(0)
+    expect(screen.getByRole('button', { name: 'Aderencia' })).toBeInTheDocument()
+    expect(screen.getByText('Plano do Nutricionista')).toBeInTheDocument()
+    expect(screen.getByText('Somente leitura')).toBeInTheDocument()
   })
 
-  it('keeps history route and can navigate back to plan route', async () => {
-    const history = renderNutritionAt('/tabs/nutrition/history')
+  it('opens adherence tab from history route', async () => {
+    renderNutritionAt('/tabs/nutrition/history')
 
     await screen.findByRole('heading', { name: 'Nutricao' })
-    await screen.findByRole('button', { name: 'Plano' })
-    expect(history.location.pathname).toBe('/tabs/nutrition/history')
+    expect(screen.getByText('Aderencia diaria')).toBeInTheDocument()
+    expect(screen.getByText('Ultimos 7 dias')).toBeInTheDocument()
+  })
 
-    fireEvent.click(screen.getByRole('button', { name: 'Plano' }))
+  it('registers selected meal with quick logging flow', async () => {
+    const today = toIsoDate(new Date())
+    const days = createNutritionMockDays(today)
+    const updatedDay = {
+      ...days[today],
+      meals: days[today].meals.map((meal) =>
+        meal.id === 'breakfast'
+          ? {
+              ...meal,
+              status: 'done' as const,
+            }
+          : meal,
+      ),
+    }
+
+    vi.spyOn(nutritionService, 'updateMealStatus').mockResolvedValue(updatedDay)
+
+    renderNutritionAt('/tabs/nutrition/meal/breakfast')
+
+    await screen.findByText('Registro rapido')
+    fireEvent.click(screen.getByRole('button', { name: '1.5x' }))
+    fireEvent.change(screen.getByLabelText('Item extra (opcional)'), {
+      target: { value: 'banana' },
+    })
+    fireEvent.click(screen.getByRole('button', { name: 'Salvar registro' }))
 
     await waitFor(() => {
-      expect(history.location.pathname).toBe('/tabs/nutrition')
+      expect(nutritionService.updateMealStatus).toHaveBeenCalledWith({
+        date: today,
+        mealId: 'breakfast',
+        status: 'done',
+      })
     })
-  })
-
-  it('opens meal detail sheet when route contains meal id', async () => {
-    const history = renderNutritionAt('/tabs/nutrition/meal/breakfast')
-
-    await screen.findByText('Plano somente leitura')
-
-    expect(history.location.pathname).toBe('/tabs/nutrition/meal/breakfast')
-  })
-
-  it('checks in a meal and opens history tab', async () => {
-    const history = renderNutritionAt('/tabs/nutrition')
-
-    await screen.findByRole('heading', { name: 'Nutricao' })
-    await screen.findByRole('button', { name: 'Historico' })
-    await screen.findByText('Refeicoes')
-
-    const registerButtons = await screen.findAllByRole('button', { name: 'Registrar' })
-    fireEvent.click(registerButtons[1])
-
-    await screen.findByText('Refeicao registrada')
-
-    fireEvent.click(screen.getByRole('button', { name: 'Historico' }))
-
-    await waitFor(() => {
-      expect(history.location.pathname).toBe('/tabs/nutrition/history')
-    })
-
-    expect(screen.getByText('Historico (7 dias)')).toBeInTheDocument()
   })
 })

@@ -158,13 +158,19 @@ function createMealsWithStatuses(statuses: Array<Meal['status']>): Meal[] {
   }))
 }
 
-function createDay(date: string, statuses: Array<Meal['status']>, waterEntries: Array<{ ml: number }>, starsEarned = 12): NutritionDay {
+function createDay(
+  date: string,
+  statuses: Array<Meal['status']>,
+  waterEntries: Array<{ ml: number }>,
+  waterGoalMl: number,
+  starsEarned = 12,
+): NutritionDay {
   const goals = {
     calories: 2200,
     protein: 130,
     carbs: 250,
     fat: 70,
-    waterMl: 2500,
+    waterMl: waterGoalMl,
   }
 
   const day: NutritionDay = {
@@ -191,17 +197,17 @@ function createDay(date: string, statuses: Array<Meal['status']>, waterEntries: 
   return recalculateDay(day)
 }
 
-export function createNutritionMockDays(todayDate: string): NutritionDaysMap {
+export function createNutritionMockDays(todayDate: string, waterGoalMl = 2500): NutritionDaysMap {
   const map: NutritionDaysMap = {}
 
-  map[todayDate] = createDay(todayDate, ['done', 'pending', 'pending', 'pending'], [{ ml: 300 }, { ml: 300 }, { ml: 500 }], 15)
-  map[addDays(todayDate, -1)] = createDay(addDays(todayDate, -1), ['done', 'done', 'done', 'done'], [{ ml: 500 }, { ml: 500 }, { ml: 500 }, { ml: 500 }, { ml: 500 }], 15)
-  map[addDays(todayDate, 1)] = createDay(addDays(todayDate, 1), ['pending', 'pending', 'pending', 'pending'], [{ ml: 0 }], 12)
-  map[addDays(todayDate, -2)] = createDay(addDays(todayDate, -2), ['done', 'done', 'pending', 'done'], [{ ml: 500 }, { ml: 300 }, { ml: 300 }], 8)
-  map[addDays(todayDate, -3)] = createDay(addDays(todayDate, -3), ['done', 'done', 'done', 'pending'], [{ ml: 500 }, { ml: 500 }, { ml: 300 }], 10)
-  map[addDays(todayDate, -4)] = createDay(addDays(todayDate, -4), ['done', 'pending', 'pending', 'pending'], [{ ml: 300 }, { ml: 300 }], 6)
-  map[addDays(todayDate, -5)] = createDay(addDays(todayDate, -5), ['done', 'done', 'done', 'pending'], [{ ml: 500 }, { ml: 500 }, { ml: 500 }], 10)
-  map[addDays(todayDate, -6)] = createDay(addDays(todayDate, -6), ['pending', 'pending', 'pending', 'pending'], [{ ml: 300 }], 4)
+  map[todayDate] = createDay(todayDate, ['done', 'pending', 'pending', 'pending'], [{ ml: 300 }, { ml: 300 }, { ml: 500 }], waterGoalMl, 15)
+  map[addDays(todayDate, -1)] = createDay(addDays(todayDate, -1), ['done', 'done', 'done', 'done'], [{ ml: 500 }, { ml: 500 }, { ml: 500 }, { ml: 500 }, { ml: 500 }], waterGoalMl, 15)
+  map[addDays(todayDate, 1)] = createDay(addDays(todayDate, 1), ['pending', 'pending', 'pending', 'pending'], [{ ml: 0 }], waterGoalMl, 12)
+  map[addDays(todayDate, -2)] = createDay(addDays(todayDate, -2), ['done', 'done', 'pending', 'done'], [{ ml: 500 }, { ml: 300 }, { ml: 300 }], waterGoalMl, 8)
+  map[addDays(todayDate, -3)] = createDay(addDays(todayDate, -3), ['done', 'done', 'done', 'pending'], [{ ml: 500 }, { ml: 500 }, { ml: 300 }], waterGoalMl, 10)
+  map[addDays(todayDate, -4)] = createDay(addDays(todayDate, -4), ['done', 'pending', 'pending', 'pending'], [{ ml: 300 }, { ml: 300 }], waterGoalMl, 6)
+  map[addDays(todayDate, -5)] = createDay(addDays(todayDate, -5), ['done', 'done', 'done', 'pending'], [{ ml: 500 }, { ml: 500 }, { ml: 500 }], waterGoalMl, 10)
+  map[addDays(todayDate, -6)] = createDay(addDays(todayDate, -6), ['pending', 'pending', 'pending', 'pending'], [{ ml: 300 }], waterGoalMl, 4)
 
   return map
 }

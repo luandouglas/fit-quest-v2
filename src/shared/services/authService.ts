@@ -4,7 +4,7 @@ import {
 } from '@/shared/constants'
 import { HttpError, httpClient, setHttpAccessToken } from '@/shared/services/http'
 import { storage } from '@/shared/services/storage'
-import type { AuthCredentials, AuthSession } from '@/shared/types'
+import type { AuthCredentials, AuthSession, AuthUserRole } from '@/shared/types'
 
 type LoginResponse = {
   session: AuthSession
@@ -13,6 +13,10 @@ type LoginResponse = {
 type PersistedAuthSession = {
   version: number
   session: AuthSession
+}
+
+function isAuthUserRole(value: unknown): value is AuthUserRole {
+  return value === 'STUDENT' || value === 'PERSONAL' || value === 'NUTRITIONIST'
 }
 
 function isValidSessionShape(value: unknown): value is PersistedAuthSession {
@@ -29,8 +33,31 @@ function isValidSessionShape(value: unknown): value is PersistedAuthSession {
     typeof (candidate.session as AuthSession).accessToken === 'string' &&
     typeof (candidate.session as AuthSession).expiresAt === 'string' &&
     typeof (candidate.session as AuthSession).user?.id === 'string' &&
-    typeof (candidate.session as AuthSession).user?.name === 'string'
+    typeof (candidate.session as AuthSession).user?.name === 'string' &&
+    (!('role' in ((candidate.session as AuthSession).user ?? {})) ||
+      isAuthUserRole((candidate.session as AuthSession).user?.role))
   )
+}
+
+function normalizeSession(session: AuthSession): AuthSession {
+  const role = isAuthUserRole(session.user.role) ? session.user.role : 'STUDENT'
+  const professionalProfile =
+    role === 'STUDENT'
+      ? undefined
+      : {
+          title: session.user.professionalProfile?.title ?? (role === 'PERSONAL' ? 'Personal Trainer' : 'Nutricionista'),
+          license: session.user.professionalProfile?.license,
+          specialties: session.user.professionalProfile?.specialties ?? [],
+        }
+
+  return {
+    ...session,
+    user: {
+      ...session.user,
+      role,
+      professionalProfile,
+    },
+  }
 }
 
 function isExpired(expiresAt: string) {
@@ -69,7 +96,16 @@ export const authService = {
       return null
     }
 
-    return raw.session
+    const normalized = normalizeSession(raw.session)
+
+    if (
+      normalized.user.role !== raw.session.user.role ||
+      normalized.user.professionalProfile?.title !== raw.session.user.professionalProfile?.title
+    ) {
+      this.persistSession(normalized)
+    }
+
+    return normalized
   },
   hydrateHttpToken() {
     const session = this.getStoredSession()
@@ -78,6 +114,24 @@ export const authService = {
   persistSession(session: AuthSession) {
     storage.set(AUTH_SESSION_STORAGE_KEY, toPersistedSession(session))
     setHttpAccessToken(session.accessToken)
+  },
+  updateStoredSessionUser(patch: Partial<AuthSession['user']>): AuthSession | null {
+    const session = this.getStoredSession()
+
+    if (!session) {
+      return null
+    }
+
+    const nextSession: AuthSession = {
+      ...session,
+      user: {
+        ...session.user,
+        ...patch,
+      },
+    }
+    this.persistSession(nextSession)
+
+    return nextSession
   },
   clearSession() {
     storage.remove(AUTH_SESSION_STORAGE_KEY)

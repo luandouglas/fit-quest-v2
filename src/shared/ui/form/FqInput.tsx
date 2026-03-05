@@ -21,15 +21,15 @@ type FqInputProps = FqBaseProps &
   }
 
 const sizeMap: Record<FqSize, string> = {
-  xs: 'h-8 px-2 text-xs',
-  sm: 'h-9 px-3 text-sm',
-  md: 'h-10 px-3 text-sm',
-  lg: 'h-12 px-4 text-base',
+  xs: 'h-8 px-3 text-xs',
+  sm: 'h-10 px-4 text-sm',
+  md: 'h-12 px-4 text-sm',
+  lg: 'h-14 px-5 text-base',
 }
 
 const variantMap: Record<FqVariant, string> = {
-  solid: 'border-transparent bg-muted hover:bg-accent',
-  outline: 'border border-input bg-card',
+  solid: 'border border-transparent bg-muted/80 hover:bg-muted',
+  outline: 'border border-input bg-card shadow-sm',
   ghost: 'border-transparent bg-transparent',
 }
 
@@ -65,7 +65,7 @@ export function FqInput({
   const inputId = id ?? `fq-input-${testId ?? crypto.randomUUID()}`
 
   return (
-    <label className="flex w-full flex-col gap-1.5" htmlFor={inputId}>
+    <label className="flex w-full flex-col gap-2" htmlFor={inputId}>
       {label ? <span className="text-sm font-medium text-foreground">{label}</span> : null}
       <span className="relative flex items-center">
         {leftIcon ? (
@@ -76,7 +76,7 @@ export function FqInput({
         <input
           id={inputId}
           className={cx(
-            'w-full rounded-xl text-foreground outline-none transition placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-60',
+            'w-full rounded-xl text-foreground outline-none transition duration-200 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-60',
             'focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-background',
             sizeMap[size],
             variantMap[variant],
@@ -100,7 +100,7 @@ export function FqInput({
       {errorMessage ? (
         <span className="text-xs text-destructive">{errorMessage}</span>
       ) : helperText ? (
-        <span className="text-xs text-muted-foreground">{helperText}</span>
+        <span className="text-xs text-muted-foreground/90">{helperText}</span>
       ) : null}
     </label>
   )

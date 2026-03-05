@@ -1,5 +1,7 @@
 import type { ExerciseItem } from '@/pages/training-plan/types'
 import type {
+  CreateQuickWorkoutInput,
+  StartWorkoutSessionInput,
   WorkoutPlanSnapshot,
   WorkoutSession,
   WorkoutSessionSummary,
@@ -18,6 +20,9 @@ export const workoutService = {
   getTodayWorkoutSnapshot(progressPct: number, doneCount: number, totalCount: number) {
     return workoutMockRepository.getTodayWorkout(progressPct, doneCount, totalCount)
   },
+  createQuickWorkoutSnapshot(input?: CreateQuickWorkoutInput) {
+    return workoutMockRepository.createQuickWorkout(input)
+  },
   async getPlanSnapshot(): Promise<WorkoutPlanSnapshot> {
     return httpClient.get<WorkoutPlanSnapshot>('/workouts/plan/snapshot')
   },
@@ -30,8 +35,8 @@ export const workoutService = {
   getLastSessionSummary() {
     return workoutSessionMockRepository.getLastSummary()
   },
-  async startSession(): Promise<WorkoutSession> {
-    return httpClient.post<WorkoutSession>('/workouts/session/start')
+  async startSession(input?: StartWorkoutSessionInput): Promise<WorkoutSession> {
+    return httpClient.post<WorkoutSession, StartWorkoutSessionInput>('/workouts/session/start', input)
   },
   async saveSessionProgress(session: WorkoutSession): Promise<WorkoutSession> {
     return httpClient.patch<WorkoutSession, { session: WorkoutSession }>('/workouts/session/progress', {
@@ -42,5 +47,8 @@ export const workoutService = {
     return httpClient.post<WorkoutSessionSummary, { session: WorkoutSession }>('/workouts/session/complete', {
       session,
     })
+  },
+  async createQuickWorkout(input?: CreateQuickWorkoutInput): Promise<WorkoutPlanSnapshot> {
+    return httpClient.post<WorkoutPlanSnapshot, CreateQuickWorkoutInput>('/workouts/quick/create', input)
   },
 }

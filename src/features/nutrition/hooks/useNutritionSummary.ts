@@ -3,6 +3,7 @@ import { useCallback, useMemo } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { nutritionService, type NutritionDay, type NutritionDaysMap } from '@/shared/services'
+import type { NutritionPermissions } from '@/shared/services/contracts/nutrition'
 
 import { nutritionQueryKeys } from './queryKeys'
 import { cloneDay, recalculateDay } from './nutritionUtils'
@@ -12,6 +13,12 @@ export type NutritionUiState = 'loading' | 'ready' | 'empty' | 'error'
 type UseNutritionSummaryParams = {
   anchorDate: string
   selectedDate: string
+}
+
+const defaultPermissions: NutritionPermissions = {
+  hasActiveNutritionist: false,
+  canEditPlan: true,
+  canRegisterConsumption: true,
 }
 
 export function useNutritionSummary({ anchorDate, selectedDate }: UseNutritionSummaryParams) {
@@ -24,7 +31,11 @@ export function useNutritionSummary({ anchorDate, selectedDate }: UseNutritionSu
     staleTime: 30_000,
   })
 
-  const daysByDate = useMemo(() => query.data ?? {}, [query.data])
+  const daysByDate = useMemo(() => query.data?.daysByDate ?? {}, [query.data?.daysByDate])
+  const permissions = useMemo<NutritionPermissions>(
+    () => query.data?.permissions ?? defaultPermissions,
+    [query.data?.permissions],
+  )
 
   const currentDay = useMemo(() => {
     const day = daysByDate[selectedDate]
@@ -54,14 +65,18 @@ export function useNutritionSummary({ anchorDate, selectedDate }: UseNutritionSu
 
   const updateDaysByDate = useCallback(
     (updater: (previous: NutritionDaysMap) => NutritionDaysMap) => {
-      queryClient.setQueryData<NutritionDaysMap>(queryKey, (previous) => {
-        const safePrevious = previous ?? {}
+      queryClient.setQueryData(queryKey, (previous) => {
+        const payload = previous as { daysByDate?: NutritionDaysMap; permissions?: NutritionPermissions } | undefined
+        const safePrevious = payload?.daysByDate ?? {}
         const next = updater(safePrevious)
         nutritionService.saveDaysSnapshot(next)
-        return next
+        return {
+          daysByDate: next,
+          permissions: payload?.permissions ?? permissions,
+        }
       })
     },
-    [queryClient, queryKey],
+    [permissions, queryClient, queryKey],
   )
 
   const invalidate = useCallback(async () => {
@@ -74,6 +89,7 @@ export function useNutritionSummary({ anchorDate, selectedDate }: UseNutritionSu
     uiState,
     isError: query.isError,
     error: query.error,
+    permissions,
     updateDaysByDate,
     refresh: query.refetch,
     invalidate,

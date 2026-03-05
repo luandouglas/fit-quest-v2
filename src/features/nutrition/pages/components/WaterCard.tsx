@@ -6,11 +6,19 @@ type WaterCardProps = {
   onQuickAdd: (ml: number) => void
   onOpenEditor: () => void
   isDisabled?: boolean
+  isEditorDisabled?: boolean
 }
 
 const quickActions = [200, 300, 500]
 
-export function WaterCard({ consumedMl, goalMl, onQuickAdd, onOpenEditor, isDisabled = false }: WaterCardProps) {
+export function WaterCard({
+  consumedMl,
+  goalMl,
+  onQuickAdd,
+  onOpenEditor,
+  isDisabled = false,
+  isEditorDisabled = false,
+}: WaterCardProps) {
   const safeGoal = Math.max(goalMl, 1)
   const progress = Math.round((consumedMl / safeGoal) * 100)
   const remaining = Math.max(goalMl - consumedMl, 0)
@@ -53,7 +61,7 @@ export function WaterCard({ consumedMl, goalMl, onQuickAdd, onOpenEditor, isDisa
           <p className="text-xs text-muted-foreground">
             {remaining > 0 ? `Faltam ${remaining} ml para bater a meta.` : 'Meta de hidratacao concluida hoje.'}
           </p>
-          <FqButton variant="ghost" tone="secondary" onClick={onOpenEditor} isDisabled={isDisabled}>
+          <FqButton variant="ghost" tone="secondary" onClick={onOpenEditor} isDisabled={isDisabled || isEditorDisabled}>
             Editar
           </FqButton>
         </div>

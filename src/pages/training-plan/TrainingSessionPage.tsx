@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
+import { useQueryClient } from '@tanstack/react-query'
 
-import { FqAlert, FqButton, FqCard, FqModal, FqProgressBar, FqTag, FqText } from '@/shared/ui'
+import { FqAlert, FqButton, FqCard, FqGoalRing, FqModal, FqProgressBar, FqQuickActions, FqStatCard, FqStepper, FqTag, FqText, FqTimeline, useToast } from '@/shared/ui'
 import { workoutService, type WorkoutSession, type WorkoutSessionSummary } from '@/shared/services'
 
 type SessionUiState = 'loading' | 'ready' | 'error' | 'empty'
@@ -14,8 +15,17 @@ function formatSeconds(totalSeconds: number) {
   return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
 }
 
+const sessionFlowSteps = [
+  { id: 'prepare', title: 'Preparar', description: 'Revise treino e inicie a sessao.', icon: 'list' },
+  { id: 'execute', title: 'Executar', description: 'Marque series e controle pausas.', icon: 'play' },
+  { id: 'review', title: 'Revisar', description: 'Conclua e confira o resumo.', icon: 'check' },
+] as const
+
 export function TrainingSessionPage() {
   const history = useHistory()
+  const location = useLocation<{ workoutId?: string } | undefined>()
+  const queryClient = useQueryClient()
+  const { toast } = useToast()
 
   const [uiState, setUiState] = useState<SessionUiState>('loading')
   const [session, setSession] = useState<WorkoutSession | null>(null)
@@ -38,7 +48,10 @@ export function TrainingSessionPage() {
       setErrorMessage(null)
 
       try {
-        const activeSession = await workoutService.startSession()
+        const selectedWorkoutId = location.state?.workoutId
+        const activeSession = await workoutService.startSession(
+          selectedWorkoutId ? { workoutId: selectedWorkoutId } : undefined,
+        )
 
         if (!mounted) {
           return
@@ -70,7 +83,7 @@ export function TrainingSessionPage() {
     return () => {
       mounted = false
     }
-  }, [])
+  }, [location.state])
 
   useEffect(() => {
     if (!session || !isExecutionStarted || isPaused || session.status === 'completed') {
@@ -147,15 +160,37 @@ export function TrainingSessionPage() {
   }, [session])
 
   const completionPct = totalSets > 0 ? Math.round((completedSets / totalSets) * 100) : 0
+  const activeStep = session?.status === 'completed' ? 2 : isExecutionStarted ? 1 : 0
+
+  const timelineItems = useMemo(
+    () =>
+      (session?.exercises ?? []).map((exercise) => {
+        const doneSets = session?.setsDoneByExerciseId[exercise.id] ?? 0
+        const isDone = doneSets >= exercise.sets
+
+        return {
+          id: exercise.id,
+          title: `${exercise.order}. ${exercise.name}`,
+          description: `${doneSets}/${exercise.sets} series concluidas`,
+          tone: isDone ? ('success' as const) : doneSets > 0 ? ('warning' as const) : ('secondary' as const),
+        }
+      }),
+    [session],
+  )
 
   async function persistProgress(nextSession: WorkoutSession) {
     setSession(nextSession)
 
     try {
       await workoutService.saveSessionProgress(nextSession)
+      await queryClient.invalidateQueries({ queryKey: ['progress'] })
     } catch (error) {
-      setUiState('error')
       setErrorMessage(error instanceof Error ? error.message : 'Falha ao salvar progresso da sessao.')
+      toast({
+        title: 'Falha ao salvar progresso',
+        description: 'Seu treino continua ativo. Tente salvar novamente em alguns segundos.',
+        tone: 'danger',
+      })
     }
   }
 
@@ -172,6 +207,11 @@ export function TrainingSessionPage() {
       status: 'active',
       pausedAt: undefined,
     })
+    toast({
+      title: 'Sessao iniciada',
+      description: 'Bons treinos. Marque cada serie concluida.',
+      tone: 'success',
+    })
   }
 
   function handleTogglePauseResume() {
@@ -186,6 +226,11 @@ export function TrainingSessionPage() {
       ...session,
       status: nextPaused ? 'paused' : 'active',
       pausedAt: nextPaused ? new Date().toISOString() : undefined,
+    })
+    toast({
+      title: nextPaused ? 'Sessao pausada' : 'Sessao retomada',
+      description: nextPaused ? 'Quando quiser, retome para continuar.' : 'Continue de onde parou.',
+      tone: 'secondary',
     })
   }
 
@@ -220,11 +265,24 @@ export function TrainingSessionPage() {
     setIsRestRunning(true)
 
     void persistProgress(nextSession)
+
+    if (currentDone + 1 >= exercise.sets) {
+      toast({
+        title: 'Exercicio concluido',
+        description: `${exercise.name} finalizado.`,
+        tone: 'success',
+      })
+    }
   }
 
   function handleSkipRest() {
     setIsRestRunning(false)
     setRestRemainingSec(0)
+    toast({
+      title: 'Descanso pulado',
+      description: 'Voce pode seguir para a proxima serie.',
+      tone: 'secondary',
+    })
   }
 
   async function handleCompleteSession() {
@@ -240,6 +298,11 @@ export function TrainingSessionPage() {
 
       setSummary(summaryResponse)
       setIsSummaryOpen(true)
+      toast({
+        title: 'Sessao concluida',
+        description: 'Resumo pronto para revisao.',
+        tone: 'success',
+      })
 
       setSession((currentSession) => {
         if (!currentSession) {
@@ -252,15 +315,68 @@ export function TrainingSessionPage() {
           completedAt: summaryResponse.completedAt,
         }
       })
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['progress'] }),
+        queryClient.invalidateQueries({ queryKey: ['gamification', 'overview'] }),
+        queryClient.invalidateQueries({ queryKey: ['home', 'dashboard'] }),
+        queryClient.invalidateQueries({ queryKey: ['ranking'] }),
+        queryClient.invalidateQueries({ queryKey: ['notifications'] }),
+      ])
     } catch (error) {
-      setUiState('error')
       setErrorMessage(error instanceof Error ? error.message : 'Nao foi possivel concluir a sessao.')
+      toast({
+        title: 'Falha ao concluir sessao',
+        description: error instanceof Error ? error.message : 'Tente novamente.',
+        tone: 'danger',
+      })
     }
   }
 
+  const quickActions = session
+    ? [
+        !isExecutionStarted
+          ? {
+              id: 'start',
+              label: 'Iniciar',
+              icon: 'play' as const,
+              onClick: handleStartSession,
+            }
+          : {
+              id: 'pause-resume',
+              label: isPaused ? 'Retomar sessao' : 'Pausar sessao',
+              icon: isPaused ? ('play' as const) : ('clock' as const),
+              tone: 'warning' as const,
+              onClick: handleTogglePauseResume,
+            },
+        {
+          id: 'complete',
+          label: 'Concluir',
+          icon: 'check' as const,
+          tone: 'success' as const,
+          disabled: !isExecutionStarted || completedSets === 0,
+          onClick: () => void handleCompleteSession(),
+        },
+        isRestRunning
+          ? {
+              id: 'skip-rest',
+              label: 'Pular descanso',
+              icon: 'arrowRight' as const,
+              tone: 'neutral' as const,
+              onClick: handleSkipRest,
+            }
+          : {
+              id: 'back',
+              label: 'Voltar',
+              icon: 'arrowLeft' as const,
+              tone: 'neutral' as const,
+              onClick: () => history.push('/tabs/workouts'),
+            },
+      ]
+    : []
+
   if (uiState === 'loading') {
     return (
-      <section className="mx-auto w-full max-w-5xl space-y-4 px-4 py-4 lg:px-0">
+      <section className="fq-page-shell-medium">
         <FqCard className="border-border bg-card">
           <FqText as="h1" variant="title" className="text-lg">
             Carregando sessao de treino...
@@ -272,7 +388,7 @@ export function TrainingSessionPage() {
 
   if (uiState === 'error') {
     return (
-      <section className="mx-auto w-full max-w-5xl space-y-4 px-4 py-4 lg:px-0">
+      <section className="fq-page-shell-medium">
         <FqAlert tone="danger" title="Falha ao carregar a sessao">
           {errorMessage ?? 'Tente novamente para continuar seu treino.'}
         </FqAlert>
@@ -285,7 +401,7 @@ export function TrainingSessionPage() {
 
   if (uiState === 'empty' || !session) {
     return (
-      <section className="mx-auto w-full max-w-5xl space-y-4 px-4 py-4 lg:px-0">
+      <section className="fq-page-shell-medium">
         <FqCard className="border-border bg-card">
           <FqText as="h1" variant="title" className="text-lg">
             Nenhum exercicio disponivel para esta sessao
@@ -300,8 +416,8 @@ export function TrainingSessionPage() {
 
   return (
     <>
-      <section className="mx-auto w-full max-w-6xl space-y-4 px-4 py-4 lg:px-0">
-        <header className="space-y-3">
+      <section className="fq-page-shell">
+        <header className="fq-page-header">
           <FqText as="h1" variant="title" className="text-lg">
             Sessao de treino
           </FqText>
@@ -309,6 +425,8 @@ export function TrainingSessionPage() {
             Execute os exercicios, marque as series e conclua a sessao.
           </FqText>
         </header>
+
+        <FqStepper steps={sessionFlowSteps} activeStep={activeStep} />
 
         <div className="grid gap-4 lg:grid-cols-12">
           <div className="space-y-4 lg:col-span-8">
@@ -325,11 +443,11 @@ export function TrainingSessionPage() {
 
                 <FqProgressBar value={completionPct} tone="primary" showLabel />
 
-                <div className="grid grid-cols-2 gap-2 text-sm text-muted-foreground md:grid-cols-4">
-                  <p>Series: {completedSets}/{totalSets}</p>
-                  <p>Exercicios: {completedExercises}/{session.exercises.length}</p>
-                  <p>Tempo: {formatSeconds(session.totalElapsedSec)}</p>
-                  <p>Descanso: {isRestRunning ? formatSeconds(restRemainingSec) : '--:--'}</p>
+                <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+                  <FqStatCard label="Series" value={`${completedSets}/${totalSets}`} icon="check" />
+                  <FqStatCard label="Exercicios" value={`${completedExercises}/${session.exercises.length}`} icon="list" />
+                  <FqStatCard label="Tempo" value={formatSeconds(session.totalElapsedSec)} icon="clock" />
+                  <FqStatCard label="Descanso" value={isRestRunning ? formatSeconds(restRemainingSec) : '--:--'} icon="activity" />
                 </div>
 
                 <div className="flex flex-wrap gap-2">
@@ -409,16 +527,13 @@ export function TrainingSessionPage() {
           </div>
 
           <aside className="space-y-4 lg:col-span-4">
-            <FqCard className="border-border bg-card">
-              <div className="space-y-2">
-                <FqText as="p" className="text-sm font-semibold text-foreground">
-                  Painel da sessao
-                </FqText>
-                <FqText as="p" className="text-sm text-muted-foreground">
-                  Acompanhe progresso e finalize quando concluir as series principais.
-                </FqText>
-              </div>
-            </FqCard>
+            <FqGoalRing
+              value={completionPct}
+              max={100}
+              title="Meta da sessao"
+              subtitle="Concluir 100% das series planejadas."
+              tone="primary"
+            />
 
             <FqCard className="border-border bg-card">
               <div className="space-y-2 text-sm text-muted-foreground">
@@ -427,9 +542,13 @@ export function TrainingSessionPage() {
                 <p>Tempo total: {formatSeconds(session.totalElapsedSec)}</p>
               </div>
             </FqCard>
+
+            <FqTimeline items={timelineItems} />
           </aside>
         </div>
       </section>
+
+      <FqQuickActions actions={quickActions} />
 
       <FqModal
         open={isSummaryOpen}

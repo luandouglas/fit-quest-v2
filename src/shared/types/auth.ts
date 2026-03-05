@@ -1,6 +1,16 @@
+export type AuthUserRole = 'STUDENT' | 'PERSONAL' | 'NUTRITIONIST'
+
+export type ProfessionalProfile = {
+  title: string
+  license?: string
+  specialties: string[]
+}
+
 export type AuthUser = {
   id: string
   name: string
+  role: AuthUserRole
+  professionalProfile?: ProfessionalProfile
 }
 
 export type AuthSession = {
@@ -25,5 +35,6 @@ export type AuthContextValue = {
   error: string | null
   login: (credentials: AuthCredentials) => Promise<void>
   logout: () => Promise<void>
+  updateUser: (patch: Partial<AuthUser>) => void
   clearError: () => void
 }

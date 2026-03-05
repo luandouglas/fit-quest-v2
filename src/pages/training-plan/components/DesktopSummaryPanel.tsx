@@ -6,6 +6,10 @@ type DesktopSummaryPanelProps = {
   totalDurationMin: number
   isStarted: boolean
   onStart: () => void
+  selectedDayLabel: string
+  selectedDayStatus: 'completed' | 'pending' | 'late' | 'rest'
+  hasWorkoutToday: boolean
+  isUpdatingExercise?: boolean
 }
 
 export function DesktopSummaryPanel({
@@ -14,7 +18,18 @@ export function DesktopSummaryPanel({
   totalDurationMin,
   isStarted,
   onStart,
+  selectedDayLabel,
+  selectedDayStatus,
+  hasWorkoutToday,
+  isUpdatingExercise = false,
 }: DesktopSummaryPanelProps) {
+  const statusLabelMap = {
+    completed: 'Concluido',
+    pending: 'Pendente',
+    late: 'Atrasado',
+    rest: 'Descanso',
+  } as const
+
   return (
     <aside className="space-y-4 xl:sticky xl:top-5 xl:h-fit">
       <FqCard className="border-border bg-card">
@@ -41,7 +56,21 @@ export function DesktopSummaryPanel({
           </FqButton>
 
           <FqTag tone="secondary" className="w-full justify-center rounded-lg py-2 text-sm">
-            Você está mais perto da sua meta hoje
+            {selectedDayLabel}: {statusLabelMap[selectedDayStatus]}
+          </FqTag>
+
+          <FqTag
+            tone={hasWorkoutToday ? 'success' : 'neutral'}
+            className="w-full justify-center rounded-lg py-2 text-sm"
+          >
+            {hasWorkoutToday ? 'Treino do dia disponivel' : 'Sem treino para hoje'}
+          </FqTag>
+
+          <FqTag
+            tone={isUpdatingExercise ? 'warning' : 'neutral'}
+            className="w-full justify-center rounded-lg py-2 text-sm"
+          >
+            {isUpdatingExercise ? 'Sincronizando progresso...' : 'Progresso sincronizado'}
           </FqTag>
         </div>
       </FqCard>
