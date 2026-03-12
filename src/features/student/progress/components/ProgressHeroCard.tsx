@@ -23,7 +23,7 @@ export function ProgressHeroCard({
   feedback,
 }: ProgressHeroCardProps) {
   return (
-    <FqCard className="overflow-hidden border-border bg-[radial-gradient(circle_at_top_left,_rgba(34,197,94,0.14),_transparent_36%),linear-gradient(180deg,_rgba(15,23,42,0.02),_rgba(15,23,42,0.08))]">
+    <FqCard className="fq-gradient-progress-hero overflow-hidden border-border">
       <div className="space-y-5">
         <div className="flex flex-wrap items-center gap-2">
           <FqLevelBadge level={level} label="Nivel" />

@@ -4,12 +4,12 @@ import type { FqBaseProps, FqTone } from '@/shared/ui/types'
 import { clamp, cx } from '@/shared/utils'
 
 const toneMap: Record<FqTone, string> = {
-  primary: 'bg-[linear-gradient(90deg,var(--primary)_0%,color-mix(in_srgb,var(--primary)_72%,white)_100%)]',
-  secondary: 'bg-[linear-gradient(90deg,var(--secondary)_0%,color-mix(in_srgb,var(--secondary)_78%,white)_100%)]',
-  success: 'bg-[linear-gradient(90deg,var(--success)_0%,color-mix(in_srgb,var(--success)_78%,white)_100%)]',
-  warning: 'bg-[linear-gradient(90deg,var(--warning)_0%,color-mix(in_srgb,var(--warning)_76%,white)_100%)]',
-  danger: 'bg-[linear-gradient(90deg,var(--destructive)_0%,color-mix(in_srgb,var(--destructive)_78%,white)_100%)]',
-  neutral: 'bg-[linear-gradient(90deg,var(--foreground)_0%,color-mix(in_srgb,var(--foreground)_72%,white)_100%)]',
+  primary: 'bg-[linear-gradient(90deg,var(--primary)_0%,color-mix(in_srgb,var(--primary)_72%,var(--card))_100%)]',
+  secondary: 'bg-[linear-gradient(90deg,var(--secondary)_0%,color-mix(in_srgb,var(--secondary)_78%,var(--card))_100%)]',
+  success: 'bg-[linear-gradient(90deg,var(--success)_0%,color-mix(in_srgb,var(--success)_78%,var(--card))_100%)]',
+  warning: 'bg-[linear-gradient(90deg,var(--warning)_0%,color-mix(in_srgb,var(--warning)_76%,var(--card))_100%)]',
+  danger: 'bg-[linear-gradient(90deg,var(--destructive)_0%,color-mix(in_srgb,var(--destructive)_78%,var(--card))_100%)]',
+  neutral: 'bg-[linear-gradient(90deg,var(--foreground)_0%,color-mix(in_srgb,var(--foreground)_72%,var(--card))_100%)]',
 }
 
 type FqProgressBarProps = FqBaseProps &
@@ -45,7 +45,7 @@ export function FqProgressBar({
         >
           <span
             aria-hidden="true"
-            className="absolute inset-y-0 right-0 w-10 bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.28)_100%)]"
+            className="absolute inset-y-0 right-0 w-10 bg-[linear-gradient(90deg,transparent_0%,color-mix(in_srgb,var(--card)_28%,transparent)_100%)]"
           />
         </div>
       </div>

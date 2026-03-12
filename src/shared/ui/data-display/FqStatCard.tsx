@@ -36,7 +36,7 @@ export function FqStatCard({
     >
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-[linear-gradient(180deg,rgba(255,255,255,0.36)_0%,rgba(255,255,255,0)_100%)]"
+        className="fq-gradient-overlay-top pointer-events-none absolute inset-x-0 top-0 h-16"
       />
       <div className="relative flex items-start justify-between gap-3">
         <span className="text-sm font-medium text-muted-foreground">{label}</span>

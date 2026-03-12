@@ -29,7 +29,7 @@ export function FqXPBar({
   return (
     <div
       className={cx(
-        'w-full rounded-[calc(var(--radius)+6px)] border border-border/75 bg-[linear-gradient(180deg,rgba(255,255,255,0.36)_0%,rgba(255,255,255,0)_100%),linear-gradient(180deg,rgba(252,250,246,0.9)_0%,rgba(245,241,232,0.72)_100%)] p-4 shadow-[0_12px_28px_rgba(36,49,44,0.05)]',
+        'fq-gradient-surface w-full rounded-[calc(var(--radius)+6px)] border border-border/75 p-4 shadow-[0_12px_28px_rgba(36,49,44,0.05)]',
         className,
       )}
       data-testid={testId}
@@ -61,7 +61,7 @@ export function FqXPBar({
         >
           <span
             aria-hidden="true"
-            className="absolute inset-y-0 right-0 w-12 bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.28)_100%)]"
+            className="absolute inset-y-0 right-0 w-12 bg-[linear-gradient(90deg,transparent_0%,color-mix(in_srgb,var(--card)_28%,transparent)_100%)]"
           />
         </div>
       </div>

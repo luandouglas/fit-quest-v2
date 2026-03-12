@@ -129,7 +129,7 @@ export function StudentDailyFocusCard({ dashboard, onNavigate }: StudentDailyFoc
             </div>
           </div>
 
-          <div className="rounded-[calc(var(--radius)+6px)] border border-primary/14 bg-[linear-gradient(180deg,rgba(95,141,118,0.09)_0%,rgba(95,141,118,0.04)_100%)] p-4 shadow-[0_14px_30px_rgba(95,141,118,0.08)]">
+          <div className="fq-gradient-soft-primary rounded-[calc(var(--radius)+6px)] border border-primary/14 p-4 shadow-[0_14px_30px_rgba(95,141,118,0.08)]">
             <FqText as="p" className="fq-subtle-label">
               Missão de hoje
             </FqText>

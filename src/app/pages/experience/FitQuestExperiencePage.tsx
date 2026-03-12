@@ -609,7 +609,7 @@ function LandingSection({ isStandalone }: { isStandalone: boolean }) {
       title="FitQuest: o app fitness que transforma consistencia em jogo"
       description="Destaque no estilo loja de apps, prova de progresso e botoes de download claros para conversao."
     >
-      <div className="relative overflow-hidden rounded-3xl border border-border/70 bg-gradient-to-br from-[#ebf3ff] via-card to-[#fff2dd] p-5 sm:p-6 lg:p-8">
+      <div className="fq-gradient-hero-warm relative overflow-hidden rounded-3xl border border-border/70 bg-card p-5 sm:p-6 lg:p-8">
         <div className="pointer-events-none absolute -left-12 top-6 h-28 w-28 rounded-full bg-primary/10 blur-xl" />
         <div className="pointer-events-none absolute bottom-2 right-10 h-24 w-24 rounded-full bg-warning/20 blur-xl" />
 
@@ -997,7 +997,7 @@ export function FitQuestExperiencePage({
 
   return (
     <section className="space-y-7 pb-10 lg:space-y-8">
-      <header className="relative overflow-hidden rounded-[30px] border border-border/70 bg-gradient-to-br from-[#ecf5ff] via-card to-[#fff0d7] p-6 shadow-[0_24px_80px_-45px_rgba(15,23,42,0.8)] sm:p-8">
+      <header className="fq-gradient-hero-warm relative overflow-hidden rounded-[30px] border border-border/70 bg-card p-6 shadow-[0_24px_80px_-45px_rgba(15,23,42,0.8)] sm:p-8">
         <div className="pointer-events-none absolute -left-14 top-0 h-36 w-36 rounded-full bg-primary/15 blur-2xl" />
         <div className="pointer-events-none absolute -right-10 bottom-0 h-32 w-32 rounded-full bg-warning/25 blur-2xl" />
 

@@ -20,7 +20,7 @@ export function ProfileHeroCard({
   streakDays,
 }: ProfileHeroCardProps) {
   return (
-    <FqCard className="overflow-hidden border-border bg-[radial-gradient(circle_at_top_left,_rgba(249,115,22,0.18),_transparent_36%),linear-gradient(180deg,_rgba(15,23,42,0.02),_rgba(15,23,42,0.08))]">
+    <FqCard className="fq-gradient-profile-hero overflow-hidden border-border">
       <div className="space-y-5">
         <div className="flex items-start gap-4">
           <FqAvatar name={name} src={avatarUrl} size="lg" className="h-16 w-16 bg-secondary/15 text-secondary" />

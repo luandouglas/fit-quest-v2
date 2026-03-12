@@ -33,7 +33,7 @@ export function FqCard({
     >
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-[linear-gradient(180deg,rgba(255,255,255,0.42)_0%,rgba(255,255,255,0)_100%)] opacity-80"
+        className="fq-gradient-overlay-top pointer-events-none absolute inset-x-0 top-0 h-20 opacity-80"
       />
       {header || title || subtitle ? (
         <header className="relative border-b border-border/70 px-5 py-5 md:px-7">

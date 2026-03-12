@@ -61,7 +61,7 @@ export function StudentQuickActionsCard({
         </div>
 
         {recommendedAction ? (
-          <div className="rounded-[calc(var(--radius)+6px)] border border-primary/16 bg-[linear-gradient(180deg,rgba(95,141,118,0.1)_0%,rgba(95,141,118,0.04)_100%)] p-4 shadow-[0_12px_28px_rgba(95,141,118,0.08)]">
+          <div className="fq-gradient-soft-primary rounded-[calc(var(--radius)+6px)] border border-primary/16 p-4 shadow-[0_12px_28px_rgba(95,141,118,0.08)]">
             <FqText as="p" className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
               Ação recomendada
             </FqText>
@@ -88,7 +88,7 @@ export function StudentQuickActionsCard({
                 className={[
                   'min-h-[156px] items-start justify-start rounded-[calc(var(--radius)+6px)] border px-4 py-4 text-left shadow-none transition-[transform,box-shadow,border-color,background-color] duration-200',
                   isRecommended
-                    ? 'border-primary/24 bg-[linear-gradient(180deg,rgba(95,141,118,0.1)_0%,rgba(95,141,118,0.04)_100%)] shadow-[0_14px_30px_rgba(95,141,118,0.08)]'
+                    ? 'fq-gradient-soft-primary border-primary/24 shadow-[0_14px_30px_rgba(95,141,118,0.08)]'
                     : 'border-border/75 bg-background/72',
                 ].join(' ')}
                 leftIcon={action.icon}

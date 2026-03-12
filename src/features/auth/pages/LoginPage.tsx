@@ -58,7 +58,7 @@ export function LoginPage() {
           className="relative hidden overflow-hidden border-r border-border/70 px-10 py-10 lg:flex lg:flex-col lg:justify-between"
           style={{
             backgroundImage:
-              "linear-gradient(180deg, color-mix(in srgb, var(--primary) 14%, white), color-mix(in srgb, var(--background) 92%, transparent))",
+              "linear-gradient(180deg, color-mix(in srgb, var(--primary) 14%, var(--card)), color-mix(in srgb, var(--background) 92%, transparent))",
           }}
         >
           <div className="space-y-5">

@@ -47,7 +47,7 @@ export function useTrainingPlanState() {
   })
 
   const createQuickWorkoutMutation = useMutation({
-    mutationFn: () => workoutService.createQuickWorkout({ date: selectedDate ?? undefined }),
+    mutationFn: (date?: string) => workoutService.createQuickWorkout({ date: date ?? selectedDate ?? undefined }),
     onSuccess: async () => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: workoutPlanQueryKey }),
@@ -151,12 +151,12 @@ export function useTrainingPlanState() {
     await updateExerciseMutation.mutateAsync({ id, status: nextStatus })
   }
 
-  async function createQuickWorkout() {
+  async function createQuickWorkout(date?: string) {
     if (!permissions.canCreateQuickWorkout) {
       throw new Error('Criacao manual bloqueada: voce tem personal ativo com treinos atribuidos.')
     }
 
-    await createQuickWorkoutMutation.mutateAsync()
+    await createQuickWorkoutMutation.mutateAsync(date)
   }
 
   function setSelectedDate(date: string) {

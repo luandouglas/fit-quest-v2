@@ -30,7 +30,7 @@ export function GamificationHeroCard({
   feedback,
 }: GamificationHeroCardProps) {
   return (
-    <FqCard className="overflow-hidden border-border bg-[radial-gradient(circle_at_top_left,_rgba(244,191,117,0.18),_transparent_38%),linear-gradient(180deg,_rgba(17,24,39,0.02),_rgba(17,24,39,0.09))]">
+    <FqCard className="fq-gradient-gamification-hero overflow-hidden border-border">
       <div className="space-y-5">
         <div className="flex flex-wrap items-center gap-2">
           <FqLevelBadge level={level} label="Nivel" />

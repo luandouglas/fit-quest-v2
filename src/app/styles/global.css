@@ -3,144 +3,110 @@
 
 @layer base {
   :root {
-    --background: #f5f1e8;
-    --foreground: #24312c;
-
-    --card: #fcfaf6;
-    --card-foreground: #24312c;
-
-    --popover: #fcfaf6;
-    --popover-foreground: #24312c;
-
-    --primary: #5f8d76;
-    --primary-foreground: #f7f4ee;
-
-    --secondary: #7892ae;
-    --secondary-foreground: #f7f4ee;
-
-    --tertiary: #d2ad84;
-    --tertiary-foreground: #3c2d1c;
-
-    --gamification: #7d8bc2;
+    --background: #ffffff;
+    --foreground: #0a0a0a;
+    --card: #ffffff;
+    --card-foreground: #0a0a0a;
+    --popover: #ffffff;
+    --popover-foreground: #0a0a0a;
+    --primary: #2563eb;
+    --primary-foreground: #ffffff;
+    --secondary: #f97316;
+    --secondary-foreground: #ffffff;
+    --tertiary: #16a34a;
+    --tertiary-foreground: #ffffff;
+    --gamification: #7c3aed;
     --gamification-foreground: #ffffff;
-
-    --muted: #ebe5da;
-    --muted-foreground: #65756d;
-
-    --accent: #f0ebe2;
-    --accent-foreground: #24312c;
-
-    --surface-subtle: #eeece3;
-
-    --destructive: #c65a58;
-    --destructive-foreground: #ffffff;
-
-    --border: #ddd6ca;
-    --input: #d4ccbf;
-    --ring: #5f8d76;
-
-    --success: #4d876b;
+    --muted: #f5f5f5;
+    --muted-foreground: #737373;
+    --accent: #f5f5f5;
+    --accent-foreground: #171717;
+    --surface-subtle: #fafafa;
+    --destructive: #ef4444;
+    --destructive-foreground: #fafafa;
+    --border: #e5e5e5;
+    --input: #e5e5e5;
+    --ring: #2563eb;
+    --success: #16a34a;
     --success-foreground: #ffffff;
-    --info: #6c8baa;
+    --info: #2563eb;
     --info-foreground: #ffffff;
-    --warning: #c48d4d;
-    --warning-foreground: #2d2216;
-
-    --star: #d0a04b;
-    --star-foreground: #2d2216;
-
-    --radius: 1.125rem;
-
-    --sidebar-background: #f8f4ec;
-    --sidebar-foreground: #24312c;
-    --sidebar-primary: #5f8d76;
+    --warning: #f59e0b;
+    --warning-foreground: #171717;
+    --star: #eab308;
+    --star-foreground: #171717;
+    --chart-1: #2563eb;
+    --chart-2: #f97316;
+    --chart-3: #16a34a;
+    --chart-4: #e9c46a;
+    --chart-5: #7c3aed;
+    --radius: 0.5rem;
+    --sidebar-background: #fafafa;
+    --sidebar-foreground: #3f3f46;
+    --sidebar-primary: #2563eb;
     --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #efe9de;
-    --sidebar-accent-foreground: #24312c;
-    --sidebar-border: #ddd6ca;
-    --sidebar-ring: #5f8d76;
-
-    font-family: var(--fq-font-sans);
+    --sidebar-accent: #f4f4f5;
+    --sidebar-accent-foreground: #18181b;
+    --sidebar-border: #e7ebf0;
+    --sidebar-ring: #2563eb;
   }
 
   .dark {
-    --background: #141b19;
-    --foreground: #ebefe9;
-
-    --card: #1a2521;
-    --card-foreground: #ebefe9;
-
-    --popover: #1a2521;
-    --popover-foreground: #ebefe9;
-
-    --primary: #88b69d;
-    --primary-foreground: #ffffff;
-
-    --secondary: #9bb8d4;
-    --secondary-foreground: #ffffff;
-
-    --tertiary: #dfc39f;
-    --tertiary-foreground: #241b12;
-
-    --gamification: #9aa3dd;
+    --background: #0a0a0a;
+    --foreground: #fafafa;
+    --card: #0a0a0a;
+    --card-foreground: #fafafa;
+    --popover: #0a0a0a;
+    --popover-foreground: #fafafa;
+    --primary: #60a5fa;
+    --primary-foreground: #0a0a0a;
+    --secondary: #fb923c;
+    --secondary-foreground: #171717;
+    --tertiary: #4ade80;
+    --tertiary-foreground: #171717;
+    --gamification: #8b5cf6;
     --gamification-foreground: #ffffff;
-
-    --muted: #232d29;
-    --muted-foreground: #98a59f;
-
-    --accent: #29332f;
-    --accent-foreground: #ebefe9;
-
-    --surface-subtle: #202925;
-
-    --destructive: #de7572;
-    --destructive-foreground: #ffffff;
-
-    --border: #32403a;
-    --input: #32403a;
-    --ring: #88b69d;
-
-    --success: #74b893;
-    --success-foreground: #ffffff;
-    --info: #9bb8d4;
-    --info-foreground: #ffffff;
-    --warning: #e0b06d;
-    --warning-foreground: #241b12;
-
-    --star: #e2ba69;
-    --star-foreground: #241b12;
-
-    --sidebar-background: #171f1c;
-    --sidebar-foreground: #ebefe9;
-    --sidebar-primary: #88b69d;
+    --muted: #262626;
+    --muted-foreground: #a3a3a3;
+    --accent: #262626;
+    --accent-foreground: #fafafa;
+    --surface-subtle: #18181b;
+    --destructive: #7f1d1d;
+    --destructive-foreground: #fafafa;
+    --border: #262626;
+    --input: #262626;
+    --ring: #60a5fa;
+    --success: #4ade80;
+    --success-foreground: #171717;
+    --info: #60a5fa;
+    --info-foreground: #0a0a0a;
+    --warning: #fbbf24;
+    --warning-foreground: #171717;
+    --star: #facc15;
+    --star-foreground: #171717;
+    --chart-1: #60a5fa;
+    --chart-2: #fb923c;
+    --chart-3: #4ade80;
+    --chart-4: #ad5cdb;
+    --chart-5: #e23670;
+    --sidebar-background: #18181b;
+    --sidebar-foreground: #f4f4f5;
+    --sidebar-primary: #60a5fa;
     --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #24302b;
-    --sidebar-accent-foreground: #ebefe9;
-    --sidebar-border: #32403a;
-    --sidebar-ring: #88b69d;
+    --sidebar-accent: #27272a;
+    --sidebar-accent-foreground: #f4f4f5;
+    --sidebar-border: #27272a;
+    --sidebar-ring: #60a5fa;
   }
 }
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border outline-ring/50;
   }
 
   body {
     @apply bg-background text-foreground;
-    background-image:
-      radial-gradient(circle at top left, color-mix(in srgb, var(--primary) 11%, transparent) 0%, transparent 30%),
-      radial-gradient(circle at top right, color-mix(in srgb, var(--secondary) 10%, transparent) 0%, transparent 28%),
-      linear-gradient(180deg, color-mix(in srgb, white 32%, var(--background)) 0%, var(--background) 100%);
-    font-family: var(--fq-font-sans);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    min-height: 100vh;
-  }
-
-  ::selection {
-    background: color-mix(in srgb, var(--primary) 24%, white);
-    color: var(--foreground);
   }
 }
 
@@ -238,7 +204,11 @@
     height: 132px;
     width: 132px;
     border-radius: 9999px;
-    background: radial-gradient(circle, color-mix(in srgb, var(--primary) 18%, transparent) 0%, transparent 68%);
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--primary) 18%, transparent) 0%,
+      transparent 68%
+    );
     pointer-events: none;
   }
 
@@ -250,20 +220,36 @@
     height: 108px;
     width: 108px;
     border-radius: 9999px;
-    background: radial-gradient(circle, color-mix(in srgb, var(--secondary) 16%, transparent) 0%, transparent 70%);
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--secondary) 16%, transparent) 0%,
+      transparent 70%
+    );
     pointer-events: none;
   }
 
   .fq-shell-panel {
     @apply rounded-[calc(var(--radius)+10px)] border border-border/80 bg-card/92 shadow-[0_20px_44px_rgba(60,73,66,0.08)] backdrop-blur;
     background-image:
-      linear-gradient(180deg, color-mix(in srgb, white 20%, transparent) 0%, transparent 22%),
-      linear-gradient(180deg, color-mix(in srgb, var(--card) 94%, transparent) 0%, color-mix(in srgb, var(--background) 28%, var(--card)) 100%);
+      linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--card) 20%, transparent) 0%,
+        transparent 22%
+      ),
+      linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--card) 94%, transparent) 0%,
+        color-mix(in srgb, var(--background) 28%, var(--card)) 100%
+      );
   }
 
   .fq-soft-block {
     @apply rounded-[calc(var(--radius)+6px)] border border-border/70 bg-background/78 shadow-[inset_0_1px_0_rgba(255,255,255,0.35)];
-    background-image: linear-gradient(180deg, color-mix(in srgb, white 16%, transparent) 0%, transparent 100%);
+    background-image: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--card) 16%, transparent) 0%,
+      transparent 100%
+    );
   }
 
   .fq-subtle-label {
@@ -291,8 +277,6 @@
   .fq-skeleton-sheen {
     position: relative;
     overflow: hidden;
-    background:
-      linear-gradient(90deg, color-mix(in srgb, var(--muted) 86%, white) 0%, color-mix(in srgb, white 70%, var(--muted)) 50%, color-mix(in srgb, var(--muted) 86%, white) 100%);
     background-size: 220% 100%;
     animation: fq-skeleton-wave 1.35s ease-in-out infinite;
   }

@@ -15,6 +15,7 @@ export type {
   TrainingPlanDay,
   TrainingPlanDayStatus,
   WorkoutDetail,
+  WorkoutExercise,
   WorkoutPlanItem,
 }
 

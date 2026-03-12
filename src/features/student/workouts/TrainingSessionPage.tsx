@@ -622,7 +622,7 @@ export function TrainingSessionPage() {
 
         <div className="grid gap-5 xl:grid-cols-[minmax(0,1.55fr)_minmax(300px,0.95fr)]">
           <div className="space-y-5">
-            <FqCard className="border-primary/18 bg-[radial-gradient(circle_at_top_left,_rgba(95,141,118,0.22),_transparent_36%),radial-gradient(circle_at_bottom_right,_rgba(208,160,75,0.14),_transparent_34%),linear-gradient(180deg,_rgba(252,250,246,0.98),_rgba(245,241,232,0.9))]">
+            <FqCard className="fq-gradient-session-hero border-primary/18">
               <div className="grid gap-6 xl:grid-cols-[minmax(0,1.2fr)_minmax(280px,0.92fr)]">
                 <div className="space-y-5">
                   <div className="space-y-3">
@@ -663,7 +663,7 @@ export function TrainingSessionPage() {
                   ) : null}
 
                   {isRestRunning ? (
-                    <div className="rounded-[24px] border border-warning/26 bg-[linear-gradient(135deg,_rgba(196,141,77,0.18),_rgba(252,250,246,0.9))] p-4">
+                    <div className="fq-gradient-soft-warning rounded-[24px] border border-warning/26 p-4">
                       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <div className="space-y-1">
                           <FqText as="p" className="text-sm font-semibold text-foreground">
@@ -845,7 +845,7 @@ export function TrainingSessionPage() {
           </div>
 
           <div className="self-start xl:sticky xl:top-6">
-            <FqCard className="border-success/18 bg-[radial-gradient(circle_at_top_right,_rgba(77,135,107,0.16),_transparent_34%),linear-gradient(180deg,_rgba(252,250,246,0.96),_rgba(245,241,232,0.92))]">
+            <FqCard className="fq-gradient-session-summary border-success/18">
               <div className="space-y-4">
                 <div className="space-y-1">
                   <FqText as="h2" className="text-lg font-semibold text-foreground">

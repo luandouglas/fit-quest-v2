@@ -21,10 +21,8 @@ import { nutritionistNavigationItems } from "@/features/nutritionist/presentatio
 import { personalNavigationItems } from "@/features/personal/presentation";
 import { useNotificationsInbox } from "@/features/student/application";
 import { StudentProfilePage } from "@/features/student/presentation/pages/StudentProfilePage";
-import { StudentExperienceBanner } from "@/features/student/presentation";
 import {
   getStudentNavigationItem,
-  shouldHideStudentExperienceChrome,
   studentNavigationItems,
 } from "@/features/student/presentation";
 import { gamificationService } from "@/services";
@@ -758,9 +756,6 @@ export function AppTabsLayout({
     () => getRouteMeta(location.pathname),
     [location.pathname],
   );
-  const showStudentChrome =
-    role === "STUDENT" && !shouldHideStudentExperienceChrome(location.pathname);
-
   const levelQuery = useQuery({
     queryKey: ["layout", "student-level"],
     queryFn: () => gamificationService.getOverview(),
@@ -820,7 +815,6 @@ export function AppTabsLayout({
         </div>
 
         <div className="mx-auto w-full max-w-7xl px-4 pb-28 pt-4 md:px-6 md:pb-32 md:pt-5 lg:px-8 lg:pb-8 lg:pt-6">
-          {showStudentChrome ? <StudentExperienceBanner /> : null}
 
           <Switch>
             {renderStudentRoutes({ role, fallback: <TabsRouteFallback /> })}
