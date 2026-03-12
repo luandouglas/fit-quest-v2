@@ -1,25 +1,32 @@
-import { Suspense, createElement, lazy } from 'react'
+import { Suspense, createElement, lazy } from "react";
 
-import { IonRouterOutlet, IonSpinner } from '@ionic/react'
-import { IonReactRouter } from '@ionic/react-router'
-import { Redirect, Route } from 'react-router-dom'
+import { IonRouterOutlet, IonSpinner } from "@ionic/react";
+import { IonReactRouter } from "@ionic/react-router";
+import { Redirect, Route } from "react-router-dom";
 
-import { AppTabsLayout } from '@/app/layouts'
-import { NotFoundPage } from '@/app/pages/NotFoundPage'
-import { PrivateRoute, PublicOnlyRoute, RoleGuard } from '@/app/router/Guards'
-import { LoginPage } from '@/features/auth'
-import { TrainingSessionPage } from '@/pages/training-plan'
-import { AppErrorBoundary } from '@/shared/ui'
+import { appRoutePaths } from "@/app/router/routes";
+import { NotFoundPage } from "@/app/pages/NotFoundPage";
+import {
+  PrivateRoute,
+  PublicOnlyRoute,
+  RoleGuard,
+} from "@/app/router/guards/Guards";
+import { TabsShellResolver } from "@/app/router/layouts";
+import { LoginScreen } from "@/features/auth";
+import { studentRoutes } from "@/features/student/routes";
+import { AppErrorBoundary } from "@/shared/ui";
 
 const LazyComponentsPageRoute = lazy(() =>
-  import('@/app/pages/ComponentsPage').then((module) => ({ default: module.ComponentsPage })),
-)
+  import("@/app/pages/ComponentsPage").then((module) => ({
+    default: module.ComponentsPage,
+  })),
+);
 
 const LazyFitQuestExperiencePageRoute = lazy(() =>
-  import('@/features/experience/pages/FitQuestExperiencePage').then((module) => ({
+  import("@/app/pages/experience/FitQuestExperiencePage").then((module) => ({
     default: module.FitQuestExperiencePage,
   })),
-)
+);
 
 function RouteFallback() {
   return (
@@ -27,7 +34,7 @@ function RouteFallback() {
       <IonSpinner name="crescent" />
       <span>Carregando...</span>
     </div>
-  )
+  );
 }
 
 export function AppRouter() {
@@ -36,33 +43,35 @@ export function AppRouter() {
       <IonReactRouter>
         <Suspense fallback={<RouteFallback />}>
           <IonRouterOutlet>
-            <Route exact path="/">
-              <Redirect to="/tabs/home" />
+            <Route exact path={appRoutePaths.root}>
+              <Redirect to={appRoutePaths.studentHome} />
             </Route>
 
-            <Route exact path="/components">
+            <Route exact path={appRoutePaths.components}>
               {createElement(LazyComponentsPageRoute)}
             </Route>
 
-            <Route path="/landing" exact>
-              {createElement(LazyFitQuestExperiencePageRoute, { mode: 'landing' })}
+            <Route path={appRoutePaths.landing} exact>
+              {createElement(LazyFitQuestExperiencePageRoute, {
+                mode: "landing",
+              })}
             </Route>
 
-            <Route path="/login" exact>
+            <Route path={appRoutePaths.login} exact>
               <PublicOnlyRoute>
-                <LoginPage />
+                <LoginScreen />
               </PublicOnlyRoute>
             </Route>
 
-            <Route path="/tabs">
+            <Route path={appRoutePaths.tabs}>
               <PrivateRoute>
-                <AppTabsLayout />
+                <TabsShellResolver />
               </PrivateRoute>
             </Route>
 
             <Route path="/personal" exact>
               <PrivateRoute>
-                <RoleGuard allowedRoles={['PERSONAL']}>
+                <RoleGuard allowedRoles={["PERSONAL"]}>
                   <Redirect to="/tabs/personal/dashboard" />
                 </RoleGuard>
               </PrivateRoute>
@@ -70,16 +79,16 @@ export function AppRouter() {
 
             <Route path="/nutritionist" exact>
               <PrivateRoute>
-                <RoleGuard allowedRoles={['NUTRITIONIST']}>
+                <RoleGuard allowedRoles={["NUTRITIONIST"]}>
                   <Redirect to="/tabs/nutritionist/dashboard" />
                 </RoleGuard>
               </PrivateRoute>
             </Route>
 
-            <Route path="/treinos/sessao" exact>
+            <Route path={appRoutePaths.studentTrainingSession} exact>
               <PrivateRoute>
-                <RoleGuard allowedRoles={['STUDENT', 'PERSONAL']}>
-                  <TrainingSessionPage />
+                <RoleGuard allowedRoles={["STUDENT", "PERSONAL"]}>
+                  <Redirect to={studentRoutes.workoutSession} />
                 </RoleGuard>
               </PrivateRoute>
             </Route>
@@ -89,8 +98,10 @@ export function AppRouter() {
               exact
               render={({ match }) => (
                 <PrivateRoute>
-                  <RoleGuard allowedRoles={['STUDENT']}>
-                    <Redirect to={`/tabs/nutrition/meal/${match.params.mealId}`} />
+                  <RoleGuard allowedRoles={["STUDENT"]}>
+                    <Redirect
+                      to={`/tabs/nutrition/meal/${match.params.mealId}`}
+                    />
                   </RoleGuard>
                 </PrivateRoute>
               )}
@@ -98,7 +109,7 @@ export function AppRouter() {
 
             <Route path="/nutrition/history" exact>
               <PrivateRoute>
-                <RoleGuard allowedRoles={['STUDENT']}>
+                <RoleGuard allowedRoles={["STUDENT"]}>
                   <Redirect to="/tabs/nutrition/history" />
                 </RoleGuard>
               </PrivateRoute>
@@ -106,7 +117,7 @@ export function AppRouter() {
 
             <Route path="/nutrition" exact>
               <PrivateRoute>
-                <RoleGuard allowedRoles={['STUDENT']}>
+                <RoleGuard allowedRoles={["STUDENT"]}>
                   <Redirect to="/tabs/nutrition" />
                 </RoleGuard>
               </PrivateRoute>
@@ -119,5 +130,5 @@ export function AppRouter() {
         </Suspense>
       </IonReactRouter>
     </AppErrorBoundary>
-  )
+  );
 }

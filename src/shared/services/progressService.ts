@@ -1,22 +1,17 @@
-import { httpClient } from '@/shared/services/http'
 import type { BodyMeasurements, ProgressOverview, ProgressRange } from '@/shared/services/contracts/progress'
+import { getProgressRepository } from '@/shared/services/repositories/progressRepositoryFactory'
 
 export const progressService = {
   async getOverview(range: ProgressRange = '7d'): Promise<ProgressOverview> {
-    return httpClient.get<ProgressOverview>('/progress/overview', {
-      query: { range },
-    })
+    return getProgressRepository().getOverview(range)
   },
   async registerWeight(params: { weightKg: number; date?: string }): Promise<{ saved: boolean }> {
-    return httpClient.post<{ saved: boolean }, { weightKg: number; date?: string }>('/progress/weight', params)
+    return getProgressRepository().registerWeight(params)
   },
   async registerBodyMeasurements(params: { measurements: BodyMeasurements; date?: string; comment?: string }): Promise<{ saved: boolean }> {
-    return httpClient.post<{ saved: boolean }, { measurements: BodyMeasurements; date?: string; comment?: string }>(
-      '/progress/measurements',
-      params,
-    )
+    return getProgressRepository().registerBodyMeasurements(params)
   },
   async requestMeasurementsUpdate(params?: { note?: string }): Promise<{ sent: boolean }> {
-    return httpClient.post<{ sent: boolean }, { note?: string }>('/progress/measurements/request-update', params)
+    return getProgressRepository().requestMeasurementsUpdate(params)
   },
 }

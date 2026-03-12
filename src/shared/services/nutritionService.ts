@@ -1,24 +1,30 @@
-import { httpClient } from '@/shared/services/http'
-import { nutritionMockRepository } from '@/shared/services/repositories/nutritionMockRepository'
-import type { Meal, NutritionDay, NutritionDaysMap, NutritionDaysPayload, NutritionPermissions } from '@/shared/services/contracts/nutrition'
+import type {
+  Meal,
+  NutritionDay,
+  NutritionDaysMap,
+  NutritionDaysPayload,
+  NutritionPermissions,
+} from '@/shared/services/contracts/nutrition'
+
+import { getNutritionRepository } from '@/shared/services/repositories/nutritionRepositoryFactory'
 
 const defaultPermissions: NutritionPermissions = {
-  hasActiveNutritionist: false,
-  canEditPlan: true,
+  hasActiveNutritionist: true,
+  canEditPlan: false,
   canRegisterConsumption: true,
+  canAddMealNotes: true,
+  canUpdateWater: true,
 }
 
 export const nutritionService = {
   getDaysSnapshot(anchorDate: string) {
-    return nutritionMockRepository.getDaysSnapshot(anchorDate)
+    return getNutritionRepository().getDaysSnapshot(anchorDate)
   },
   saveDaysSnapshot(days: NutritionDaysMap) {
-    nutritionMockRepository.saveDaysSnapshot(days)
+    getNutritionRepository().saveDaysSnapshot(days)
   },
   async fetchDays(anchorDate: string): Promise<NutritionDaysPayload> {
-    const response = await httpClient.get<NutritionDaysPayload>('/nutrition/days', {
-      query: { anchorDate },
-    })
+    const response = await getNutritionRepository().getDays(anchorDate)
 
     return {
       daysByDate: response.daysByDate,
@@ -26,24 +32,25 @@ export const nutritionService = {
     }
   },
   async updateMealStatus(params: { date: string; mealId: string; status: Meal['status'] }): Promise<NutritionDay> {
-    return httpClient.patch<NutritionDay, { date: string; mealId: string; status: Meal['status'] }>('/nutrition/meals/status', params)
+    return getNutritionRepository().updateMealStatus(params)
   },
   async updateMeal(params: { date: string; mealId: string; patch: Partial<Pick<Meal, 'name' | 'time' | 'note'>> }): Promise<NutritionDay> {
-    return httpClient.patch<NutritionDay, { date: string; mealId: string; patch: Partial<Pick<Meal, 'name' | 'time' | 'note'>> }>(
-      '/nutrition/meals/update',
-      params,
-    )
+    return getNutritionRepository().updateMealNote({
+      date: params.date,
+      mealId: params.mealId,
+      note: params.patch.note ?? '',
+    })
   },
-  async deleteMeal(params: { date: string; mealId: string }): Promise<NutritionDay> {
-    return httpClient.post<NutritionDay, { date: string; mealId: string }>('/nutrition/meals/delete', params)
+  async deleteMeal(): Promise<NutritionDay> {
+    throw new Error('Student nutrition flow does not support deleting meals.')
   },
   async addWaterEntry(params: { date: string; ml: number }): Promise<NutritionDay> {
-    return httpClient.post<NutritionDay, { date: string; ml: number }>('/nutrition/water', params)
+    return getNutritionRepository().addWaterEntry(params)
   },
   async removeLastWaterEntry(params: { date: string }): Promise<NutritionDay> {
-    return httpClient.post<NutritionDay, { date: string }>('/nutrition/water/remove-last', params)
+    return getNutritionRepository().removeLastWaterEntry(params)
   },
   async updateWaterGoal(params: { date: string; waterMl: number }): Promise<NutritionDay> {
-    return httpClient.patch<NutritionDay, { date: string; waterMl: number }>('/nutrition/goals/water', params)
+    return getNutritionRepository().updateWaterGoal(params)
   },
 }

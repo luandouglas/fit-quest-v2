@@ -18,6 +18,19 @@ import type { RankingAthlete, RankingLeaderboard, RankingLeague, RankingPeriod, 
 import type { RelationshipInvite, StudentRelationshipsOverview } from '@/shared/services/contracts/relationship'
 import type { MeasurementsUpdateRequest, RequestStatus } from '@/shared/services/contracts/requests'
 import type { RunOverview, RunRankingSnapshot, RunSession } from '@/shared/services/contracts/run'
+import type {
+  CardioSession,
+  DailyProgress,
+  GamificationProfile,
+  NutritionDayPlan,
+  RankingSummary as StudentHubRankingSummary,
+  StudentDashboard,
+  StudentWorkoutExecutionInput,
+  StudentMetrics,
+  StudentProfile,
+  WaterProgress,
+  WorkoutDay,
+} from '@/shared/services/contracts/student'
 import type { WorkoutSession, WorkoutSessionSummary } from '@/shared/services/contracts/workout'
 import {
   AUTH_SESSION_SCHEMA_VERSION,
@@ -38,6 +51,7 @@ import { HttpError } from '@/shared/services/http'
 import { registerMockHandler } from '@/shared/services/http'
 import type { HttpRequestContext } from '@/shared/services/http'
 import { createNutritionMockDays } from '@/shared/services/mocks/nutritionMockData'
+import { createStudentDashboardMock } from '@/shared/services/mocks/studentMockData'
 import { workoutMockRepository } from '@/shared/services/repositories/workoutMockRepository'
 import { runMockRepository } from '@/shared/services/repositories/runMockRepository'
 import { workoutSessionMockRepository } from '@/shared/services/repositories/workoutSessionMockRepository'
@@ -599,6 +613,8 @@ function getNutritionPermissions(studentId: string): NutritionPermissions {
     hasActiveNutritionist,
     canEditPlan: !hasActiveNutritionist,
     canRegisterConsumption: true,
+    canAddMealNotes: true,
+    canUpdateWater: true,
   }
 }
 
@@ -1101,6 +1117,7 @@ function createProgressOverview(
   range: ProgressRange = '7d',
   studentId = resolveProgressStudentIdFromCurrentUser(),
 ): ProgressOverview {
+  const defaultHeightCm = 178
   const profile = getProfileSettings()
   const rangeDays = range === '90d' ? 90 : range === '30d' ? 30 : 7
   const now = new Date()
@@ -1176,6 +1193,7 @@ function createProgressOverview(
   const workoutsPerWeek = Number((completedTrainings / Math.max(rangeDays / 7, 1)).toFixed(1))
   const avgWaterMl = Math.round(chart.reduce((total, point) => total + point.waterMl, 0) / Math.max(chart.length, 1))
   const estimatedCalories = chart.reduce((total, point) => total + point.caloriesEstimated, 0)
+  const bmi = currentWeight > 0 ? Number((currentWeight / ((defaultHeightCm / 100) * (defaultHeightCm / 100))).toFixed(1)) : 0
 
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
   const monthStartKey = toIsoDate(monthStart)
@@ -1194,6 +1212,15 @@ function createProgressOverview(
     return day ? day.consumed.waterMl >= day.goals.waterMl : false
   }).length
   const hydrationAdherencePct = Math.round((hydrationDaysHit / Math.max(monthDates.length, 1)) * 100)
+  const nutritionCompletedMonth = monthDates.filter((dateKey) => {
+    const day = nutritionDays[dateKey]
+    return day ? isDayComplete(day) : false
+  }).length
+  const nutritionConsistencyPct = Math.round((nutritionCompletedMonth / Math.max(monthDates.length, 1)) * 100)
+  const activeDays = monthDates.filter((dateKey) => {
+    const point = chart.find((entry) => entry.date === dateKey)
+    return point ? point.completedTrainings > 0 || point.waterMl > 0 : false
+  }).length
 
   const exercisePrMap = new Map<string, { exerciseName: string; bestLoadVolumeKg: number; achievedAt: string }>()
   rangeWorkoutEntries.forEach((entry) => {
@@ -1257,10 +1284,68 @@ function createProgressOverview(
     }).length
     return Math.round((hit / Math.max(dates.length, 1)) * 100)
   }
+  const nutritionConsistencyForDates = (dates: string[]) => {
+    const completed = dates.filter((dateKey) => {
+      const day = nutritionDays[dateKey]
+      return day ? isDayComplete(day) : false
+    }).length
+    return Math.round((completed / Math.max(dates.length, 1)) * 100)
+  }
+  const workoutCountForDates = (dates: string[]) =>
+    workoutHistory.filter((item) => dates.includes(toIsoDate(new Date(item.completedAt)))).length
+  const cardioCountForDates = (dates: string[]) =>
+    runHistory.filter((item) => dates.includes(toIsoDate(new Date(item.endedAt ?? item.startedAt)))).length
   const currentWeekDates = Array.from({ length: 7 }, (_, index) => toIsoDate(addDays(now, -index)))
   const previousWeekDates = Array.from({ length: 7 }, (_, index) => toIsoDate(addDays(now, -7 - index)))
   const waterAdherenceThisWeek = adherenceForDates(currentWeekDates)
   const waterAdherencePreviousWeek = adherenceForDates(previousWeekDates)
+  const currentWeekNutritionConsistency = nutritionConsistencyForDates(currentWeekDates)
+  const previousWeekNutritionConsistency = nutritionConsistencyForDates(previousWeekDates)
+  const currentWeekWorkoutCount = workoutCountForDates(currentWeekDates)
+  const previousWeekWorkoutCount = workoutCountForDates(previousWeekDates)
+  const currentWeekCardioCount = cardioCountForDates(currentWeekDates)
+  const previousWeekCardioCount = cardioCountForDates(previousWeekDates)
+
+  const comparisonMetric = (current: number, previous: number) => {
+    const deltaValue = Number((current - previous).toFixed(1))
+    const deltaPct = previous === 0 ? (current > 0 ? 100 : 0) : Math.round((deltaValue / previous) * 100)
+
+    return {
+      current,
+      previous,
+      deltaValue,
+      deltaPct,
+      trend: deltaValue > 0 ? 'up' : deltaValue < 0 ? 'down' : 'stable',
+    } as const
+  }
+
+  const monthMetricWindow = (referenceDate: Date) => {
+    const start = new Date(referenceDate.getFullYear(), referenceDate.getMonth(), 1)
+    const end = new Date(referenceDate.getFullYear(), referenceDate.getMonth() + 1, 1)
+    const startKey = `${toIsoDate(start)}T00:00:00`
+    const endKey = `${toIsoDate(end)}T00:00:00`
+    const monthWorkoutsFiltered = workoutHistory.filter((item) => item.completedAt >= startKey && item.completedAt < endKey)
+    const monthRunsFiltered = runHistory.filter((item) => {
+      const completedAt = item.endedAt ?? item.startedAt
+      return completedAt >= startKey && completedAt < endKey
+    })
+    const monthDays = Array.from({ length: new Date(referenceDate.getFullYear(), referenceDate.getMonth() + 1, 0).getDate() }, (_, index) =>
+      toIsoDate(new Date(referenceDate.getFullYear(), referenceDate.getMonth(), index + 1)),
+    )
+
+    return {
+      trainingMin:
+        monthWorkoutsFiltered.reduce((total, item) => total + Math.round(item.durationSec / 60), 0) +
+        monthRunsFiltered.reduce((total, item) => total + Math.round(item.elapsedSec / 60), 0),
+      cardioDistanceKm: Number(monthRunsFiltered.reduce((total, item) => total + item.distanceKm, 0).toFixed(1)),
+      activeDays: monthDays.filter((dateKey) => {
+        const point = chart.find((entry) => entry.date === dateKey)
+        return point ? point.completedTrainings > 0 || point.waterMl > 0 : false
+      }).length,
+    }
+  }
+
+  const previousMonthMetrics = monthMetricWindow(new Date(now.getFullYear(), now.getMonth() - 1, 1))
 
   const insights: string[] = []
   if (previousWeekTrainings > 0) {
@@ -1280,6 +1365,10 @@ function createProgressOverview(
     insights.push('Consistencia em alta. Continue com a mesma disciplina.')
   }
 
+  const previousMeasurement = measurementLogsSorted[1] ?? null
+  const bmiStatus =
+    bmi < 18.5 ? 'underweight' : bmi < 25 ? 'healthy' : bmi < 30 ? 'overweight' : 'obesity'
+
   return {
     range,
     monthSummary: {
@@ -1288,12 +1377,21 @@ function createProgressOverview(
       completedRuns: monthRuns.length,
       totalRunKm: monthRunKm,
       hydrationAdherencePct,
+      nutritionConsistencyPct,
+      activeDays,
     },
     weeklySummary: {
       completedTrainings,
       targetTrainings: Math.max(1, Math.round((rangeDays / 7) * profile.goals.workoutsPerWeek)),
       totalDurationMin,
       averageCompletionPct,
+      completedRuns: rangeRunEntries.length,
+      nutritionConsistencyPct: currentWeekNutritionConsistency,
+      waterAdherencePct: waterAdherenceThisWeek,
+      activeDays: currentWeekDates.filter((dateKey) => {
+        const point = chart.find((entry) => entry.date === dateKey)
+        return point ? point.completedTrainings > 0 || point.waterMl > 0 : false
+      }).length,
     },
     metrics: {
       currentWeightKg: Number(currentWeight.toFixed(1)),
@@ -1301,6 +1399,28 @@ function createProgressOverview(
       workoutsPerWeek,
       avgWaterMl,
       estimatedCalories,
+      heightCm: defaultHeightCm,
+      bmi,
+    },
+    bodyComposition: {
+      heightCm: defaultHeightCm,
+      bmi,
+      bmiStatus,
+      latestMeasurements: latestMeasurement?.measurements ?? null,
+      previousMeasurements: previousMeasurement?.measurements ?? null,
+    },
+    comparisons: {
+      weekly: {
+        workouts: comparisonMetric(currentWeekWorkoutCount, previousWeekWorkoutCount),
+        cardioSessions: comparisonMetric(currentWeekCardioCount, previousWeekCardioCount),
+        nutritionConsistencyPct: comparisonMetric(currentWeekNutritionConsistency, previousWeekNutritionConsistency),
+        waterAdherencePct: comparisonMetric(waterAdherenceThisWeek, waterAdherencePreviousWeek),
+      },
+      monthly: {
+        trainingMin: comparisonMetric(monthDurationMin, previousMonthMetrics.trainingMin),
+        cardioDistanceKm: comparisonMetric(monthRunKm, previousMonthMetrics.cardioDistanceKm),
+        activeDays: comparisonMetric(activeDays, previousMonthMetrics.activeDays),
+      },
     },
     strengthPrs,
     strengthWeeklyVolume,
@@ -1327,6 +1447,16 @@ function createProgressOverview(
       durationSec: item.durationSec,
       completedSets: item.completedSets,
       totalSets: item.totalSets,
+    })),
+    cardioHistory: runHistory.slice(0, 8).map((item) => ({
+      sessionId: item.sessionId,
+      title: item.activityType === 'walk' ? 'Caminhada' : 'Corrida',
+      completedAt: item.endedAt ?? item.startedAt,
+      durationSec: item.elapsedSec,
+      distanceKm: Number(item.distanceKm.toFixed(2)),
+      calories: item.calories,
+      paceSecPerKm: item.paceSecPerKm,
+      starsEarned: item.starsEarned,
     })),
   }
 }
@@ -2431,7 +2561,13 @@ function resolveNotificationRecipientStudentId() {
 }
 
 function upsertNotification(
-  notification: Omit<NotificationItem, 'id' | 'read'> & {
+  notification: Pick<NotificationItem, 'entityKey' | 'title' | 'description' | 'at' | 'type'> &
+    Partial<
+      Pick<
+        NotificationItem,
+        'trigger' | 'urgency' | 'origin' | 'action' | 'channels' | 'delivery' | 'expiresAt' | 'recipientStudentId' | 'senderRole'
+      >
+    > & {
     id?: string
     recipientStudentId?: string
     senderRole?: NotificationItem['senderRole']
@@ -2458,6 +2594,13 @@ function upsertNotification(
       description: notification.description,
       at: notification.at,
       type: notification.type,
+      trigger: notification.trigger ?? 'system',
+      urgency: notification.urgency ?? 'opportunity',
+      origin: notification.origin ?? 'system',
+      action: notification.action,
+      channels: notification.channels ?? ['in_app'],
+      delivery: notification.delivery,
+      expiresAt: notification.expiresAt,
       recipientStudentId: notification.recipientStudentId,
       senderRole: notification.senderRole,
       read: false,
@@ -2504,6 +2647,32 @@ function ensureAutomaticNotifications(workoutHistory: WorkoutSessionSummary[], r
       description: `Voce atingiu ${todayDay.consumed.waterMl} ml de agua hoje.`,
       at: new Date().toISOString(),
       type: 'goal',
+      trigger: 'goal_reached',
+      urgency: 'celebration',
+      origin: 'hydration',
+      action: {
+        label: 'Ver nutricao',
+        route: '/tabs/nutrition',
+        intent: 'open_nutrition',
+      },
+      recipientStudentId,
+      senderRole: 'SYSTEM',
+    })
+  } else if (todayDay && todayDay.goals.waterMl > todayDay.consumed.waterMl) {
+    upsertNotification({
+      entityKey: `hydration-incomplete-${todayKey}`,
+      title: `Faltam ${todayDay.goals.waterMl - todayDay.consumed.waterMl} ml para sua meta`,
+      description: 'Registrar agua agora ajuda a proteger a rotina do dia e a consistencia semanal.',
+      at: new Date().toISOString(),
+      type: 'goal',
+      trigger: 'water_incomplete',
+      urgency: todayDay.goals.waterMl - todayDay.consumed.waterMl <= 600 ? 'attention' : 'opportunity',
+      origin: 'hydration',
+      action: {
+        label: 'Adicionar agua',
+        route: '/tabs/nutrition',
+        intent: 'open_hydration',
+      },
       recipientStudentId,
       senderRole: 'SYSTEM',
     })
@@ -2518,6 +2687,14 @@ function ensureAutomaticNotifications(workoutHistory: WorkoutSessionSummary[], r
         description: `${mission.title} (+${mission.rewardXp} XP).`,
         at: new Date().toISOString(),
         type: 'mission',
+        trigger: 'mission_completed',
+        urgency: 'celebration',
+        origin: 'gamification',
+        action: {
+          label: 'Ver gamificacao',
+          route: '/tabs/gamification',
+          intent: 'open_gamification',
+        },
         recipientStudentId,
         senderRole: 'SYSTEM',
       })
@@ -2528,10 +2705,18 @@ function ensureAutomaticNotifications(workoutHistory: WorkoutSessionSummary[], r
     .forEach((badge) => {
       upsertNotification({
         entityKey: `badge-${badge.id}`,
-        title: 'Badge desbloqueada',
+        title: 'Nova conquista desbloqueada',
         description: `${badge.title}: ${badge.description}`,
         at: new Date().toISOString(),
         type: 'badge',
+        trigger: 'achievement_unlocked',
+        urgency: 'celebration',
+        origin: 'gamification',
+        action: {
+          label: 'Ver conquista',
+          route: '/tabs/gamification',
+          intent: 'open_achievement',
+        },
         recipientStudentId,
         senderRole: 'SYSTEM',
       })
@@ -2539,6 +2724,7 @@ function ensureAutomaticNotifications(workoutHistory: WorkoutSessionSummary[], r
 
   const hasWorkoutToday = filteredWorkoutHistory.some((item) => toIsoDate(new Date(item.completedAt)) === todayKey)
   const hasRunToday = runHistory.some((item) => toIsoDate(new Date(item.endedAt ?? item.startedAt)) === todayKey)
+  const pendingMeals = todayDay?.meals.filter((meal) => meal.status !== 'done').length ?? 0
   if (profile.preferences.remindersEnabled && !hasWorkoutToday && !hasRunToday) {
     upsertNotification({
       entityKey: `workout-pending-${todayKey}`,
@@ -2546,6 +2732,121 @@ function ensureAutomaticNotifications(workoutHistory: WorkoutSessionSummary[], r
       description: 'Seu treino de hoje ainda nao foi concluido.',
       at: new Date().toISOString(),
       type: 'workout',
+      trigger: 'workout_pending',
+      urgency: 'attention',
+      origin: 'workout',
+      action: {
+        label: 'Iniciar treino',
+        route: '/tabs/workouts/session',
+        intent: 'open_workout_session',
+      },
+      recipientStudentId,
+      senderRole: 'SYSTEM',
+    })
+  }
+
+  if (profile.preferences.remindersEnabled && pendingMeals > 0) {
+    upsertNotification({
+      entityKey: `meal-pending-${todayKey}`,
+      title: pendingMeals === 1 ? '1 refeicao ainda nao foi registrada' : `${pendingMeals} refeicoes aguardam registro`,
+      description: 'Fechar o plano alimentar do dia melhora sua aderencia e protege a gamificacao.',
+      at: new Date().toISOString(),
+      type: 'nutrition',
+      trigger: 'meal_pending',
+      urgency: pendingMeals >= 2 ? 'attention' : 'opportunity',
+      origin: 'nutrition',
+      action: {
+        label: 'Abrir nutricao',
+        route: '/tabs/nutrition',
+        intent: 'open_nutrition',
+      },
+      recipientStudentId,
+      senderRole: 'SYSTEM',
+    })
+  }
+
+  if (profile.preferences.remindersEnabled && gamification.weeklyStreak >= 2 && !hasWorkoutToday && (todayDay?.consumed.waterMl ?? 0) < (todayDay?.goals.waterMl ?? 0)) {
+    upsertNotification({
+      entityKey: `streak-risk-${todayKey}`,
+      title: 'Seu streak esta em risco hoje',
+      description: 'Fazer pelo menos uma acao-chave agora evita perder a sequencia acumulada.',
+      at: new Date().toISOString(),
+      type: 'gamification',
+      trigger: 'streak_risk',
+      urgency: 'critical',
+      origin: 'gamification',
+      action: {
+        label: 'Ver tarefas do dia',
+        route: '/tabs/student',
+        intent: 'open_home',
+      },
+      recipientStudentId,
+      senderRole: 'SYSTEM',
+    })
+  }
+
+  const nextLevelRemaining = Math.max(gamification.nextLevelXp - gamification.currentLevelXp, 0)
+  if (nextLevelRemaining <= 40) {
+    upsertNotification({
+      entityKey: `level-up-${todayKey}`,
+      title: nextLevelRemaining === 0 ? 'Voce subiu de nivel' : `Mais ${nextLevelRemaining} XP para subir de nivel`,
+      description:
+        nextLevelRemaining === 0
+          ? 'Seu progresso virou nivel novo. Continue acumulando estrelas para manter o ritmo.'
+          : 'Voce esta muito perto do proximo nivel e da proxima faixa de recompensas.',
+      at: new Date().toISOString(),
+      type: 'gamification',
+      trigger: 'level_up',
+      urgency: nextLevelRemaining === 0 ? 'celebration' : 'opportunity',
+      origin: 'gamification',
+      action: {
+        label: 'Ver gamificacao',
+        route: '/tabs/gamification',
+        intent: 'open_gamification',
+      },
+      recipientStudentId,
+      senderRole: 'SYSTEM',
+    })
+  }
+
+  const assignedWorkout = workoutMockRepository
+    .getWorkouts(recipientStudentId, { includeInactive: true })
+    .find((workout) => workout.date === todayKey)
+  if (assignedWorkout) {
+    upsertNotification({
+      entityKey: `workout-assigned-${assignedWorkout.id}-${todayKey}`,
+      title: 'Novo treino atribuido',
+      description: `${assignedWorkout.title} foi organizado para o seu dia de hoje.`,
+      at: new Date().toISOString(),
+      type: 'workout',
+      trigger: 'workout_assigned',
+      urgency: 'opportunity',
+      origin: 'workout',
+      action: {
+        label: 'Ver treino',
+        route: '/tabs/workouts',
+        intent: 'open_workouts',
+      },
+      recipientStudentId,
+      senderRole: 'SYSTEM',
+    })
+  }
+
+  if (todayDay && todayDay.meals.length > 0) {
+    upsertNotification({
+      entityKey: `nutrition-plan-updated-${todayKey}`,
+      title: 'Plano alimentar atualizado',
+      description: `Seu plano de hoje tem ${todayDay.meals.length} refeicoes prontas para acompanhamento.`,
+      at: new Date().toISOString(),
+      type: 'nutrition',
+      trigger: 'nutrition_plan_updated',
+      urgency: 'opportunity',
+      origin: 'nutrition',
+      action: {
+        label: 'Abrir plano',
+        route: '/tabs/nutrition',
+        intent: 'open_nutrition_plan',
+      },
       recipientStudentId,
       senderRole: 'SYSTEM',
     })
@@ -3556,6 +3857,377 @@ function createHomeDashboardOverview(): HomeDashboardOverview {
   }
 }
 
+function getProfileGoalLabel(goal: ProfileGoal) {
+  if (goal === 'gain_muscle') {
+    return 'Hipertrofia'
+  }
+
+  if (goal === 'lose_weight') {
+    return 'Emagrecimento'
+  }
+
+  if (goal === 'performance') {
+    return 'Performance'
+  }
+
+  return 'Manutenção'
+}
+
+function getStudentStreakStatus(days: number): DailyProgress['streakStatus'] {
+  if (days <= 0) {
+    return 'broken'
+  }
+
+  if (days >= 10) {
+    return 'hot'
+  }
+
+  if (days >= 4) {
+    return 'building'
+  }
+
+  return 'cold'
+}
+
+function getDailyProgressStatus(completionPct: number): DailyProgress['status'] {
+  if (completionPct >= 100) {
+    return 'completed'
+  }
+
+  if (completionPct > 0) {
+    return 'in_progress'
+  }
+
+  return 'not_started'
+}
+
+function getNutritionPlanStatus(
+  adherencePct: number,
+  completedMeals: number,
+  totalMeals: number,
+  skippedMeals = 0,
+): NutritionDayPlan['status'] {
+  if (completedMeals > 0 && completedMeals === totalMeals && adherencePct >= 100) {
+    return 'completed'
+  }
+
+  if (totalMeals > 0 && skippedMeals > 0 && completedMeals + skippedMeals === totalMeals) {
+    return 'partial'
+  }
+
+  if (completedMeals > 0 || adherencePct > 0) {
+    return 'in_progress'
+  }
+
+  return 'planned'
+}
+
+function getWaterProgressStatus(completionPct: number): WaterProgress['status'] {
+  if (completionPct >= 100) {
+    return 'completed'
+  }
+
+  if (completionPct > 0) {
+    return 'in_progress'
+  }
+
+  return 'empty'
+}
+
+function calculateDailyStarsEarned(input: {
+  completedWorkout: WorkoutSessionSummary | null
+  completedRun: RunSession | null
+  completedMeals: number
+  waterCompletionPct: number
+}) {
+  return (
+    (input.completedWorkout?.rewardStars ?? 0) +
+    (input.completedRun?.starsEarned ?? 0) +
+    input.completedMeals * 3 +
+    (input.waterCompletionPct >= 100 ? 4 : 0)
+  )
+}
+
+function buildStudentDashboard(date: string): StudentDashboard {
+  const studentId = resolveWorkoutStudentIdFromCurrentUser()
+  const currentUser = getCurrentUserIdentity()
+  const profileSettings = getProfileSettings(currentUser.name)
+  const workoutHistory = workoutSessionMockRepository
+    .getHistory()
+    .filter((entry) => !entry.studentId || entry.studentId === studentId)
+  const runHistory = runMockRepository.getHistory()
+  const activeWorkoutSession = workoutSessionMockRepository.getActiveSession()
+  const activeRunSession = runMockRepository.getActiveSession()
+  const nutritionDays = getNutritionDays(date, studentId)
+  const fallbackDays = createNutritionMockDays(date, profileSettings.goals.waterMlDaily)
+  const todayNutrition = recalculateNutritionDay(nutritionDays[date] ?? fallbackDays[date])
+  const completedMeals = todayNutrition.meals.filter((meal) => meal.status === 'done').length
+  const skippedMeals = todayNutrition.meals.filter((meal) => meal.status === 'skipped').length
+  const totalMeals = Math.max(todayNutrition.meals.length, 1)
+  const nutritionAdherencePct = Math.round((completedMeals / totalMeals) * 100)
+  const waterCompletionPct = Math.round((todayNutrition.consumed.waterMl / Math.max(todayNutrition.goals.waterMl, 1)) * 100)
+  const weeklyDates = Array.from({ length: 7 }, (_, index) => toIsoDate(addDays(new Date(`${date}T12:00:00`), -index)))
+  const nutritionConsistencyPct = Math.round(
+    weeklyDates.reduce((total, dateKey) => {
+      const day = nutritionDays[dateKey] ?? fallbackDays[dateKey]
+
+      if (!day || day.meals.length === 0) {
+        return total
+      }
+
+      const completed = day.meals.filter((meal) => meal.status === 'done').length
+      return total + (completed / day.meals.length) * 100
+    }, 0) / Math.max(weeklyDates.length, 1),
+  )
+  const progressOverview = createProgressOverview(workoutHistory, runHistory, '30d', studentId)
+  const gamificationOverview = createGamificationOverview(workoutHistory, runHistory, studentId)
+  const leaderboard = buildRankingLeaderboard(
+    { period: 'weekly', scope: 'global', league: 'bronze' },
+    workoutHistory,
+    runHistory,
+  )
+  const activePersonalId = getActivePersonalIdByStudentId(studentId)
+  const activeNutritionistId = getActiveNutritionistIdByStudentId(studentId)
+  const supportTeam = [
+    activePersonalId
+      ? {
+          id: activePersonalId,
+          role: 'PERSONAL' as const,
+          name: getSeededUserNameById(activePersonalId) ?? 'Personal FitQuest',
+        }
+      : null,
+    activeNutritionistId
+      ? {
+          id: activeNutritionistId,
+          role: 'NUTRITIONIST' as const,
+          name: getSeededUserNameById(activeNutritionistId) ?? 'Nutricionista FitQuest',
+        }
+      : null,
+  ].filter((item): item is StudentProfile['supportTeam'][number] => item !== null)
+
+  const selectedWorkouts = workoutMockRepository.getWorkouts(studentId, { includeInactive: true })
+  const scheduledWorkout = selectedWorkouts.find((workout) => workout.date === date && workout.isActive !== false) ?? null
+  const completedWorkout = workoutHistory.find((entry) => toIsoDate(new Date(entry.completedAt)) === date) ?? null
+  const completedRun = runHistory.find((entry) => toIsoDate(new Date(entry.endedAt ?? entry.startedAt)) === date) ?? null
+  const workoutExerciseDetails = scheduledWorkout
+    ? workoutMockRepository.getWorkoutExerciseDetails(studentId, scheduledWorkout.id)
+    : []
+  const totalWorkoutSets = activeWorkoutSession
+    ? activeWorkoutSession.exercises.reduce((total, exercise) => total + Math.max(exercise.sets, 0), 0)
+    : workoutExerciseDetails.reduce((total, exercise) => total + Math.max(exercise.sets, 0), 0)
+  const completedWorkoutSets = activeWorkoutSession
+    ? Object.values(activeWorkoutSession.setsDoneByExerciseId).reduce((total, value) => total + value, 0)
+    : completedWorkout?.completedSets ?? 0
+  const workoutCompletionPct = completedWorkout
+    ? 100
+    : totalWorkoutSets > 0
+      ? Math.round((completedWorkoutSets / totalWorkoutSets) * 100)
+      : 0
+  const cardioCompletionPct = completedRun
+    ? 100
+    : activeRunSession
+      ? Math.round((activeRunSession.elapsedSec / 60 / Math.max(30, activeRunSession.elapsedSec / 60)) * 100)
+      : 0
+  const dailyCompletionPct = Math.round(
+    (workoutCompletionPct + nutritionAdherencePct + waterCompletionPct + cardioCompletionPct) / 4,
+  )
+  const streakDays = createWorkoutStreak(workoutHistory, runHistory, nutritionDays)
+  const dailyStarsEarned = calculateDailyStarsEarned({
+    completedWorkout,
+    completedRun,
+    completedMeals,
+    waterCompletionPct,
+  })
+
+  const profile: StudentProfile = {
+    id: currentUser.id,
+    firstName: currentUser.name.split(' ')[0] ?? currentUser.name,
+    fullName: currentUser.name,
+    city: profileSettings.city,
+    neighborhood: profileSettings.neighborhood,
+    gym: profileSettings.gym,
+    memberSince: addDays(new Date(), -240).toISOString(),
+    primaryGoal: getProfileGoalLabel(profileSettings.goal),
+    headline: 'Seu hub diário centraliza execução, progresso, hábitos, gamificação e recompensa.',
+    supportTeam,
+  }
+
+  const dailyProgress: DailyProgress = {
+    date,
+    status: getDailyProgressStatus(dailyCompletionPct),
+    completionPct: dailyCompletionPct,
+    completedBlocks: [workoutCompletionPct, nutritionAdherencePct, waterCompletionPct, cardioCompletionPct].filter(
+      (value) => value >= 100,
+    ).length,
+    totalBlocks: 4,
+    starsEarned: dailyStarsEarned,
+    xpEarned: gamificationOverview.todayXp,
+    streakDays,
+    streakStatus: getStudentStreakStatus(streakDays),
+    focusLabel:
+      completedWorkout?.title ??
+      scheduledWorkout?.title ??
+      (todayNutrition.meals.some((meal) => meal.status === 'pending')
+        ? 'Registrar refeicoes pendentes e fechar sua hidratacao'
+        : 'Organize treino, nutricao, agua e cardio do dia'),
+  }
+
+  const todayWorkout: WorkoutDay | null =
+    scheduledWorkout || activeWorkoutSession || completedWorkout
+      ? {
+          id: scheduledWorkout?.id ?? activeWorkoutSession?.sessionId ?? completedWorkout?.sessionId ?? crypto.randomUUID(),
+          date,
+          title: activeWorkoutSession?.title ?? scheduledWorkout?.title ?? completedWorkout?.title ?? 'Treino do dia',
+          focus:
+            scheduledWorkout?.muscleGroups?.join(', ') ||
+            (workoutExerciseDetails[0]?.muscleGroup ? `Foco em ${workoutExerciseDetails[0].muscleGroup}` : 'Força e consistência'),
+          status: activeWorkoutSession ? 'in_progress' : completedWorkout ? 'completed' : scheduledWorkout ? 'scheduled' : 'rest_day',
+          estimatedDurationMin:
+            scheduledWorkout?.estimatedDurationMin ?? Math.max(Math.round((completedWorkout?.durationSec ?? 1800) / 60), 20),
+          completionPct: Math.min(workoutCompletionPct, 100),
+          rewardStars: scheduledWorkout?.starsReward ?? 6,
+          coachNote: supportTeam[0] ? `Acompanhamento ativo por ${supportTeam[0].name}.` : 'Execução livre para manter o ritmo.',
+          exercises: (activeWorkoutSession?.exercises ?? workoutExerciseDetails).slice(0, 6).map((exercise, index) => ({
+            id: exercise.id,
+            name: exercise.name,
+            group: 'muscleGroup' in exercise ? exercise.muscleGroup ?? 'Treino geral' : 'Treino geral',
+            sets: exercise.sets,
+            reps: exercise.reps,
+            restSec: 'restSec' in exercise ? exercise.restSec : 60,
+            suggestedLoadKg: exercise.suggestedLoadKg ?? 0,
+            status: (() => {
+              const activeStatus = activeWorkoutSession?.exercises.find((item) => item.id === exercise.id)?.status
+
+              if (activeStatus === 'done') {
+                return 'completed'
+              }
+
+              if (activeStatus === 'upcoming') {
+                return 'pending'
+              }
+
+              if (activeStatus === 'current') {
+                return 'current'
+              }
+
+              return completedWorkout ? 'completed' : index === 0 ? 'current' : 'pending'
+            })(),
+          })),
+        }
+      : null
+
+  const cardioSession: CardioSession | null = {
+    id: activeRunSession?.sessionId ?? completedRun?.sessionId ?? `cardio-${date}`,
+    date,
+    title: activeRunSession ? 'Cardio em andamento' : completedRun ? 'Cardio concluído' : 'Cardio leve do dia',
+    type: 'run',
+    status: activeRunSession ? 'in_progress' : completedRun ? 'completed' : 'scheduled',
+    intensity: completedRun && completedRun.distanceKm >= 6 ? 'high' : 'moderate',
+    goalDurationMin: 30,
+    completedDurationMin: completedRun ? Math.round(completedRun.elapsedSec / 60) : activeRunSession ? Math.round(activeRunSession.elapsedSec / 60) : 0,
+    targetDistanceKm: 4,
+    completedDistanceKm: completedRun?.distanceKm ?? activeRunSession?.distanceKm ?? 0,
+  }
+
+  const nutritionPlan: NutritionDayPlan = {
+    date,
+    status: getNutritionPlanStatus(nutritionAdherencePct, completedMeals, totalMeals, skippedMeals),
+    adherencePct: nutritionAdherencePct,
+    caloriesTarget: todayNutrition.goals.calories,
+    caloriesConsumed: todayNutrition.consumed.calories,
+    proteinTargetG: todayNutrition.goals.protein,
+    proteinConsumedG: todayNutrition.consumed.protein,
+    carbsTargetG: todayNutrition.goals.carbs,
+    carbsConsumedG: todayNutrition.consumed.carbs,
+    fatTargetG: todayNutrition.goals.fat,
+    fatConsumedG: todayNutrition.consumed.fat,
+    meals: todayNutrition.meals.map((meal) => ({
+      id: meal.id,
+      name: meal.name,
+      scheduledAt: meal.time,
+      status: meal.status === 'done' ? 'completed' : meal.status,
+      itemsSummary: meal.items.map((item) => item.label).slice(0, 2).join(', '),
+      targetCalories: meal.targetMacros.calories,
+      consumedCalories: meal.status === 'done' ? meal.targetMacros.calories : 0,
+      rewardStars: meal.status === 'done' ? 3 : 0,
+    })),
+  }
+
+  const waterProgress: WaterProgress = {
+    status: getWaterProgressStatus(waterCompletionPct),
+    consumedMl: todayNutrition.consumed.waterMl,
+    targetMl: todayNutrition.goals.waterMl,
+    remainingMl: Math.max(todayNutrition.goals.waterMl - todayNutrition.consumed.waterMl, 0),
+    completionPct: Math.min(waterCompletionPct, 100),
+    checkpointsCompleted: Math.min(Math.floor(todayNutrition.consumed.waterMl / 500), Math.ceil(todayNutrition.goals.waterMl / 500)),
+    checkpointsTotal: Math.ceil(todayNutrition.goals.waterMl / 500),
+  }
+
+  const gamificationProfile: GamificationProfile = {
+    level: gamificationOverview.level,
+    totalXp: gamificationOverview.totalXp,
+    currentLevelXp: gamificationOverview.currentLevelXp,
+    nextLevelXp: gamificationOverview.nextLevelXp,
+    weeklyXp: gamificationOverview.weeklyXp,
+    weeklyXpTarget: gamificationOverview.weeklyXpTarget,
+    stars: workoutHistory.reduce((total, entry) => total + entry.rewardStars, 0) +
+      runHistory.reduce((total, entry) => total + (entry.starsEarned ?? 0), 0) +
+      Object.values(nutritionDays).reduce((total, day) => total + day.meals.filter((meal) => meal.status === 'done').length * 3, 0) +
+      Object.values(nutritionDays).reduce((total, day) => total + (day.consumed.waterMl >= day.goals.waterMl ? 4 : 0), 0),
+    streakDays,
+    streakStatus: getStudentStreakStatus(streakDays),
+  }
+
+  const rankingAbove = leaderboard.top.find((athlete) => athlete.position === leaderboard.currentUser.position - 1) ?? null
+  const rankingSummary: StudentHubRankingSummary = {
+    scope: 'global',
+    period: 'weekly',
+    league: leaderboard.currentUser.league,
+    position: leaderboard.currentUser.position,
+    totalParticipants: leaderboard.totalAthletes,
+    points: leaderboard.currentUser.xp,
+    gapToNext: rankingAbove ? Math.max(rankingAbove.xp - leaderboard.currentUser.xp, 0) : 0,
+    gapToLeader: Math.max((leaderboard.top[0]?.xp ?? leaderboard.currentUser.xp) - leaderboard.currentUser.xp, 0),
+    trend:
+      leaderboard.currentUser.trend === 'same'
+        ? 'stable'
+        : leaderboard.currentUser.trend,
+    lastUpdatedAt: leaderboard.updatedAt,
+  }
+
+  const monthStart = new Date()
+  monthStart.setDate(1)
+  monthStart.setHours(0, 0, 0, 0)
+  const cardioMinutesMonth = runHistory
+    .filter((entry) => new Date(entry.endedAt ?? entry.startedAt) >= monthStart)
+    .reduce((total, entry) => total + Math.round(entry.elapsedSec / 60), 0)
+  const consistencyScore = Math.round(
+    (dailyCompletionPct + nutritionConsistencyPct + Math.min((progressOverview.monthSummary.completedWorkouts / 18) * 100, 100)) /
+      3,
+  )
+
+  const metrics: StudentMetrics = {
+    workoutsCompletedMonth: progressOverview.monthSummary.completedWorkouts,
+    nutritionAdherencePct: nutritionConsistencyPct,
+    cardioMinutesMonth,
+    averageWaterMl: progressOverview.metrics.avgWaterMl,
+    currentWeightKg: progressOverview.metrics.currentWeightKg,
+    consistencyScore,
+  }
+
+  return createStudentDashboardMock({
+    profile,
+    dailyProgress,
+    todayWorkout,
+    cardioSession,
+    nutritionPlan,
+    waterProgress,
+    gamificationProfile,
+    rankingSummary,
+    metrics,
+  })
+}
+
 function createWorkoutSession(studentId: string, workoutId?: string): WorkoutSession {
   const exercises = workoutMockRepository.getExercises(studentId)
   const doneCount = exercises.filter((exercise) => exercise.status === 'done').length
@@ -3576,6 +4248,7 @@ function createWorkoutSession(studentId: string, workoutId?: string): WorkoutSes
 
   return {
     sessionId: crypto.randomUUID(),
+    studentId,
     startedAt: new Date().toISOString(),
     status: 'active',
     workoutId: selectedWorkout?.id,
@@ -3584,6 +4257,8 @@ function createWorkoutSession(studentId: string, workoutId?: string): WorkoutSes
     setsDoneByExerciseId,
     totalElapsedSec: 0,
     restTimerSec: 45,
+    currentExerciseId: exercises[0]?.id,
+    rewardStars: selectedWorkout?.starsReward ?? 30,
   }
 }
 
@@ -3638,6 +4313,17 @@ function createWorkoutSummary(session: WorkoutSession, studentId: string): Worko
     completedSets,
     loadVolumeKg: Number(loadVolumeKg.toFixed(1)),
     exerciseRecords,
+    rewardStars: session.rewardStars,
+    streakDays: 4,
+    currentLevel: 3,
+    nextLevel: 4,
+    currentLevelStars: 72,
+    nextLevelStars: 120,
+    starsToNextLevel: 48,
+    weeklyCompletedWorkouts: 3,
+    weeklyTargetWorkouts: 4,
+    weeklyCompletionDelta: 1,
+    completionMessage: 'Treino concluido e progresso semanal atualizado.',
   }
 }
 
@@ -3645,6 +4331,11 @@ function createRunMetrics(history: RunSession[]) {
   const now = new Date()
   const month = now.getMonth()
   const year = now.getFullYear()
+  const weekStart = new Date(now)
+  const weekDay = weekStart.getDay()
+  const diff = (weekDay + 6) % 7
+  weekStart.setDate(weekStart.getDate() - diff)
+  weekStart.setHours(0, 0, 0, 0)
   const thisMonthRuns = history.filter((run) => {
     const runDate = new Date(run.endedAt ?? run.startedAt)
     return runDate.getMonth() === month && runDate.getFullYear() === year
@@ -3659,17 +4350,46 @@ function createRunMetrics(history: RunSession[]) {
     totalKmMonth,
     bestPaceSecPerKm,
     totalCalories,
+    totalSessionsMonth: thisMonthRuns.length,
+    weeklyDistanceKm: Number(
+      history
+        .filter((run) => new Date(run.endedAt ?? run.startedAt) >= weekStart)
+        .reduce((total, run) => total + run.distanceKm, 0)
+        .toFixed(2),
+    ),
+    weeklyStars: history
+      .filter((run) => new Date(run.endedAt ?? run.startedAt) >= weekStart)
+      .reduce((total, run) => total + (run.starsEarned ?? 0), 0),
   }
 }
 
 function createRunOverview(): RunOverview {
   const history = runMockRepository.getHistory()
   const activeSession = runMockRepository.getActiveSession()
+  const todayKey = toIsoDate(new Date())
+  const todayRuns = history.filter((run) => toIsoDate(new Date(run.endedAt ?? run.startedAt)) === todayKey)
+  const uniqueDates = new Set(history.map((run) => toIsoDate(new Date(run.endedAt ?? run.startedAt))))
+  let streakDays = 0
+
+  for (let offset = 0; offset < 30; offset += 1) {
+    const dateKey = toIsoDate(addDays(new Date(), -offset))
+
+    if (uniqueDates.has(dateKey)) {
+      streakDays += 1
+      continue
+    }
+
+    break
+  }
 
   return {
     activeSession,
     history,
     metrics: createRunMetrics(history),
+    recommendedGoalKm: 4,
+    todayDistanceKm: Number(todayRuns.reduce((total, run) => total + run.distanceKm, 0).toFixed(2)),
+    todayStars: todayRuns.reduce((total, run) => total + (run.starsEarned ?? 0), 0),
+    streakDays,
   }
 }
 
@@ -5072,7 +5792,7 @@ export function registerMockHandlers() {
   registerMockHandler<RunSession>('POST', '/run/start', () => {
     const active = runMockRepository.getActiveSession()
 
-    if (active && active.status === 'active') {
+    if (active && active.status !== 'completed') {
       return {
         data: active,
       }
@@ -5080,12 +5800,17 @@ export function registerMockHandlers() {
 
     const session: RunSession = {
       sessionId: crypto.randomUUID(),
+      studentId: 'current-user',
+      activityType: 'run',
       startedAt: new Date().toISOString(),
       status: 'active',
       elapsedSec: 0,
       distanceKm: 0,
       calories: 0,
       paceSecPerKm: 0,
+      starsEarned: 0,
+      progressImpactPct: 0,
+      source: 'manual',
     }
 
     runMockRepository.saveActiveSession(session)
@@ -5114,6 +5839,8 @@ export function registerMockHandlers() {
         body.session.distanceKm > 0
           ? Math.round(body.session.elapsedSec / Math.max(body.session.distanceKm, 0.01))
           : 0,
+      starsEarned: body.session.status === 'completed' ? body.session.starsEarned : 0,
+      progressImpactPct: body.session.status === 'completed' ? body.session.progressImpactPct : 0,
     }
 
     runMockRepository.saveActiveSession(nextSession)
@@ -5147,6 +5874,8 @@ export function registerMockHandlers() {
       distanceKm,
       calories,
       paceSecPerKm,
+      starsEarned: 14 + Math.round(distanceKm * 8) + Math.round(elapsedSec / 900) * 2,
+      progressImpactPct: Math.min(Math.round(distanceKm * 7 + (elapsedSec / 60) * 0.6), 35),
     }
 
     runMockRepository.appendHistory(completed)
@@ -5347,6 +6076,138 @@ export function registerMockHandlers() {
 
     return {
       data: getNotificationsInbox(),
+    }
+  })
+
+  registerMockHandler<StudentDashboard>('GET', '/student/dashboard', (request) => {
+    ensureStudentAccess(request)
+    const url = new URL(request.url, window.location.origin)
+    const selectedDate = url.searchParams.get('date') ?? toIsoDate(new Date())
+
+    return {
+      data: buildStudentDashboard(selectedDate),
+    }
+  })
+
+  registerMockHandler<{ mealId: string | null }>('POST', '/student/actions/register-meal', (request) => {
+    ensureStudentAccess(request)
+    const url = new URL(request.url, window.location.origin)
+    const selectedDate = url.searchParams.get('date') ?? toIsoDate(new Date())
+    const daysByDate = getNutritionDays(selectedDate)
+    const selectedDay = daysByDate[selectedDate]
+
+    if (!selectedDay) {
+      return { data: { mealId: null } }
+    }
+
+    const pendingMeal = selectedDay.meals.find((meal) => meal.status === 'pending')
+
+    if (!pendingMeal) {
+      return { data: { mealId: null } }
+    }
+
+    upsertNutritionDay(
+      selectedDate,
+      (day) => ({
+        ...day,
+        meals: day.meals.map((meal) =>
+          meal.id === pendingMeal.id
+            ? {
+                ...meal,
+                status: 'done',
+                completedAt: new Date().toISOString(),
+              }
+            : meal,
+        ),
+      }),
+      request,
+    )
+
+    return {
+      data: {
+        mealId: pendingMeal.id,
+      },
+    }
+  })
+
+  registerMockHandler<{ totalWaterMl: number }>('POST', '/student/actions/register-water', (request) => {
+    ensureStudentAccess(request)
+    const body = (request.body ?? {}) as { ml?: number }
+    const ml = Math.max(Math.round(body.ml ?? 300), 50)
+    const url = new URL(request.url, window.location.origin)
+    const selectedDate = url.searchParams.get('date') ?? toIsoDate(new Date())
+
+    const updatedDay = upsertNutritionDay(
+      selectedDate,
+      (day) => ({
+        ...day,
+        waterLog: {
+          entries: [
+            ...day.waterLog.entries,
+            {
+              id: crypto.randomUUID(),
+              ml,
+              at: new Date().toISOString(),
+            },
+          ],
+        },
+      }),
+      request,
+    )
+
+    return {
+      data: {
+        totalWaterMl: updatedDay.consumed.waterMl,
+      },
+    }
+  })
+
+  registerMockHandler<{ saved: boolean }>('POST', '/student/workouts/execution', (request) => {
+    const student = ensureStudentAccess(request)
+    const body = (request.body ?? {}) as StudentWorkoutExecutionInput
+
+    if (!body.workoutId || !body.date) {
+      throw new HttpError('workoutId and date are required', {
+        status: 400,
+        code: 'http_error',
+        data: { message: 'workoutId and date are required' },
+        request,
+      })
+    }
+
+    const completedAt = new Date().toISOString()
+    const summary: WorkoutSessionSummary = {
+      sessionId: crypto.randomUUID(),
+      studentId: student.id,
+      workoutId: body.workoutId,
+      title: body.title,
+      startedAt: new Date(Date.now() - body.durationSec * 1000).toISOString(),
+      completedAt,
+      durationSec: body.durationSec,
+      totalExercises: body.totalExercises,
+      completedExercises: body.completedExercises,
+      totalSets: body.totalSets,
+      completedSets: body.completedSets,
+      loadVolumeKg: body.loadVolumeKg,
+      exerciseRecords: body.exerciseRecords,
+      rewardStars: Math.max(body.completedExercises * 6, 18),
+      streakDays: 4,
+      currentLevel: 3,
+      nextLevel: 4,
+      currentLevelStars: 78,
+      nextLevelStars: 120,
+      starsToNextLevel: 42,
+      weeklyCompletedWorkouts: 3,
+      weeklyTargetWorkouts: 4,
+      weeklyCompletionDelta: 1,
+      completionMessage: 'Execucao registrada com sucesso.',
+    }
+
+    workoutSessionMockRepository.appendSummary(summary)
+    workoutSessionMockRepository.saveLastSummary(summary)
+
+    return {
+      data: { saved: true },
     }
   })
 

@@ -20,15 +20,17 @@ export function FqLevelBadge({
   return (
     <div
       className={cx(
-        'inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3 py-1.5 text-sm font-semibold text-blue-800',
+        'inline-flex items-center gap-2 rounded-full border border-secondary/18 bg-[linear-gradient(180deg,rgba(255,255,255,0.34)_0%,rgba(255,255,255,0)_100%),linear-gradient(180deg,rgba(120,146,174,0.14)_0%,rgba(120,146,174,0.08)_100%)] px-3 py-1.5 text-sm font-semibold text-secondary shadow-[0_10px_22px_rgba(120,146,174,0.14)]',
         className,
       )}
      
       data-testid={testId}
       {...rest}
     >
-      <span className="rounded-full bg-blue-600 px-2 py-0.5 text-xs text-white">{label}</span>
-      <span>{level}</span>
+      <span className="rounded-full bg-secondary px-2 py-0.5 text-[0.68rem] uppercase tracking-[0.16em] text-secondary-foreground">
+        {label}
+      </span>
+      <span className="text-base">{level}</span>
     </div>
   )
 }

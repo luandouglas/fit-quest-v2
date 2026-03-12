@@ -34,7 +34,8 @@ export function FqQuickActions({
   return (
     <div
       className={cx(
-        'fixed bottom-20 right-4 z-30 flex flex-col gap-2 rounded-2xl border border-border/80 bg-card/95 p-2 shadow-lg backdrop-blur',
+        'fixed inset-x-4 bottom-[calc(env(safe-area-inset-bottom)+5.4rem)] z-30 grid gap-2 rounded-2xl border border-border/80 bg-card/95 p-2 shadow-lg backdrop-blur',
+        'sm:left-auto sm:right-4 sm:w-auto sm:min-w-[240px] sm:max-w-[320px] sm:bottom-[calc(env(safe-area-inset-bottom)+1.25rem)]',
         mobileOnly ? 'lg:hidden' : '',
         className,
       )}
@@ -44,12 +45,12 @@ export function FqQuickActions({
       {actions.map((action) => (
         <FqButton
           key={action.id}
-          size="sm"
+          size="md"
           tone={action.tone ?? 'primary'}
           leftIcon={action.icon}
           onClick={action.onClick}
           isDisabled={action.disabled}
-          className="justify-start"
+          className="min-h-[48px] justify-start text-left"
         >
           {action.label}
         </FqButton>

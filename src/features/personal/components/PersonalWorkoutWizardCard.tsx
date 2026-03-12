@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { cx } from "@/shared/utils";
-import maleBodySvgRaw from "@/assets/shape/male/male.svg?raw";
-import maleBodyPng from "@/assets/shape/male/male.png";
-import femaleBodySvgRaw from "@/assets/shape/female/female.svg?raw";
-import femaleBodyPng from "@/assets/shape/female/female.png";
+import maleBodySvgRaw from "@/shared/assets/shape/male/male.svg?raw";
+import maleBodyPng from "@/shared/assets/shape/male/male.png";
+import femaleBodySvgRaw from "@/shared/assets/shape/female/female.svg?raw";
+import femaleBodyPng from "@/shared/assets/shape/female/female.png";
 import {
   FqAlert,
   FqBadge,
@@ -227,7 +227,7 @@ function getExerciseDisplayName(exercise: AssistantExercise) {
 export function PersonalWorkoutWizardCard({
   onCreateWorkout,
   isCreatingWorkout,
-  onClose,
+  onClose: _onClose,
   onCreated,
 }: PersonalWorkoutWizardCardProps) {
   const { toast } = useToast();

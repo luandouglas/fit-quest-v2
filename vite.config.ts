@@ -31,15 +31,15 @@ export default defineConfig({
             return 'vendor-misc'
           }
 
-          if (id.includes('/src/features/experience/')) {
+          if (id.includes('/src/app/pages/experience/')) {
             return 'feature-landing'
           }
 
-          if (id.includes('/src/features/nutrition/')) {
+          if (id.includes('/src/features/student/nutrition/')) {
             return 'feature-nutrition'
           }
 
-          if (id.includes('/src/pages/training-plan/')) {
+          if (id.includes('/src/features/student/workouts/')) {
             return 'feature-workouts'
           }
         },

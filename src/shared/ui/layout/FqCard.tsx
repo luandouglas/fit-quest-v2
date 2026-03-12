@@ -25,14 +25,18 @@ export function FqCard({
   return (
     <section
       className={cx(
-        "fq-raise-hover fq-soft-reveal w-full rounded-[calc(var(--radius)+2px)] border border-border/70 bg-card shadow-[0_10px_28px_rgba(15,23,42,0.06)]",
+        "fq-raise-hover fq-soft-reveal relative isolate w-full overflow-hidden rounded-[calc(var(--radius)+8px)] border border-border/80 bg-card/92 shadow-[0_20px_44px_rgba(60,73,66,0.08)] backdrop-blur",
         className,
       )}
       data-testid={testId}
       {...rest}
     >
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-[linear-gradient(180deg,rgba(255,255,255,0.42)_0%,rgba(255,255,255,0)_100%)] opacity-80"
+      />
       {header || title || subtitle ? (
-        <header className="border-b border-border/70 px-4 py-4 md:px-6">
+        <header className="relative border-b border-border/70 px-5 py-5 md:px-7">
           {header}
           {title ? (
             <h3 className="text-base font-semibold text-card-foreground">
@@ -44,9 +48,9 @@ export function FqCard({
           ) : null}
         </header>
       ) : null}
-      <div className="px-4 py-4 md:px-6">{children}</div>
+      <div className="relative px-5 py-5 md:px-7">{children}</div>
       {footer ? (
-        <footer className="border-t border-border/70 px-4 py-4 md:px-6">
+        <footer className="relative border-t border-border/70 px-5 py-5 md:px-7">
           {footer}
         </footer>
       ) : null}

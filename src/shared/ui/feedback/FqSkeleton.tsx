@@ -25,7 +25,7 @@ export function FqSkeleton({
   return (
     <div
       aria-hidden="true"
-      className={cx('animate-pulse bg-zinc-200', roundedMap[rounded], className)}
+      className={cx('fq-skeleton-sheen bg-zinc-200/90', roundedMap[rounded], className)}
      
       data-testid={testId}
       {...rest}

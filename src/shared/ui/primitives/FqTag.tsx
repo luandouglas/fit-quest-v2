@@ -25,7 +25,7 @@ export function FqTag({
   return (
     <div
       className={cx(
-        'inline-flex items-center gap-1.5 rounded-full border border-transparent px-2.5 py-1 text-xs font-medium',
+        'inline-flex items-center gap-1.5 rounded-full border border-transparent px-3 py-1.5 text-[0.72rem] font-semibold tracking-[0.01em] shadow-[0_8px_18px_rgba(36,49,44,0.04)]',
         fqBadgeToneMap[tone],
         className,
       )}

@@ -1,5 +1,5 @@
-import { httpClient } from '@/shared/services/http'
 import { PROFILE_SCHEMA_VERSION, PROFILE_STORAGE_KEY } from '@/shared/constants'
+import { getProfileRepository } from '@/shared/services/repositories/profileRepositoryFactory'
 import { storage } from '@/shared/services/storage'
 import type { ProfileSettings, ThemePreference, UpdateProfilePayload } from '@/shared/services/contracts/profile'
 
@@ -38,14 +38,12 @@ export const profileService = {
     applyThemeClass(stored.profile.preferences.themePreference)
   },
   async getProfile(): Promise<ProfileSettings> {
-    const profile = await httpClient.get<ProfileSettings>('/profile')
+    const profile = await getProfileRepository().getProfile()
     applyThemeClass(profile.preferences.themePreference)
     return profile
   },
   async updateProfile(payload: UpdateProfilePayload): Promise<ProfileSettings> {
-    const profile = await httpClient.patch<ProfileSettings, { patch: UpdateProfilePayload }>('/profile', {
-      patch: payload,
-    })
+    const profile = await getProfileRepository().updateProfile(payload)
     applyThemeClass(profile.preferences.themePreference)
     return profile
   },

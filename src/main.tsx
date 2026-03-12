@@ -1,17 +1,17 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
+import React from "react";
+import ReactDOM from "react-dom/client";
 
-import { setupIonicReact } from '@ionic/react'
+import { setupIonicReact } from "@ionic/react";
 
-import '@/shared/theme/typography.css'
-import '@/shared/theme/global.css'
+import "@/app/styles/typography.css";
+import "@/app/styles/global.css";
 
-import App from './App'
+import App from "./App";
 
-setupIonicReact()
+setupIonicReact();
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <App />
   </React.StrictMode>,
-)
+);

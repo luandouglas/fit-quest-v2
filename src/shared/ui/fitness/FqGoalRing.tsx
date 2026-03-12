@@ -27,7 +27,14 @@ export function FqGoalRing({
   ...rest
 }: FqGoalRingProps) {
   return (
-    <div className={cx('rounded-xl border border-border bg-card p-4', className)} data-testid={testId} {...rest}>
+    <div
+      className={cx(
+        'fq-raise-hover rounded-[calc(var(--radius)+4px)] border border-border/75 bg-[linear-gradient(180deg,rgba(255,255,255,0.34)_0%,rgba(255,255,255,0)_100%),linear-gradient(180deg,rgba(252,250,246,0.9)_0%,rgba(245,241,232,0.72)_100%)] p-4 shadow-[0_14px_30px_rgba(36,49,44,0.05)]',
+        className,
+      )}
+      data-testid={testId}
+      {...rest}
+    >
       <div className="flex items-center gap-4">
         <FqProgressRing value={value} max={max} tone={tone} size={size} />
         <div className="space-y-1">

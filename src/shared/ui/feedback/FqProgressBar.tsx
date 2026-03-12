@@ -4,18 +4,12 @@ import type { FqBaseProps, FqTone } from '@/shared/ui/types'
 import { clamp, cx } from '@/shared/utils'
 
 const toneMap: Record<FqTone, string> = {
-  primary:
-    '[&::-webkit-progress-value]:bg-primary [&::-moz-progress-bar]:bg-primary',
-  secondary:
-    '[&::-webkit-progress-value]:bg-secondary [&::-moz-progress-bar]:bg-secondary',
-  success:
-    '[&::-webkit-progress-value]:bg-success [&::-moz-progress-bar]:bg-success',
-  warning:
-    '[&::-webkit-progress-value]:bg-warning [&::-moz-progress-bar]:bg-warning',
-  danger:
-    '[&::-webkit-progress-value]:bg-destructive [&::-moz-progress-bar]:bg-destructive',
-  neutral:
-    '[&::-webkit-progress-value]:bg-foreground [&::-moz-progress-bar]:bg-foreground',
+  primary: 'bg-[linear-gradient(90deg,var(--primary)_0%,color-mix(in_srgb,var(--primary)_72%,white)_100%)]',
+  secondary: 'bg-[linear-gradient(90deg,var(--secondary)_0%,color-mix(in_srgb,var(--secondary)_78%,white)_100%)]',
+  success: 'bg-[linear-gradient(90deg,var(--success)_0%,color-mix(in_srgb,var(--success)_78%,white)_100%)]',
+  warning: 'bg-[linear-gradient(90deg,var(--warning)_0%,color-mix(in_srgb,var(--warning)_76%,white)_100%)]',
+  danger: 'bg-[linear-gradient(90deg,var(--destructive)_0%,color-mix(in_srgb,var(--destructive)_78%,white)_100%)]',
+  neutral: 'bg-[linear-gradient(90deg,var(--foreground)_0%,color-mix(in_srgb,var(--foreground)_72%,white)_100%)]',
 }
 
 type FqProgressBarProps = FqBaseProps &
@@ -37,15 +31,24 @@ export function FqProgressBar({
 
   return (
     <div className={cx('w-full space-y-1.5', className)} data-testid={testId} {...rest}>
-      <progress
-        max={100}
-        value={safeValue}
-        className={cx(
-          'h-2.5 w-full overflow-hidden rounded-full [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-bar]:bg-muted',
-          '[&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:transition-all',
-          toneMap[tone],
-        )}
-      />
+      <div className="overflow-hidden rounded-full border border-border/55 bg-muted/85 shadow-[inset_0_1px_2px_rgba(36,49,44,0.05)]">
+        <div
+          role="progressbar"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.round(safeValue)}
+          className={cx(
+            'relative h-2.5 rounded-full transition-[width] duration-300 ease-out',
+            toneMap[tone],
+          )}
+          style={{ width: `${safeValue}%` }}
+        >
+          <span
+            aria-hidden="true"
+            className="absolute inset-y-0 right-0 w-10 bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.28)_100%)]"
+          />
+        </div>
+      </div>
       {showLabel ? <p className="text-xs text-muted-foreground">{safeValue}%</p> : null}
     </div>
   )

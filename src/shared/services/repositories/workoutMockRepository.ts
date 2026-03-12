@@ -1,5 +1,5 @@
-import { mockExercises } from '@/pages/training-plan/data/mockTrainingPlan'
-import type { ExerciseItem, TodayWorkout, TrainingPlanDay, WorkoutPlanItem } from '@/pages/training-plan/types'
+import { mockExercises } from '@/features/student/workouts/data/mockTrainingPlan'
+import type { ExerciseItem, TodayWorkout, TrainingPlanDay, WorkoutPlanItem } from '@/features/student/workouts/types'
 import {
   WORKOUT_EXERCISES_BY_STUDENT_STORAGE_KEY,
   WORKOUT_EXERCISES_STORAGE_KEY,
@@ -29,6 +29,7 @@ type StoredWorkoutPlanItem = {
   source?: WorkoutPlanItem['source']
   exercises?: StoredWorkoutExercise[]
   createdAt?: string
+  personalNote?: string
 }
 
 type StoredWorkoutExercise = {
@@ -41,6 +42,8 @@ type StoredWorkoutExercise = {
   muscleGroup?: string
   equipment?: string
   durationMin: number
+  note?: string
+  supportMedia?: ExerciseItem['supportMedia']
 }
 
 type StoredWorkoutPlanByStudent = Record<string, StoredWorkoutPlanItem[]>
@@ -70,6 +73,8 @@ type CreateAssignedWorkoutInput = {
     muscleGroup?: string
     equipment?: string
     durationMin?: number
+    note?: string
+    supportMedia?: ExerciseItem['supportMedia']
   }>
 }
 
@@ -111,6 +116,8 @@ function normalizeStoredWorkoutExercise(
     muscleGroup?: string
     equipment?: string
     durationMin?: number
+    note?: string
+    supportMedia?: ExerciseItem['supportMedia']
   },
   index: number,
 ): StoredWorkoutExercise {
@@ -124,6 +131,8 @@ function normalizeStoredWorkoutExercise(
     muscleGroup: input.muscleGroup?.trim() ? input.muscleGroup.trim() : undefined,
     equipment: input.equipment?.trim() ? input.equipment.trim() : undefined,
     durationMin: clamp(Math.round(input.durationMin ?? 6), 2, 30),
+    note: input.note?.trim() ? input.note.trim() : undefined,
+    supportMedia: input.supportMedia ?? null,
   }
 }
 
@@ -133,11 +142,16 @@ function toExerciseItem(exercise: StoredWorkoutExercise, index: number): Exercis
     name: exercise.name,
     sets: exercise.sets,
     reps: exercise.reps,
+    restSec: exercise.restSec,
     suggestedLoadKg: exercise.suggestedLoadKg,
     durationMin: exercise.durationMin,
     status: (index === 0 ? 'current' : 'upcoming') as ExerciseItem['status'],
     order: index + 1,
     iconName: 'dumbbell',
+    muscleGroup: exercise.muscleGroup,
+    equipment: exercise.equipment,
+    note: exercise.note,
+    supportMedia: exercise.supportMedia,
   }
 }
 
@@ -147,10 +161,10 @@ function createDefaultWeekPlan(): StoredWorkoutPlanItem[] {
 
   return [
     { id: crypto.randomUUID(), title: 'Upper Body Day', date: toIsoDate(addDays(weekStart, 0)), isActive: true, estimatedDurationMin: 44, frequencyWeekly: 4, createdAt: new Date().toISOString() },
-    { id: crypto.randomUUID(), title: 'Lower Body Day', date: toIsoDate(addDays(weekStart, 1)), isActive: true, estimatedDurationMin: 48, frequencyWeekly: 4, createdAt: new Date().toISOString() },
-    { id: crypto.randomUUID(), title: 'Core and Mobility', date: toIsoDate(addDays(weekStart, 2)), isActive: true, estimatedDurationMin: 35, frequencyWeekly: 4, createdAt: new Date().toISOString() },
-    { id: crypto.randomUUID(), title: 'Push Strength', date: toIsoDate(addDays(weekStart, 3)), isActive: true, estimatedDurationMin: 46, frequencyWeekly: 4, createdAt: new Date().toISOString() },
-    { id: crypto.randomUUID(), title: 'Cardio and Recovery', date: toIsoDate(addDays(weekStart, 4)), isActive: true, estimatedDurationMin: 32, frequencyWeekly: 4, createdAt: new Date().toISOString() },
+    { id: crypto.randomUUID(), title: 'Lower Body Day', date: toIsoDate(addDays(weekStart, 1)), isActive: true, estimatedDurationMin: 48, frequencyWeekly: 4, createdAt: new Date().toISOString(), personalNote: 'Priorize amplitude e controle no agachamento.' },
+    { id: crypto.randomUUID(), title: 'Core and Mobility', date: toIsoDate(addDays(weekStart, 2)), isActive: true, estimatedDurationMin: 35, frequencyWeekly: 4, createdAt: new Date().toISOString(), personalNote: 'Faça as transicoes com calma para preservar a tecnica.' },
+    { id: crypto.randomUUID(), title: 'Push Strength', date: toIsoDate(addDays(weekStart, 3)), isActive: true, estimatedDurationMin: 46, frequencyWeekly: 4, createdAt: new Date().toISOString(), personalNote: 'Hoje a meta e manter carga, sem sacrificar execução.' },
+    { id: crypto.randomUUID(), title: 'Cardio and Recovery', date: toIsoDate(addDays(weekStart, 4)), isActive: true, estimatedDurationMin: 32, frequencyWeekly: 4, createdAt: new Date().toISOString(), personalNote: 'Use esta sessão para acelerar recuperação e manter consistencia.' },
   ]
 }
 
@@ -350,6 +364,8 @@ function toWorkoutItems(studentId: string, includeInactive = false): WorkoutPlan
         weekdays: workout.weekdays,
         source: workout.source,
         createdAt: workout.createdAt,
+        exerciseCount: workout.exercises?.length,
+        personalNote: workout.personalNote,
       }
     })
     .sort((left, right) => left.date.localeCompare(right.date))
@@ -472,8 +488,10 @@ export const workoutMockRepository = {
         starsReward: existing.starsReward,
         weekdays: existing.weekdays,
         source: existing.source,
-        createdAt: existing.createdAt,
-      }
+      createdAt: existing.createdAt,
+      exerciseCount: existing.exercises?.length,
+      personalNote: existing.personalNote,
+    }
     }
 
     const nextItem: StoredWorkoutPlanItem = {
@@ -506,6 +524,8 @@ export const workoutMockRepository = {
       weekdays: nextItem.weekdays,
       source: nextItem.source,
       createdAt: nextItem.createdAt,
+      exerciseCount: nextItem.exercises?.length,
+      personalNote: nextItem.personalNote,
     }
   },
   createWorkoutForStudent(input: CreateAssignedWorkoutInput): WorkoutPlanItem {
@@ -539,6 +559,7 @@ export const workoutMockRepository = {
       source: input.source ?? 'manual',
       exercises: normalizedExercises,
       createdAt: new Date().toISOString(),
+      personalNote: 'Treino ajustado para manter o ritmo mesmo fora da rotina completa.',
     }
 
     const plan = getStoredPlan(input.studentId)
@@ -561,6 +582,8 @@ export const workoutMockRepository = {
       weekdays: nextItem.weekdays,
       source: nextItem.source,
       createdAt: nextItem.createdAt,
+      exerciseCount: nextItem.exercises?.length,
+      personalNote: nextItem.personalNote,
     }
   },
   updateAssignedWorkout(input: {
@@ -586,6 +609,8 @@ export const workoutMockRepository = {
       muscleGroup?: string
       equipment?: string
       durationMin?: number
+      note?: string
+      supportMedia?: ExerciseItem['supportMedia']
     }>
   }): WorkoutPlanItem | null {
     const plan = getStoredPlan(input.studentId)
@@ -644,6 +669,7 @@ export const workoutMockRepository = {
             : item.weekdays,
         source: input.source ?? item.source,
         exercises: nextExercises,
+        personalNote: item.personalNote,
       }
     })
 
@@ -714,6 +740,8 @@ export const workoutMockRepository = {
       restSec: 60,
       suggestedLoadKg: Math.max(0, Number((exercise.suggestedLoadKg ?? 0).toFixed(1))),
       durationMin: Math.max(2, Math.round(exercise.durationMin || 6)),
+      note: exercise.note,
+      supportMedia: exercise.supportMedia ?? null,
     }))
   },
   updateExerciseStatus(id: string, status: ExerciseItem['status'], studentId = 'current-user') {

@@ -1,7 +1,7 @@
-import { IonApp } from '@ionic/react'
+import { IonApp } from "@ionic/react";
 
-import { AppProviders } from '@/app/providers'
-import { AppRouter } from '@/app/router'
+import { AppProviders } from "@/app/providers";
+import { AppRouter } from "@/app/router";
 
 export function AppBootstrap() {
   return (
@@ -10,5 +10,5 @@ export function AppBootstrap() {
         <AppRouter />
       </AppProviders>
     </IonApp>
-  )
+  );
 }

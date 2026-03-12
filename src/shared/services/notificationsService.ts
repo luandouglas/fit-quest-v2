@@ -1,17 +1,14 @@
-import { httpClient } from '@/shared/services/http'
 import type { NotificationsInbox } from '@/shared/services/contracts/notifications'
+import { getNotificationsRepository } from '@/shared/services/repositories/notificationsRepositoryFactory'
 
 export const notificationsService = {
   async getInbox(): Promise<NotificationsInbox> {
-    return httpClient.get<NotificationsInbox>('/notifications/inbox')
+    return getNotificationsRepository().getInbox()
   },
   async markAsRead(notificationId: string): Promise<NotificationsInbox> {
-    return httpClient.patch<NotificationsInbox, { notificationId: string }>('/notifications/read', {
-      notificationId,
-    })
+    return getNotificationsRepository().markAsRead(notificationId)
   },
   async markAllAsRead(): Promise<NotificationsInbox> {
-    return httpClient.post<NotificationsInbox>('/notifications/read-all')
+    return getNotificationsRepository().markAllAsRead()
   },
 }
-

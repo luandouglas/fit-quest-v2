@@ -1,1 +1,1 @@
-export * from './AppTabsLayout'
+export * from "../router/layouts/AppTabsLayout";

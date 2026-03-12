@@ -1,8 +1,8 @@
-import { httpClient } from '@/shared/services/http'
 import type { GamificationOverview } from '@/shared/services/contracts/gamification'
+import { getGamificationRepository } from '@/shared/services/repositories/gamificationRepositoryFactory'
 
 export const gamificationService = {
   async getOverview(): Promise<GamificationOverview> {
-    return httpClient.get<GamificationOverview>('/gamification/overview')
+    return getGamificationRepository().getOverview()
   },
 }

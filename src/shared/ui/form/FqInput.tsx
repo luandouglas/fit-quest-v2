@@ -28,8 +28,8 @@ const sizeMap: Record<FqSize, string> = {
 }
 
 const variantMap: Record<FqVariant, string> = {
-  solid: 'border border-transparent bg-muted/80 hover:bg-muted',
-  outline: 'border border-input bg-card shadow-sm',
+  solid: 'border border-transparent bg-muted/80 hover:bg-muted/95',
+  outline: 'border border-input/90 bg-card/90 shadow-[0_8px_18px_rgba(36,49,44,0.04)] backdrop-blur',
   ghost: 'border-transparent bg-transparent',
 }
 
@@ -76,8 +76,8 @@ export function FqInput({
         <input
           id={inputId}
           className={cx(
-            'w-full rounded-xl text-foreground outline-none transition duration-200 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-60',
-            'focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-background',
+            'w-full rounded-[calc(var(--radius)+2px)] text-foreground outline-none transition duration-200 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-60',
+            'focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
             sizeMap[size],
             variantMap[variant],
             toneMap[tone],

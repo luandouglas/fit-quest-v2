@@ -1,4 +1,4 @@
 export * from './AppProviders'
 export * from './AuthProvider'
 export * from './QueryProvider'
-export * from './queryClient'
+export * from '@/app/config/queryClient'

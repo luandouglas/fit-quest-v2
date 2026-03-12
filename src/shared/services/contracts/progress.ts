@@ -22,11 +22,26 @@ export type WorkoutHistoryEntry = {
   totalSets: number
 }
 
+export type ProgressCardioHistoryEntry = {
+  sessionId: string
+  title: string
+  completedAt: string
+  durationSec: number
+  distanceKm: number
+  calories: number
+  paceSecPerKm: number
+  starsEarned: number
+}
+
 export type ProgressWeeklySummary = {
   completedTrainings: number
   targetTrainings: number
   totalDurationMin: number
   averageCompletionPct: number
+  completedRuns: number
+  nutritionConsistencyPct: number
+  waterAdherencePct: number
+  activeDays: number
 }
 
 export type ProgressMetrics = {
@@ -35,6 +50,8 @@ export type ProgressMetrics = {
   workoutsPerWeek: number
   avgWaterMl: number
   estimatedCalories: number
+  heightCm: number
+  bmi: number
 }
 
 export type ProgressMonthSummary = {
@@ -43,6 +60,42 @@ export type ProgressMonthSummary = {
   completedRuns: number
   totalRunKm: number
   hydrationAdherencePct: number
+  nutritionConsistencyPct: number
+  activeDays: number
+}
+
+export type ProgressTrendDirection = 'up' | 'down' | 'stable'
+
+export type ProgressComparisonMetric = {
+  current: number
+  previous: number
+  deltaValue: number
+  deltaPct: number
+  trend: ProgressTrendDirection
+}
+
+export type ProgressBodyMassStatus = 'underweight' | 'healthy' | 'overweight' | 'obesity'
+
+export type ProgressBodyComposition = {
+  heightCm: number
+  bmi: number
+  bmiStatus: ProgressBodyMassStatus
+  latestMeasurements: BodyMeasurements | null
+  previousMeasurements: BodyMeasurements | null
+}
+
+export type ProgressComparisons = {
+  weekly: {
+    workouts: ProgressComparisonMetric
+    cardioSessions: ProgressComparisonMetric
+    nutritionConsistencyPct: ProgressComparisonMetric
+    waterAdherencePct: ProgressComparisonMetric
+  }
+  monthly: {
+    trainingMin: ProgressComparisonMetric
+    cardioDistanceKm: ProgressComparisonMetric
+    activeDays: ProgressComparisonMetric
+  }
 }
 
 export type ProgressStrengthPr = {
@@ -111,6 +164,8 @@ export type ProgressOverview = {
   monthSummary: ProgressMonthSummary
   weeklySummary: ProgressWeeklySummary
   metrics: ProgressMetrics
+  bodyComposition: ProgressBodyComposition
+  comparisons: ProgressComparisons
   strengthPrs: ProgressStrengthPr[]
   strengthWeeklyVolume: ProgressStrengthWeeklyVolume[]
   weightTrend: ProgressWeightTrend
@@ -121,4 +176,5 @@ export type ProgressOverview = {
   weightLogs: ProgressWeightLog[]
   bodyMeasurementLogs: BodyMeasurementLog[]
   recentHistory: WorkoutHistoryEntry[]
+  cardioHistory: ProgressCardioHistoryEntry[]
 }

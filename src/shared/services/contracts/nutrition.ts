@@ -57,9 +57,33 @@ export type NutritionPermissions = {
   hasActiveNutritionist: boolean
   canEditPlan: boolean
   canRegisterConsumption: boolean
+  canAddMealNotes: boolean
+  canUpdateWater: boolean
 }
 
 export type NutritionDaysPayload = {
   daysByDate: NutritionDaysMap
   permissions: NutritionPermissions
+}
+
+export type UpdateNutritionMealStatusInput = {
+  date: string
+  mealId: string
+  status: Meal['status']
+}
+
+export type UpdateNutritionMealNoteInput = {
+  date: string
+  mealId: string
+  note: string
+}
+
+export type AddNutritionWaterEntryInput = {
+  date: string
+  ml: number
+}
+
+export type UpdateNutritionWaterGoalInput = {
+  date: string
+  waterMl: number
 }
