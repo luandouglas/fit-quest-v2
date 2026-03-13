@@ -11,6 +11,7 @@ const srcPath = fileURLToPath(new URL('./src', import.meta.url))
 const isAnalyze = process.env.ANALYZE === 'true'
 
 export default defineConfig({
+  base: '/fit-quest-v2/',
   build: {
     rollupOptions: {
       output: {
