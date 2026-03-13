@@ -31,9 +31,3 @@ export function getFirebaseWebConfig(): FirebaseWebConfig | null {
     measurementId: cleanEnvValue(import.meta.env.VITE_FIREBASE_MEASUREMENT_ID),
   }
 }
-
-export function isFirebaseConfigured() {
-  return getFirebaseWebConfig() !== null
-}
-
-
