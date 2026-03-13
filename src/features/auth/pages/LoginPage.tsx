@@ -222,27 +222,14 @@ export function LoginPage() {
 
               {error ? (
                 <div className="rounded-[calc(var(--radius)+4px)] border border-destructive/30 bg-destructive/8 p-4">
-                  <FqText as="p" className="text-sm font-medium text-destructive">
+                  <FqText
+                    as="p"
+                    className="text-sm font-medium text-destructive"
+                  >
                     {error}
                   </FqText>
                 </div>
               ) : null}
-
-              <div className="rounded-[calc(var(--radius)+4px)] border border-border/70 bg-background/72 p-4">
-                <FqText as="p" className="fq-subtle-label">
-                  {authMode === "firebase" ? "Conta real" : "Modo mock"}
-                </FqText>
-                <FqText as="p" className="mt-2 text-sm text-muted-foreground">
-                  {authMode === "firebase"
-                    ? "Use o e-mail e a senha cadastrados no Firebase Authentication."
-                    : "Use aluno@fitquest.app, personal@fitquest.app ou nutri@fitquest.app."}
-                </FqText>
-                <FqText as="p" className="mt-1 text-xs text-muted-foreground">
-                  {authMode === "firebase"
-                    ? "Se ainda nao tiver conta, crie uma agora no cadastro."
-                    : "Qualquer senha com 6 ou mais caracteres funciona no modo mock."}
-                </FqText>
-              </div>
 
               <p className="pt-5 text-center text-sm text-muted-foreground">
                 Nao tem conta?{" "}
