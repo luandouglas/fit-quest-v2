@@ -38,9 +38,14 @@ function RouteFallback() {
 }
 
 export function AppRouter() {
+  // import.meta.env.BASE_URL é definido pelo Vite de acordo com a config `base`
+  // Em prod: '/fit-quest-v2/' | Em dev: '/'
+  // React Router v5 espera o basename sem trailing slash
+  const basename = import.meta.env.BASE_URL.replace(/\/$/, '') || '/'
+
   return (
     <AppErrorBoundary>
-      <IonReactRouter>
+      <IonReactRouter basename={basename}>
         <Suspense fallback={<RouteFallback />}>
           <IonRouterOutlet>
             <Route exact path={appRoutePaths.root}>
