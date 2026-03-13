@@ -1,5 +1,4 @@
 import { httpClient } from '@/shared/services/http'
-import { getAuthProviderPreference, isFirebaseConfigured } from '@/shared/services/firebase'
 import type {
   CreatePersonalWorkoutInput,
   DeactivatePersonalWorkoutInput,
@@ -14,45 +13,21 @@ import type { BodyMeasurements } from '@/shared/services/contracts/progress'
 import type { RequestStatus } from '@/shared/services/contracts/requests'
 import { personalFirebaseService } from '@/shared/services/personalFirebaseService'
 
-function shouldUseFirebasePersonalService() {
-  return getAuthProviderPreference() === 'firebase' && isFirebaseConfigured()
-}
-
 export const personalService = {
   async getDashboardOverview(): Promise<PersonalDashboardOverview> {
-    if (shouldUseFirebasePersonalService()) {
-      return personalFirebaseService.getDashboardOverview()
-    }
-
-    return httpClient.get<PersonalDashboardOverview>('/personal/dashboard')
+    return personalFirebaseService.getDashboardOverview()
   },
   async createWorkout(input: CreatePersonalWorkoutInput): Promise<PersonalDashboardOverview> {
-    if (shouldUseFirebasePersonalService()) {
-      return personalFirebaseService.createWorkout(input)
-    }
-
-    return httpClient.post<PersonalDashboardOverview, CreatePersonalWorkoutInput>('/personal/workouts', input)
+    return personalFirebaseService.createWorkout(input)
   },
   async updateWorkout(input: UpdatePersonalWorkoutInput): Promise<PersonalDashboardOverview> {
-    if (shouldUseFirebasePersonalService()) {
-      return personalFirebaseService.updateWorkout(input)
-    }
-
-    return httpClient.post<PersonalDashboardOverview, UpdatePersonalWorkoutInput>('/personal/workouts/update', input)
+    return personalFirebaseService.updateWorkout(input)
   },
   async deactivateWorkout(input: DeactivatePersonalWorkoutInput): Promise<PersonalDashboardOverview> {
-    if (shouldUseFirebasePersonalService()) {
-      return personalFirebaseService.deactivateWorkout(input)
-    }
-
-    return httpClient.post<PersonalDashboardOverview, DeactivatePersonalWorkoutInput>('/personal/workouts/deactivate', input)
+    return personalFirebaseService.deactivateWorkout(input)
   },
   async getStudentWorkoutHistory(studentId: string): Promise<PersonalStudentWorkoutHistory> {
-    if (shouldUseFirebasePersonalService()) {
-      return personalFirebaseService.getStudentWorkoutHistory(studentId)
-    }
-
-    return httpClient.get<PersonalStudentWorkoutHistory>('/personal/students/history', { query: { studentId } })
+    return personalFirebaseService.getStudentWorkoutHistory(studentId)
   },
   async generateStudentInviteLink(): Promise<PersonalStudentInviteLink> {
     return httpClient.post<PersonalStudentInviteLink, Record<string, never>>('/personal/students/invite-link', {})

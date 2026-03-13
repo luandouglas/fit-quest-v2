@@ -40,11 +40,6 @@ jobs:
       - name: Build
         run: pnpm build
         env:
-          VITE_AUTH_PROVIDER: ${{ secrets.VITE_AUTH_PROVIDER }}
-          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
-          VITE_HTTP_MOCK: ${{ secrets.VITE_HTTP_MOCK }}
-          VITE_HTTP_LOG: ${{ secrets.VITE_HTTP_LOG }}
-          VITE_STUDENT_DATA_SOURCE: ${{ secrets.VITE_STUDENT_DATA_SOURCE }}
           VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
           VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
           VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}

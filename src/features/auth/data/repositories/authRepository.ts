@@ -1,8 +1,5 @@
 import type { AuthCredentials, AuthRegistrationInput, AuthSession } from '@/shared/types'
-import { getAuthProviderPreference, isFirebaseConfigured } from '@/shared/services/firebase'
-
 import { firebaseAuthRepository } from './firebaseAuthRepository'
-import { mockAuthRepository } from './mockAuthRepository'
 
 export type AuthSessionListener = (session: AuthSession | null) => void
 
@@ -19,15 +16,6 @@ export type AuthRepository = {
   subscribeToSession?: (listener: AuthSessionListener) => () => void
 }
 
-let cachedRepository: AuthRepository | null = null
-
-export function getAuthRepository() {
-  if (cachedRepository) {
-    return cachedRepository
-  }
-
-  const prefersFirebase = getAuthProviderPreference() === 'firebase'
-  cachedRepository = prefersFirebase && isFirebaseConfigured() ? firebaseAuthRepository : mockAuthRepository
-
-  return cachedRepository
+export function getAuthRepository(): AuthRepository {
+  return firebaseAuthRepository
 }

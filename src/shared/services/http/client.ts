@@ -1,7 +1,6 @@
-import { HTTP_TIMEOUT_MS, getHttpBaseUrl, isHttpLogEnabled, isHttpMockEnabled } from './config'
+import { HTTP_TIMEOUT_MS, getHttpBaseUrl, isHttpLogEnabled } from './config'
 import { HttpError } from './errors'
 import { fetchRequest } from './fetchTransport'
-import { mockRequest } from './mockTransport'
 import type { HttpHeaders, HttpMethod, HttpQuery, HttpRequestConfig, HttpRequestContext, HttpResponse } from './types'
 
 export type HttpClientMiddleware = {
@@ -182,9 +181,7 @@ async function request<TResponse, TBody = unknown>(config: HttpRequestConfig<TBo
   const requestContext = await runRequestMiddlewares(buildRequestContext(config))
 
   try {
-    const response = isHttpMockEnabled()
-      ? await mockRequest<TResponse>(requestContext)
-      : await fetchRequest<TResponse>(requestContext)
+    const response = await fetchRequest<TResponse>(requestContext)
 
     if (response.status >= 400) {
       throw new HttpError(`HTTP ${response.status} for ${requestContext.method} ${requestContext.path}`, {

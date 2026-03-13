@@ -20,8 +20,6 @@ export * from './http'
 
 import { authService } from './authService'
 import { profileService } from './profileService'
-import { registerMockHandlers } from './mocks/registerMocks'
 
-registerMockHandlers()
 authService.hydrateHttpToken()
 profileService.hydrateThemeFromStorage()
