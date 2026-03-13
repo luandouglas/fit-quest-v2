@@ -24,7 +24,6 @@ export function LoginPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const { login, clearError, error, status } = useAuth();
-  const authMode = getAuthRepository().mode;
 
   const isDisabled = useMemo(() => {
     return (
