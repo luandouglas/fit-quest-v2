@@ -10,8 +10,10 @@ import { defineConfig } from 'vite'
 const srcPath = fileURLToPath(new URL('./src', import.meta.url))
 const isAnalyze = process.env.ANALYZE === 'true'
 
+const isProduction = process.env.NODE_ENV === 'production'
+
 export default defineConfig({
-  base: '/fit-quest-v2/',
+  base: isProduction ? '/fit-quest-v2/' : '/',
   build: {
     rollupOptions: {
       output: {
