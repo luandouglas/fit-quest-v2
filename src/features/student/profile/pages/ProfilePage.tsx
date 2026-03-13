@@ -56,7 +56,7 @@ function createEmptyForm(): ProfileFormState {
 export function ProfilePage() {
   const history = useHistory()
   const { toast } = useToast()
-  const { isStudent } = useRole()
+  const { isStudent, role } = useRole()
   const notificationsCenter = useNotificationsCenter()
   const {
     uiState,
@@ -70,7 +70,7 @@ export function ProfilePage() {
     isSendingInvite,
     isRespondingInvite,
     relationshipsUiState,
-  } = useProfileHubViewModel(isStudent)
+  } = useProfileHubViewModel(isStudent, isStudent)
   const [form, setForm] = useState<ProfileFormState>(createEmptyForm)
   const [inviteCodeOrId, setInviteCodeOrId] = useState('')
 
@@ -271,20 +271,37 @@ export function ProfilePage() {
         eyebrow="Hub pessoal"
         title="Perfil"
         description="Seu hub pessoal com identidade, configurações, profissionais, sinais do corpo e conquistas da jornada."
-        tags={[
-          {
-            id: 'goal-profile',
-            label: data.hero.goalLabel,
-            tone: 'primary',
-            icon: 'target',
-          },
-          {
-            id: 'streak-profile',
-            label: `${data.hero.streakDays} dias de streak`,
-            tone: 'warning',
-            icon: 'flame',
-          },
-        ]}
+        tags={
+          isStudent
+            ? [
+                {
+                  id: 'goal-profile',
+                  label: data.hero.goalLabel,
+                  tone: 'primary',
+                  icon: 'target',
+                },
+                {
+                  id: 'streak-profile',
+                  label: `${data.hero.streakDays} dias de streak`,
+                  tone: 'warning',
+                  icon: 'flame',
+                },
+              ]
+            : [
+                {
+                  id: 'goal-profile',
+                  label: data.hero.goalLabel,
+                  tone: 'primary',
+                  icon: 'target',
+                },
+                {
+                  id: 'role-profile',
+                  label: role === 'PERSONAL' ? 'Personal trainer' : 'Nutricionista',
+                  tone: 'secondary',
+                  icon: role === 'PERSONAL' ? 'activity' : 'utensils',
+                },
+              ]
+        }
       />
 
       <ProfileHeroCard
@@ -353,10 +370,19 @@ export function ProfilePage() {
         </div>
       ) : null}
 
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-        <ProfileReadOnlyBodyCard progress={data.progress} />
-        <ProfileAchievementsCard achievements={data.achievements} />
-      </div>
+      {isStudent && data.progress ? (
+        <div className="grid gap-4 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+          <ProfileReadOnlyBodyCard progress={data.progress} />
+          <ProfileAchievementsCard achievements={data.achievements} />
+        </div>
+      ) : (
+        <ProfileAccountCard
+          memberSinceLabel={data.account.memberSinceLabel}
+          cityLabel={data.account.cityLabel}
+          gym={data.account.gym}
+          supportCount={data.account.supportCount}
+        />
+      )}
     </section>
   )
 }

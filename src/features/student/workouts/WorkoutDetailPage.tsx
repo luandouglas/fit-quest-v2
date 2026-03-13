@@ -15,10 +15,12 @@ import {
 } from 'lucide-react'
 
 import { studentRoutes } from '@/features/student/routes'
+import { buildCatalogSupportMedia, findPtbrCatalogEntry, loadPtbrExerciseCatalog } from '@/shared/services/exerciseCatalog'
 import { workoutService } from '@/shared/services'
 import { FqAlert, FqButton } from '@/shared/ui'
 import { cx } from '@/shared/utils'
 
+import { ExercisePreviewVisual } from './components/ExercisePreviewVisual'
 import { ExerciseInsightModal } from './components/ExerciseInsightModal'
 
 type WorkoutDetailRouteParams = {
@@ -96,9 +98,23 @@ export function WorkoutDetailPage() {
     queryFn: () => workoutService.getWorkoutDetail(workoutId),
     staleTime: 10_000,
   })
+  const catalogQuery = useQuery({
+    queryKey: ['exercise-catalog', 'ptbr'],
+    queryFn: loadPtbrExerciseCatalog,
+    staleTime: 1000 * 60 * 60,
+  })
 
   const workout = detailQuery.data
-  const selectedExercise = workout?.exercises.find((exercise) => exercise.id === selectedExerciseId) ?? null
+  const exercises = workout?.exercises.map((exercise) => {
+    const catalogEntry = catalogQuery.data ? findPtbrCatalogEntry(exercise, catalogQuery.data) : null
+    const catalogSupportMedia = buildCatalogSupportMedia(exercise, catalogEntry)
+
+    return {
+      ...exercise,
+      supportMedia: exercise.supportMedia ?? catalogSupportMedia,
+    }
+  }) ?? []
+  const selectedExercise = exercises.find((exercise) => exercise.id === selectedExerciseId) ?? null
 
   function startWorkout() {
     history.push(studentRoutes.workoutSession, { workoutId })
@@ -257,13 +273,13 @@ export function WorkoutDetailPage() {
               </div>
 
               <div className="rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
-                {workout.exercises.length} blocos de execucao
+                {exercises.length} blocos de execucao
               </div>
             </div>
           </div>
 
           <div className="space-y-4 px-5 py-5 md:px-6">
-            {workout.exercises.map((exercise) => (
+            {exercises.map((exercise) => (
               <article
                 key={exercise.id}
                 className={cx(
@@ -271,65 +287,57 @@ export function WorkoutDetailPage() {
                   getExerciseStatusClasses(exercise.status),
                 )}
               >
-                <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                  <div className="flex gap-4">
-                    <div className={cx(
-                      'inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-[18px] text-base font-semibold',
-                      exercise.status === 'done'
-                        ? 'bg-primary text-primary-foreground'
-                        : exercise.status === 'current'
-                          ? 'bg-secondary text-secondary-foreground'
-                          : 'bg-muted text-foreground',
-                    )}>
-                      {exercise.order}
+                <div className="grid gap-4 lg:grid-cols-[132px_minmax(0,1fr)] xl:grid-cols-[132px_minmax(0,1fr)_auto] xl:items-start">
+                  <ExercisePreviewVisual
+                    exercise={exercise}
+                    className="h-44 w-full lg:h-[172px] lg:w-[132px]"
+                  />
+
+                  <div className="space-y-3">
+                    <div className="space-y-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h3 className="text-lg font-semibold tracking-tight text-foreground">
+                          {exercise.name}
+                        </h3>
+                        <span className={cx(
+                          'rounded-full px-3 py-1 text-[0.72rem] font-semibold uppercase tracking-[0.18em]',
+                          exercise.status === 'done'
+                            ? 'bg-primary/12 text-primary'
+                            : exercise.status === 'current'
+                              ? 'bg-secondary/14 text-secondary'
+                              : 'bg-muted text-muted-foreground',
+                        )}>
+                          {exercise.status === 'done' ? 'feito' : exercise.status === 'current' ? 'agora' : 'proximo'}
+                        </span>
+                      </div>
+
+                      <p className="text-sm leading-7 text-muted-foreground">
+                        {exercise.note ?? 'Execucao limpa, ritmo constante e descanso respeitado.'}
+                      </p>
                     </div>
 
-                    <div className="space-y-3">
-                      <div className="space-y-1">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <h3 className="text-lg font-semibold tracking-tight text-foreground">
-                            {exercise.name}
-                          </h3>
-                          <span className={cx(
-                            'rounded-full px-3 py-1 text-[0.72rem] font-semibold uppercase tracking-[0.18em]',
-                            exercise.status === 'done'
-                              ? 'bg-primary/12 text-primary'
-                              : exercise.status === 'current'
-                                ? 'bg-secondary/14 text-secondary'
-                                : 'bg-muted text-muted-foreground',
-                          )}>
-                            {exercise.status === 'done' ? 'feito' : exercise.status === 'current' ? 'agora' : 'proximo'}
-                          </span>
-                        </div>
-
-                        <p className="text-sm leading-7 text-muted-foreground">
-                          {exercise.note ?? 'Execucao limpa, ritmo constante e descanso respeitado.'}
-                        </p>
-                      </div>
-
-                      <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2">
+                      <span className="rounded-full bg-white/78 px-3 py-1.5 text-xs font-semibold text-foreground shadow-[0_8px_18px_rgba(36,49,44,0.05)]">
+                        {exercise.sets} series
+                      </span>
+                      <span className="rounded-full bg-white/78 px-3 py-1.5 text-xs font-semibold text-foreground shadow-[0_8px_18px_rgba(36,49,44,0.05)]">
+                        {exercise.reps} reps
+                      </span>
+                      <span className="rounded-full bg-white/78 px-3 py-1.5 text-xs font-semibold text-foreground shadow-[0_8px_18px_rgba(36,49,44,0.05)]">
+                        {formatLoad(exercise.suggestedLoadKg)}
+                      </span>
+                      <span className="rounded-full bg-white/78 px-3 py-1.5 text-xs font-semibold text-foreground shadow-[0_8px_18px_rgba(36,49,44,0.05)]">
+                        {exercise.restSec}s descanso
+                      </span>
+                      {exercise.muscleGroup ? (
                         <span className="rounded-full bg-white/78 px-3 py-1.5 text-xs font-semibold text-foreground shadow-[0_8px_18px_rgba(36,49,44,0.05)]">
-                          {exercise.sets} series
+                          {exercise.muscleGroup}
                         </span>
-                        <span className="rounded-full bg-white/78 px-3 py-1.5 text-xs font-semibold text-foreground shadow-[0_8px_18px_rgba(36,49,44,0.05)]">
-                          {exercise.reps} reps
-                        </span>
-                        <span className="rounded-full bg-white/78 px-3 py-1.5 text-xs font-semibold text-foreground shadow-[0_8px_18px_rgba(36,49,44,0.05)]">
-                          {formatLoad(exercise.suggestedLoadKg)}
-                        </span>
-                        <span className="rounded-full bg-white/78 px-3 py-1.5 text-xs font-semibold text-foreground shadow-[0_8px_18px_rgba(36,49,44,0.05)]">
-                          {exercise.restSec}s descanso
-                        </span>
-                        {exercise.muscleGroup ? (
-                          <span className="rounded-full bg-white/78 px-3 py-1.5 text-xs font-semibold text-foreground shadow-[0_8px_18px_rgba(36,49,44,0.05)]">
-                            {exercise.muscleGroup}
-                          </span>
-                        ) : null}
-                      </div>
+                      ) : null}
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap gap-2 md:justify-end">
+                  <div className="flex flex-wrap gap-2 xl:flex-col xl:items-end">
                     <button
                       type="button"
                       onClick={() => setSelectedExerciseId(exercise.id)}
@@ -347,7 +355,7 @@ export function WorkoutDetailPage() {
                         className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-white/78 px-4 py-2 text-sm font-semibold text-foreground shadow-[0_10px_24px_rgba(36,49,44,0.06)] transition hover:-translate-y-0.5 hover:border-destructive/25 hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       >
                         <PlayCircle className="h-4 w-4" />
-                        Demo
+                        {exercise.supportMedia.label === 'Guia do exercicio' ? 'Guia' : 'Demo'}
                       </a>
                     ) : null}
                   </div>

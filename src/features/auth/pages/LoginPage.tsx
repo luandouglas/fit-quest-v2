@@ -1,6 +1,8 @@
-import { type FormEvent, useMemo, useState } from "react";
+import { type FormEvent, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
+import { getAuthRepository } from "@/features/auth/data";
+import { appRoutePaths } from "@/app/router/routes";
 import { useAuth } from "@/shared/hooks";
 import {
   FqButton,
@@ -21,14 +23,20 @@ export function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const { login, clearError } = useAuth();
+  const { login, clearError, error, status } = useAuth();
+  const authMode = getAuthRepository().mode;
 
   const isDisabled = useMemo(() => {
     return (
       !isEmailValid(email.trim()) ||
-      password.trim().length < MIN_PASSWORD_LENGTH
+      password.trim().length < MIN_PASSWORD_LENGTH ||
+      status === "loading"
     );
-  }, [email, password]);
+  }, [email, password, status]);
+
+  useEffect(() => {
+    clearError();
+  }, [clearError]);
 
   async function handleLogin() {
     if (isDisabled) {
@@ -52,10 +60,10 @@ export function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background px-4 py-4 sm:px-6 sm:py-6">
-      <div className="mx-auto grid min-h-[calc(100vh-2rem)] max-w-6xl overflow-hidden rounded-[38px] border border-border/80 bg-card/76 shadow-[0_28px_70px_rgba(36,49,44,0.14)] backdrop-blur lg:grid-cols-[1.05fr_0.95fr]">
+    <div className="min-h-dvh bg-background px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
+      <div className="mx-auto grid min-h-[calc(100dvh-2rem)] max-w-6xl overflow-visible rounded-[38px] border border-border/80 bg-card/76 shadow-[0_28px_70px_rgba(36,49,44,0.14)] backdrop-blur lg:min-h-[calc(100dvh-4rem)] lg:overflow-hidden lg:grid-cols-[1.02fr_0.98fr]">
         <aside
-          className="relative hidden overflow-hidden border-r border-border/70 px-10 py-10 lg:flex lg:flex-col lg:justify-between"
+          className="relative hidden border-r border-border/70 px-10 py-10 lg:flex lg:flex-col lg:justify-between lg:gap-10 xl:gap-14"
           style={{
             backgroundImage:
               "linear-gradient(180deg, color-mix(in srgb, var(--primary) 14%, var(--card)), color-mix(in srgb, var(--background) 92%, transparent))",
@@ -83,7 +91,7 @@ export function LoginPage() {
               <FqTag tone="primary">Experiencia tranquila</FqTag>
               <FqText
                 as="h1"
-                className="fq-display text-[3.2rem] leading-[0.95] text-foreground"
+                className="fq-display max-w-[11ch] text-[clamp(2.9rem,5vw,4.5rem)] leading-[0.9] text-foreground"
               >
                 Seu treino cabe em uma interface mais calma.
               </FqText>
@@ -132,7 +140,7 @@ export function LoginPage() {
           </div>
         </aside>
 
-        <main className="flex items-center justify-center px-6 py-10 sm:px-8 lg:px-12">
+        <main className="flex items-start justify-center px-6 py-8 sm:px-8 sm:py-10 lg:px-12 lg:py-12">
           <div className="w-full max-w-[430px]">
             <div className="mb-8 flex items-center gap-3 text-primary lg:hidden">
               <span className="inline-flex h-11 w-11 items-center justify-center rounded-[18px] bg-foreground text-background">
@@ -155,7 +163,7 @@ export function LoginPage() {
               <FqTag tone="secondary">Acesso seguro</FqTag>
               <FqText
                 as="h1"
-                className="fq-display text-[2.5rem] leading-[0.98] text-foreground"
+                className="fq-display text-[clamp(2.4rem,4vw,3.2rem)] leading-[0.92] text-foreground"
               >
                 Bem-vindo de volta
               </FqText>
@@ -196,40 +204,50 @@ export function LoginPage() {
               </div>
 
               <div className="pt-1 text-right">
-                <Link
-                  to="/login"
-                  className="text-sm font-medium text-primary hover:underline"
-                >
-                  Esqueceu a senha?
-                </Link>
+                <FqText className="text-sm text-muted-foreground">
+                  Recuperacao de senha em breve.
+                </FqText>
               </div>
 
               <FqButton
                 type="submit"
                 tone="primary"
                 size="lg"
+                isLoading={status === "loading"}
                 isDisabled={isDisabled}
                 className="w-full text-base"
               >
                 Entrar
               </FqButton>
 
+              {error ? (
+                <div className="rounded-[calc(var(--radius)+4px)] border border-destructive/30 bg-destructive/8 p-4">
+                  <FqText as="p" className="text-sm font-medium text-destructive">
+                    {error}
+                  </FqText>
+                </div>
+              ) : null}
+
               <div className="rounded-[calc(var(--radius)+4px)] border border-border/70 bg-background/72 p-4">
                 <FqText as="p" className="fq-subtle-label">
-                  Teste rapido
+                  {authMode === "firebase" ? "Conta real" : "Modo mock"}
                 </FqText>
                 <FqText as="p" className="mt-2 text-sm text-muted-foreground">
-                  aluno@fitquest.app, personal@fitquest.app, nutri@fitquest.app
+                  {authMode === "firebase"
+                    ? "Use o e-mail e a senha cadastrados no Firebase Authentication."
+                    : "Use aluno@fitquest.app, personal@fitquest.app ou nutri@fitquest.app."}
                 </FqText>
                 <FqText as="p" className="mt-1 text-xs text-muted-foreground">
-                  Use qualquer senha com 6 ou mais caracteres.
+                  {authMode === "firebase"
+                    ? "Se ainda nao tiver conta, crie uma agora no cadastro."
+                    : "Qualquer senha com 6 ou mais caracteres funciona no modo mock."}
                 </FqText>
               </div>
 
               <p className="pt-5 text-center text-sm text-muted-foreground">
                 Nao tem conta?{" "}
                 <Link
-                  to="/login"
+                  to={appRoutePaths.signup}
                   className="font-medium text-primary hover:underline"
                 >
                   Cadastre-se

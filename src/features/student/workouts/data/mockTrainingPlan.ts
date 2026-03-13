@@ -62,7 +62,7 @@ export const mockWeek: TrainingPlanDay[] = [
 export const mockExercises: ExerciseItem[] = [
   {
     id: 'bench-press',
-    name: 'Bench Press',
+    name: '1 prancha de supino',
     sets: 4,
     reps: 12,
     restSec: 75,
@@ -76,7 +76,7 @@ export const mockExercises: ExerciseItem[] = [
   },
   {
     id: 'shoulder-press',
-    name: 'Shoulder Press',
+    name: 'Arnold Press Sentado',
     sets: 3,
     reps: 10,
     restSec: 60,
@@ -90,7 +90,7 @@ export const mockExercises: ExerciseItem[] = [
   },
   {
     id: 'tricep-dips',
-    name: 'Tricep Dips',
+    name: 'Extensao de cabo triceps de dois bracos',
     sets: 3,
     reps: 15,
     restSec: 45,
@@ -104,7 +104,7 @@ export const mockExercises: ExerciseItem[] = [
   },
   {
     id: 'lateral-raises',
-    name: 'Lateral Raises',
+    name: 'Elevacao lateral com halteres',
     sets: 3,
     reps: 12,
     restSec: 45,
@@ -118,7 +118,7 @@ export const mockExercises: ExerciseItem[] = [
   },
   {
     id: 'push-ups',
-    name: 'Push-ups',
+    name: 'Flexao (no banco)',
     sets: 3,
     reps: 20,
     restSec: 30,

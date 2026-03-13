@@ -1,4 +1,4 @@
-import { getStudentDataSourcePreference, isFirebaseConfigured } from '@/shared/services/firebase'
+import { getAuthProviderPreference, getStudentDataSourcePreference, isFirebaseConfigured } from '@/shared/services/firebase'
 
 import type { WorkoutRepository } from './workoutRepository'
 import { workoutFirebaseRepository } from './workoutFirebaseRepository'
@@ -11,7 +11,9 @@ export function getWorkoutRepository(): WorkoutRepository {
     return cachedRepository
   }
 
-  const prefersFirebase = getStudentDataSourcePreference() === 'firebase'
+  const prefersFirebase =
+    getStudentDataSourcePreference() === 'firebase' ||
+    getAuthProviderPreference() === 'firebase'
   cachedRepository = prefersFirebase && isFirebaseConfigured() ? workoutFirebaseRepository : workoutMockRepositoryAdapter
   return cachedRepository
 }

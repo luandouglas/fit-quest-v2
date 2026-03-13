@@ -3167,6 +3167,7 @@ function createPersonalAssignedWorkouts(personalId: string): PersonalAssignedWor
           muscleGroup: exercise.muscleGroup,
           equipment: exercise.equipment,
           durationMin: exercise.durationMin,
+          supportMedia: exercise.supportMedia ?? null,
         })),
         createdAt: workout.createdAt ?? new Date().toISOString(),
       })
@@ -3207,6 +3208,7 @@ function createPersonalAssignedWorkouts(personalId: string): PersonalAssignedWor
         muscleGroup: exercise.muscleGroup,
         equipment: exercise.equipment,
         durationMin: exercise.durationMin,
+        supportMedia: exercise.supportMedia ?? null,
       })),
       createdAt: workout.createdAt ?? new Date().toISOString(),
     })
@@ -5245,6 +5247,7 @@ export function registerMockHandlers() {
           typeof exercise.durationMin === 'number'
             ? Math.max(2, Math.round(exercise.durationMin))
             : undefined,
+        supportMedia: exercise.supportMedia ?? null,
       })),
     })
 
@@ -5278,6 +5281,7 @@ export function registerMockHandlers() {
         muscleGroup?: string
         equipment?: string
         durationMin?: number
+        supportMedia?: CreatePersonalWorkoutInput['exercises'][number]['supportMedia']
       }>
     }
 
@@ -5340,6 +5344,7 @@ export function registerMockHandlers() {
           typeof exercise.durationMin === 'number'
             ? Math.max(2, Math.round(exercise.durationMin))
             : undefined,
+        supportMedia: exercise.supportMedia ?? null,
       })),
     })
 

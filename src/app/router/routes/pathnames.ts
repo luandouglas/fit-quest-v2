@@ -1,6 +1,7 @@
 export const appRoutePaths = {
   root: "/",
   login: "/login",
+  signup: "/signup",
   landing: "/landing",
   components: "/components",
   tabs: "/tabs",

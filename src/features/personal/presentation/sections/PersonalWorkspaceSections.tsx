@@ -19,6 +19,7 @@ import type {
   PersonalWorkoutIntensity,
   PersonalWorkoutWeekday,
 } from "@/shared/services/contracts/personal";
+import type { WorkoutSupportMedia } from "@/shared/services/contracts/workout";
 import { PersonalWorkoutWizardCard } from "@/features/personal/components/PersonalWorkoutWizardCard";
 import { usePersonalDashboard } from "../../hooks/usePersonalDashboard";
 
@@ -128,6 +129,7 @@ type EditableWorkoutExercise = {
   muscleGroup?: string;
   equipment?: string;
   durationMin: number;
+  supportMedia?: WorkoutSupportMedia | null;
 };
 
 function clamp(value: number, min: number, max: number) {
@@ -429,6 +431,7 @@ export function PersonalWorkspaceSections({
         muscleGroup: exercise.muscleGroup,
         equipment: exercise.equipment,
         durationMin: clamp(Math.round(exercise.durationMin ?? 6), 2, 30),
+        supportMedia: exercise.supportMedia ?? null,
       }));
     }
 
@@ -662,6 +665,7 @@ export function PersonalWorkspaceSections({
             ? exercise.equipment.trim()
             : undefined,
           durationMin: exercise.durationMin,
+          supportMedia: exercise.supportMedia ?? null,
         })),
       });
       toast({
@@ -1171,6 +1175,7 @@ export function PersonalWorkspaceSections({
               <PersonalWorkoutWizardCard
                 onCreateWorkout={createWorkout}
                 isCreatingWorkout={isCreatingWorkout}
+                studentOptions={studentOptions}
                 onCreated={() => setIsCreatingWorkoutFlow(false)}
               />
             </div>

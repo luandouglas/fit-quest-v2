@@ -12,6 +12,7 @@ import type {
   WorkoutSession,
   WorkoutSessionSummary,
 } from '@/shared/services/contracts/workout'
+import { deriveWorkoutMuscleGroups } from '@/shared/utils/exerciseFocus'
 
 import type { WorkoutRepository } from './workoutRepository'
 import { workoutMockRepository } from './workoutMockRepository'
@@ -87,17 +88,6 @@ function decorateExercise(exercise: WorkoutExercise): WorkoutExercise {
   return {
     ...exercise,
     note: exercise.note ?? 'Controle a execução e registre percepção de esforço ao concluir.',
-    supportMedia:
-      exercise.supportMedia ??
-      (exercise.order === 1
-        ? {
-            id: `${exercise.id}-preview`,
-            type: 'video',
-            url: 'https://example.com/workout-preview',
-            label: 'Demonstração técnica',
-            durationSec: 24,
-          }
-        : null),
   }
 }
 
@@ -349,14 +339,18 @@ export const workoutMockRepositoryAdapter: WorkoutRepository = {
           ? 100
           : 0
 
+    const exercises = getWorkoutExercises(studentId, workoutId)
+    const muscleGroups = deriveWorkoutMuscleGroups(exercises, workout.muscleGroups)
+
     return {
       ...workout,
-      focusLabel: workout.muscleGroups?.join(' • ') ?? 'Treino de força',
-      personalNote: workout.personalNote ?? getDefaultPersonalNote(workout),
+      muscleGroups,
+      focusLabel: muscleGroups.length > 0 ? muscleGroups.join(' • ') : 'Treino de força',
+      personalNote: workout.personalNote ?? getDefaultPersonalNote({ ...workout, muscleGroups }),
       adherencePct,
       completionCount: completedSessions,
       scheduledWindowLabel: getPlanWindowLabel(workout.date),
-      exercises: getWorkoutExercises(studentId, workoutId),
+      exercises,
       recentHistory: history.slice(0, 4),
     }
   },

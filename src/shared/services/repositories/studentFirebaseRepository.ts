@@ -39,6 +39,7 @@ import type {
   WaterProgress,
   WorkoutDay,
 } from '@/shared/services/contracts/student'
+import type { WorkoutDetail, WorkoutSession, WorkoutWeekday } from '@/shared/services/contracts/workout'
 
 import type { StudentDashboardQuery, StudentRepository } from './studentRepository'
 import {
@@ -50,6 +51,8 @@ import {
 type FirestoreStudentPreferencesDocument = {
   preferences: ProfilePreferences
 }
+
+type FirestoreWorkoutPlanDocument = WorkoutDetail
 
 function getDb() {
   const db = getFirebaseFirestore()
@@ -147,6 +150,71 @@ function buildNutritionPlan(day: NutritionDay): NutritionDayPlan {
       rewardStars: meal.status === 'done' ? 3 : 0,
     })),
   }
+}
+
+function buildWorkoutCompletionPct(plan: FirestoreWorkoutPlanDocument, activeSession: WorkoutSession | null) {
+  if (!activeSession || activeSession.workoutId !== plan.id) {
+    return plan.adherencePct
+  }
+
+  const totalSets = activeSession.exercises.reduce((total, exercise) => total + exercise.sets, 0)
+  const completedSets = activeSession.exercises.reduce(
+    (total, exercise) => total + Math.min(activeSession.setsDoneByExerciseId[exercise.id] ?? 0, exercise.sets),
+    0,
+  )
+
+  return totalSets > 0 ? Math.round((completedSets / totalSets) * 100) : 0
+}
+
+function buildWorkoutDayFromPlan(
+  date: string,
+  plan: FirestoreWorkoutPlanDocument,
+  activeSession: WorkoutSession | null,
+): WorkoutDay {
+  const isActiveSession = activeSession?.workoutId === plan.id
+  const completionPct = buildWorkoutCompletionPct(plan, activeSession)
+
+  return {
+    id: plan.id,
+    date,
+    title: plan.title,
+    focus: plan.focusLabel || 'Treino do dia',
+    status: isActiveSession ? workoutDayStatuses.inProgress : plan.status === 'completed' ? workoutDayStatuses.completed : workoutDayStatuses.scheduled,
+    estimatedDurationMin: plan.estimatedDurationMin,
+    completionPct,
+    rewardStars: plan.starsReward ?? 0,
+    coachNote: plan.personalNote,
+    exercises: plan.exercises.map((exercise) => {
+      const completedSets = activeSession && activeSession.workoutId === plan.id
+        ? Math.min(activeSession.setsDoneByExerciseId[exercise.id] ?? 0, exercise.sets)
+        : 0
+      const status =
+        plan.status === 'completed'
+          ? 'completed'
+          : isActiveSession
+            ? completedSets >= exercise.sets
+              ? 'completed'
+              : activeSession.currentExerciseId === exercise.id
+                ? 'current'
+                : 'pending'
+            : 'pending'
+
+      return {
+        id: exercise.id,
+        name: exercise.name,
+        group: exercise.muscleGroup ?? 'Treino geral',
+        sets: exercise.sets,
+        reps: exercise.reps,
+        restSec: exercise.restSec,
+        suggestedLoadKg: exercise.suggestedLoadKg ?? 0,
+        status,
+      }
+    }),
+  }
+}
+
+function getWeekdayLabel(date: string): WorkoutWeekday {
+  return ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'][new Date(`${date}T12:00:00`).getDay()] as WorkoutWeekday
 }
 
 function buildWaterProgressFromDay(day: NutritionDay): WaterProgress {
@@ -499,7 +567,41 @@ export const studentFirebaseRepository: StudentRepository = {
   async getWorkoutDay(date: string): Promise<WorkoutDay | null> {
     const studentId = resolveStudentId()
     const snapshot = await getDoc(studentDoc<WorkoutDay>(studentId, 'workoutDays', date))
-    return snapshot.exists() ? snapshot.data() : null
+
+    if (snapshot.exists()) {
+      return snapshot.data()
+    }
+
+    const [workoutPlansSnapshot, activeSessionSnapshot] = await Promise.all([
+      getDocs(studentCollection<FirestoreWorkoutPlanDocument>(studentId, 'workoutPlans')),
+      getDoc(studentDoc<WorkoutSession>(studentId, 'workoutSessions', 'active')),
+    ])
+
+    if (workoutPlansSnapshot.empty) {
+      return null
+    }
+
+    const activeSession = activeSessionSnapshot.exists() ? activeSessionSnapshot.data() : null
+    const weekday = getWeekdayLabel(date)
+    const plans = workoutPlansSnapshot.docs
+      .map((entry) => entry.data())
+      .filter(
+        (plan) =>
+          plan.isActive !== false &&
+          date >= plan.date &&
+          ((plan.weekdays?.length ? plan.weekdays.includes(weekday) : plan.date === date)),
+      )
+
+    if (!plans.length) {
+      return null
+    }
+
+    const selectedPlan =
+      plans.find((plan) => activeSession?.workoutId === plan.id) ??
+      plans.find((plan) => plan.status !== 'completed') ??
+      plans[0]
+
+    return selectedPlan ? buildWorkoutDayFromPlan(date, selectedPlan, activeSession) : null
   },
   async getCardioSession(date: string): Promise<CardioSession | null> {
     const studentId = resolveStudentId()

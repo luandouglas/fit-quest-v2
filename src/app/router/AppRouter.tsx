@@ -12,7 +12,7 @@ import {
   RoleGuard,
 } from "@/app/router/guards/Guards";
 import { TabsShellResolver } from "@/app/router/layouts";
-import { LoginScreen } from "@/features/auth";
+import { LoginScreen, SignUpScreen } from "@/features/auth";
 import { studentRoutes } from "@/features/student/routes";
 import { AppErrorBoundary } from "@/shared/ui";
 
@@ -60,6 +60,12 @@ export function AppRouter() {
             <Route path={appRoutePaths.login} exact>
               <PublicOnlyRoute>
                 <LoginScreen />
+              </PublicOnlyRoute>
+            </Route>
+
+            <Route path={appRoutePaths.signup} exact>
+              <PublicOnlyRoute>
+                <SignUpScreen />
               </PublicOnlyRoute>
             </Route>
 

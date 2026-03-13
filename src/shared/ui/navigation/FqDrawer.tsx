@@ -11,7 +11,7 @@ type FqDrawerProps = FqBaseProps & {
   onOpenChange: (open: boolean) => void
   title?: string
   description?: string
-  side?: 'left' | 'right'
+  side?: 'left' | 'right' | 'bottom'
   children: ReactNode
 }
 
@@ -22,42 +22,47 @@ export function FqDrawer({
   description,
   side = 'left',
   className,
-  
   testId,
   children,
 }: FqDrawerProps) {
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-40 bg-zinc-900/50 backdrop-blur-sm" />
+        <Dialog.Overlay className="fixed inset-0 z-40 bg-foreground/20 backdrop-blur-sm" />
         <Dialog.Content
           className={cx(
-            'fixed top-0 z-50 h-full w-[min(420px,88vw)] border-zinc-200 bg-white p-4 shadow-2xl',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
-            side === 'left' ? 'left-0 border-r' : 'right-0 border-l',
+            'fixed z-50 flex border border-border bg-card p-4 shadow-2xl transition-transform duration-300 ease-out',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+            side === 'left' && 'left-0 top-0 h-full w-[min(420px,88vw)] border-r data-[state=closed]:-translate-x-full data-[state=open]:translate-x-0',
+            side === 'right' && 'right-0 top-0 h-full w-[min(420px,88vw)] border-l data-[state=closed]:translate-x-full data-[state=open]:translate-x-0',
+            side === 'bottom' &&
+              'bottom-0 left-0 right-0 mx-auto h-[min(82vh,760px)] w-full max-w-2xl rounded-t-[28px] border-x border-t data-[state=closed]:translate-y-full data-[state=open]:translate-y-0',
             className,
           )}
-         
           data-testid={testId}
         >
-          <header className="mb-4 flex items-start justify-between gap-3 border-b border-zinc-100 pb-3">
-            <div>
-              {title ? (
-                <Dialog.Title className="text-base font-semibold text-zinc-900">
-                  {title}
-                </Dialog.Title>
-              ) : null}
-              {description ? (
-                <Dialog.Description className="text-sm text-zinc-500">
-                  {description}
-                </Dialog.Description>
-              ) : null}
-            </div>
-            <Dialog.Close asChild>
-              <FqIconButton icon="x" label="Fechar drawer" />
-            </Dialog.Close>
-          </header>
-          <div className="h-[calc(100%-4rem)] overflow-y-auto">{children}</div>
+          <div className="flex h-full w-full flex-col">
+            {side === 'bottom' ? <div className="mx-auto mb-3 h-1.5 w-14 rounded-full bg-border" /> : null}
+
+            <header className="mb-4 flex items-start justify-between gap-3 border-b border-border/70 pb-3">
+              <div>
+                {title ? (
+                  <Dialog.Title className="text-base font-semibold text-foreground">
+                    {title}
+                  </Dialog.Title>
+                ) : null}
+                {description ? (
+                  <Dialog.Description className="text-sm text-muted-foreground">
+                    {description}
+                  </Dialog.Description>
+                ) : null}
+              </div>
+              <Dialog.Close asChild>
+                <FqIconButton icon="x" label="Fechar drawer" />
+              </Dialog.Close>
+            </header>
+            <div className="flex-1 overflow-y-auto">{children}</div>
+          </div>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

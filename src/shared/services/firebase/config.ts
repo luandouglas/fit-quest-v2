@@ -36,6 +36,24 @@ export function isFirebaseConfigured() {
   return getFirebaseWebConfig() !== null
 }
 
+export function getAuthProviderPreference() {
+  const requested = cleanEnvValue(import.meta.env.VITE_AUTH_PROVIDER)
+
+  if (requested === 'mock') {
+    return 'mock' as const
+  }
+
+  if (requested === 'firebase') {
+    return 'firebase' as const
+  }
+
+  if (import.meta.env.MODE === 'test') {
+    return 'mock' as const
+  }
+
+  return isFirebaseConfigured() ? ('firebase' as const) : ('mock' as const)
+}
+
 export function getStudentDataSourcePreference() {
   const requested = cleanEnvValue(import.meta.env.VITE_STUDENT_DATA_SOURCE)
 

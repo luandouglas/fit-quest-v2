@@ -79,9 +79,14 @@ export function useTrainingPlanState() {
   const data = planQuery.data
   const allWorkouts = data?.workouts ?? []
   const week = data?.week ?? []
+  const firstAvailableDate =
+    week.find((day) => day.isToday && allWorkouts.some((workout) => workout.date === day.date))?.date ??
+    allWorkouts[0]?.date ??
+    week.find((day) => day.isToday)?.date ??
+    week[0]?.date ??
+    null
   const selectedDate =
-    selectedDateOverride ??
-    (week.length ? week.find((day) => day.isToday)?.date ?? week[0].date : null)
+    selectedDateOverride ?? firstAvailableDate
   const selectedDay = week.find((day) => day.date === selectedDate) ?? null
   const selectedDateWorkouts = useMemo(() => {
     if (!selectedDate) {

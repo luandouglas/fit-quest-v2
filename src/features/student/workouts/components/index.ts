@@ -1,4 +1,5 @@
 export * from './DesktopSummaryPanel'
+export * from './ExercisePreviewVisual'
 export * from './ExerciseList'
 export * from './ExerciseRow'
 export * from './TodayWorkoutHero'

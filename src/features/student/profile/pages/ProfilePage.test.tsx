@@ -19,13 +19,15 @@ import { FqToastProvider } from '@/shared/ui'
 
 import { ProfilePage } from './ProfilePage'
 
+let mockRole: 'STUDENT' | 'PERSONAL' | 'NUTRITIONIST' = 'STUDENT'
+
 vi.mock('@/shared/hooks', () => ({
   useRole: () => ({
-    role: 'STUDENT',
-    isStudent: true,
-    isPersonal: false,
-    isNutritionist: false,
-    hasRole: (roles: Array<'STUDENT' | 'PERSONAL' | 'NUTRITIONIST'>) => roles.includes('STUDENT'),
+    role: mockRole,
+    isStudent: mockRole === 'STUDENT',
+    isPersonal: mockRole === 'PERSONAL',
+    isNutritionist: mockRole === 'NUTRITIONIST',
+    hasRole: (roles: Array<'STUDENT' | 'PERSONAL' | 'NUTRITIONIST'>) => roles.includes(mockRole),
   }),
   useAuth: () => ({
     updateUser: vi.fn(),
@@ -317,6 +319,7 @@ function renderPage() {
 
 describe('ProfilePage', () => {
   afterEach(() => {
+    mockRole = 'STUDENT'
     vi.restoreAllMocks()
   })
 
@@ -338,5 +341,21 @@ describe('ProfilePage', () => {
     expect(screen.getByText('Coach Diego')).toBeInTheDocument()
     expect(screen.getByText('Conquistas em destaque')).toBeInTheDocument()
     expect(screen.getAllByText('Primeiro treino concluido').length).toBeGreaterThan(0)
+  })
+
+  it('renders profile page for personal role without depending on student hub data', async () => {
+    mockRole = 'PERSONAL'
+
+    vi.spyOn(profileService, 'getProfile').mockResolvedValue(profileFixture)
+    vi.spyOn(notificationsService, 'getInbox').mockResolvedValue(notificationsFixture)
+    vi.spyOn(notificationsPushRuntimeService, 'getState').mockResolvedValue(pushStateFixture)
+
+    renderPage()
+
+    await screen.findByRole('heading', { name: 'Perfil' })
+
+    expect(screen.getByText('Personal trainer')).toBeInTheDocument()
+    expect(screen.getByDisplayValue('Luan Douglas')).toBeInTheDocument()
+    expect(screen.getByText('Historico da conta')).toBeInTheDocument()
   })
 })

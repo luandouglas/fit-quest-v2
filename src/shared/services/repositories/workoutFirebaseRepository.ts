@@ -82,6 +82,76 @@ function addDays(date: Date, days: number) {
   return nextDate
 }
 
+function getWeekdayLabel(date: Date): NonNullable<WorkoutPlanItem['weekdays']>[number] {
+  return ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'][date.getDay()] as NonNullable<WorkoutPlanItem['weekdays']>[number]
+}
+
+function resolveWorkoutOccurrenceStatus(
+  plan: FirestoreWorkoutPlanDocument,
+  date: string,
+  history: WorkoutSessionSummary[],
+  todayKey: string,
+): WorkoutPlanItem['status'] {
+  const wasCompletedOnDate = history.some(
+    (entry) => entry.workoutId === plan.id && toIsoDate(new Date(entry.completedAt)) === date,
+  )
+
+  if (wasCompletedOnDate) {
+    return 'completed'
+  }
+
+  if (date < todayKey) {
+    return 'late'
+  }
+
+  return 'pending'
+}
+
+function expandPlanDocumentsToWeek(
+  planDocuments: FirestoreWorkoutPlanDocument[],
+  history: WorkoutSessionSummary[],
+): WorkoutPlanItem[] {
+  const weekStart = startOfWeek(new Date())
+  const todayKey = toIsoDate(new Date())
+
+  return planDocuments
+    .flatMap((plan) => {
+      if (plan.isActive === false) {
+        return []
+      }
+
+      const weekdays = plan.weekdays?.length ? plan.weekdays : null
+      const dates = weekdays
+        ? Array.from({ length: 7 }, (_, index) => addDays(weekStart, index))
+            .filter((date) => weekdays.includes(getWeekdayLabel(date)))
+            .map((date) => toIsoDate(date))
+            .filter((date) => date >= plan.date)
+        : [plan.date]
+
+      return dates.map((date) => ({
+        id: plan.id,
+        title: plan.title,
+        description: plan.description,
+        date,
+        status: resolveWorkoutOccurrenceStatus(plan, date, history, todayKey),
+        isActive: plan.isActive,
+        estimatedDurationMin: plan.estimatedDurationMin,
+        isQuickWorkout: plan.isQuickWorkout,
+        frequencyWeekly: plan.frequencyWeekly,
+        assignedByPersonalId: plan.assignedByPersonalId,
+        muscleGroups: plan.muscleGroups,
+        intensity: plan.intensity,
+        starsReward: plan.starsReward,
+        weekdays: plan.weekdays,
+        source: plan.source,
+        createdAt: plan.createdAt,
+        exerciseCount: plan.exercises.length,
+        personalNote: plan.personalNote,
+      }))
+    })
+    .sort((left, right) => left.date.localeCompare(right.date) || left.title.localeCompare(right.title))
+}
+
 function calculateWorkoutStreak(history: WorkoutSessionSummary[]) {
   const uniqueDates = new Set(history.map((entry) => toIsoDate(new Date(entry.completedAt))))
   let streak = 0
@@ -112,20 +182,28 @@ function getWeeklyCompletedWorkouts(history: WorkoutSessionSummary[], completedA
 
 function toTrainingWeek(workouts: WorkoutPlanItem[]): TrainingPlanDay[] {
   const weekStart = startOfWeek(new Date())
-  const workoutByDate = new Map(workouts.map((workout) => [workout.date, workout]))
   const todayKey = toIsoDate(new Date())
 
   return Array.from({ length: 7 }, (_, index) => {
     const date = toIsoDate(addDays(weekStart, index))
-    const workout = workoutByDate.get(date)
+    const dayWorkouts = workouts.filter((workout) => workout.date === date)
+    const hasWorkout = dayWorkouts.length > 0
+    const isCompleted = hasWorkout && dayWorkouts.every((workout) => workout.status === 'completed')
+    const status = !hasWorkout
+      ? 'rest'
+      : isCompleted
+        ? 'completed'
+        : dayWorkouts.some((workout) => workout.status === 'late')
+          ? 'late'
+          : 'pending'
 
     return {
       date,
       weekday: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'][index] ?? 'Seg',
       isToday: date === todayKey,
-      isCompleted: workout?.status === 'completed',
-      hasWorkout: Boolean(workout),
-      status: workout?.status ?? 'rest',
+      isCompleted,
+      hasWorkout,
+      status,
     }
   })
 }
@@ -210,26 +288,7 @@ export const workoutFirebaseRepository: WorkoutRepository = {
       this.getWorkoutHistory(),
     ])
 
-    const workouts = planDocuments.map((plan) => ({
-      id: plan.id,
-      title: plan.title,
-      description: plan.description,
-      date: plan.date,
-      status: plan.status,
-      isActive: plan.isActive,
-      estimatedDurationMin: plan.estimatedDurationMin,
-      isQuickWorkout: plan.isQuickWorkout,
-      frequencyWeekly: plan.frequencyWeekly,
-      assignedByPersonalId: plan.assignedByPersonalId,
-      muscleGroups: plan.muscleGroups,
-      intensity: plan.intensity,
-      starsReward: plan.starsReward,
-      weekdays: plan.weekdays,
-      source: plan.source,
-      createdAt: plan.createdAt,
-      exerciseCount: plan.exercises.length,
-      personalNote: plan.personalNote,
-    }))
+    const workouts = expandPlanDocumentsToWeek(planDocuments, history)
     const todayWorkout = buildTodayWorkout(workouts, activeSession)
     const todayDetail = todayWorkout.workoutId
       ? planDocuments.find((plan) => plan.id === todayWorkout.workoutId) ?? null

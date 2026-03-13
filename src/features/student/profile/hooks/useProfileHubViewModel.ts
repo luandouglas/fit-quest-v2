@@ -15,7 +15,14 @@ function toIsoDate(date: Date) {
 }
 
 function formatMemberSince(value: string) {
-  return new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(new Date(`${value}T00:00:00`))
+  const normalizedValue = value.includes('T') ? value : `${value}T00:00:00`
+  const parsedDate = new Date(normalizedValue)
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return 'data indisponivel'
+  }
+
+  return new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(parsedDate)
 }
 
 function goalLabel(goal: 'lose_weight' | 'gain_muscle' | 'maintenance' | 'performance') {
@@ -34,14 +41,26 @@ function goalLabel(goal: 'lose_weight' | 'gain_muscle' | 'maintenance' | 'perfor
   return 'Manutencao'
 }
 
-export function useProfileHubViewModel(enabledRelationships = true) {
+export function useProfileHubViewModel(enabledRelationships = true, enabledStudentContext = true) {
   const today = useMemo(() => toIsoDate(new Date()), [])
   const profileQuery = useProfileSettings()
-  const studentHubQuery = useStudentHub(today)
-  const progressQuery = useProgressOverview('30d')
+  const studentHubQuery = useStudentHub(today, enabledStudentContext)
+  const progressQuery = useProgressOverview('30d', enabledStudentContext)
   const relationshipsQuery = useStudentRelationships(enabledRelationships)
 
   const uiState = useMemo(() => {
+    if (!enabledStudentContext) {
+      if (profileQuery.uiState === 'loading') {
+        return 'loading' as const
+      }
+
+      if (profileQuery.uiState === 'error') {
+        return 'error' as const
+      }
+
+      return profileQuery.profile ? 'ready' as const : 'empty' as const
+    }
+
     if (
       profileQuery.uiState === 'loading' ||
       studentHubQuery.uiState === 'loading' ||
@@ -70,9 +89,42 @@ export function useProfileHubViewModel(enabledRelationships = true) {
     progressQuery.uiState,
     studentHubQuery.dashboard,
     studentHubQuery.uiState,
+    enabledStudentContext,
   ])
 
   const data = useMemo(() => {
+    if (!profileQuery.profile) {
+      return null
+    }
+
+    if (!enabledStudentContext) {
+      const profile = profileQuery.profile
+
+      return {
+        profile,
+        dashboard: null,
+        progress: null,
+        relationships: relationshipsQuery.overview,
+        achievements: [],
+        hero: {
+          name: profile.name,
+          avatarUrl: undefined,
+          goalLabel: goalLabel(profile.goal),
+          level: 0,
+          stars: 0,
+          streakDays: 0,
+          headline: 'Centralize seus dados e preferências do app em um só lugar.',
+        },
+        account: {
+          memberSinceLabel: formatMemberSince(today),
+          cityLabel: `${profile.city}, ${profile.neighborhood}`,
+          gym: profile.gym,
+          supportCount: 0,
+        },
+        physicalSummary: null,
+      }
+    }
+
     if (!profileQuery.profile || !studentHubQuery.dashboard || !progressQuery.overview) {
       return null
     }
@@ -124,12 +176,14 @@ export function useProfileHubViewModel(enabledRelationships = true) {
         heightCm: progress.bodyComposition.heightCm,
       },
     }
-  }, [profileQuery.profile, progressQuery.overview, relationshipsQuery.overview, studentHubQuery.dashboard])
+  }, [enabledStudentContext, profileQuery.profile, progressQuery.overview, relationshipsQuery.overview, studentHubQuery.dashboard, today])
 
   return {
     uiState,
     data,
-    error: profileQuery.error ?? studentHubQuery.error ?? progressQuery.error ?? relationshipsQuery.error,
+    error: enabledStudentContext
+      ? profileQuery.error ?? studentHubQuery.error ?? progressQuery.error ?? relationshipsQuery.error
+      : profileQuery.error ?? relationshipsQuery.error,
     refresh: async () => {
       await Promise.all([
         profileQuery.refresh(),

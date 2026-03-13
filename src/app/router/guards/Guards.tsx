@@ -12,6 +12,18 @@ type RoleGuardProps = GuardProps & {
   fallbackTo?: string
 }
 
+function AuthGuardLoader() {
+  return (
+    <div
+      className="flex min-h-[40vh] items-center justify-center px-6 text-sm text-muted-foreground"
+      role="status"
+      aria-live="polite"
+    >
+      Carregando sessao...
+    </div>
+  )
+}
+
 export function getDefaultTabsPathByRole(role: AuthUserRole) {
   if (role === 'PERSONAL') {
     return '/tabs/personal/dashboard'
@@ -25,7 +37,11 @@ export function getDefaultTabsPathByRole(role: AuthUserRole) {
 }
 
 export function PrivateRoute({ children }: GuardProps) {
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, status } = useAuth()
+
+  if (status === 'loading') {
+    return <AuthGuardLoader />
+  }
 
   if (!isAuthenticated) {
     return <Redirect to="/login" />
@@ -35,8 +51,12 @@ export function PrivateRoute({ children }: GuardProps) {
 }
 
 export function PublicOnlyRoute({ children }: GuardProps) {
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, status } = useAuth()
   const { role } = useRole()
+
+  if (status === 'loading') {
+    return <AuthGuardLoader />
+  }
 
   if (isAuthenticated) {
     return <Redirect to={getDefaultTabsPathByRole(role)} />
@@ -46,8 +66,12 @@ export function PublicOnlyRoute({ children }: GuardProps) {
 }
 
 export function RoleGuard({ children, allowedRoles, fallbackTo }: RoleGuardProps) {
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, status } = useAuth()
   const { role, hasRole } = useRole()
+
+  if (status === 'loading') {
+    return <AuthGuardLoader />
+  }
 
   if (!isAuthenticated) {
     return <Redirect to="/login" />

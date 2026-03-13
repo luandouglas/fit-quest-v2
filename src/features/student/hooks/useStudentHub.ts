@@ -9,14 +9,15 @@ import { studentQueryKeys } from './queryKeys'
 
 export type StudentHubUiState = 'loading' | 'ready' | 'empty' | 'error'
 
-export function useStudentHub(date: string) {
+export function useStudentHub(date: string, enabled = true) {
   const queryClient = useQueryClient()
 
   const query = useQuery({
     queryKey: studentQueryKeys.dashboard(date),
     queryFn: () => studentService.getDashboard({ date }),
+    enabled,
     staleTime: 10_000,
-    refetchInterval: 20_000,
+    refetchInterval: enabled ? 20_000 : false,
     refetchOnWindowFocus: true,
   })
 
@@ -35,6 +36,10 @@ export function useStudentHub(date: string) {
   })
 
   const uiState: StudentHubUiState = useMemo(() => {
+    if (!enabled) {
+      return 'empty'
+    }
+
     if (query.isPending) {
       return 'loading'
     }
@@ -48,7 +53,7 @@ export function useStudentHub(date: string) {
     }
 
     return 'ready'
-  }, [query.data, query.isError, query.isPending])
+  }, [enabled, query.data, query.isError, query.isPending])
 
   return {
     dashboard: query.data ?? null,

@@ -24,6 +24,7 @@ import type {
   CreatePersonalWorkoutInput,
   PersonalWorkoutIntensity,
 } from "@/shared/services/contracts/personal";
+import type { WorkoutSupportMedia } from "@/shared/services/contracts/workout";
 import {
   classifyExercises,
   createExercisePrescription,
@@ -48,11 +49,13 @@ type WorkoutExerciseDraft = {
   suggestedLoadKg: number;
   source: "assistant" | "manual";
   score?: number;
+  supportMedia?: WorkoutSupportMedia | null;
 };
 
 type PersonalWorkoutWizardCardProps = {
   onCreateWorkout: (input: CreatePersonalWorkoutInput) => Promise<unknown>;
   isCreatingWorkout: boolean;
+  studentOptions: Array<{ value: string; label: string }>;
   onClose?: () => void;
   onCreated?: () => void;
 };
@@ -224,15 +227,36 @@ function getExerciseDisplayName(exercise: AssistantExercise) {
   return exercise.name_en?.trim() || exercise.name;
 }
 
+function buildExerciseSupportMedia(
+  exercise: AssistantExercise,
+): WorkoutSupportMedia | null {
+  const thumbnailUrl = exercise.thumbnail_url?.trim();
+  const sourceUrl = exercise.source_url?.trim();
+
+  if (!thumbnailUrl && !sourceUrl) {
+    return null;
+  }
+
+  return {
+    id: `${exercise.id}-preview`,
+    type: "image",
+    url: sourceUrl || thumbnailUrl || "#",
+    thumbnailUrl: thumbnailUrl || undefined,
+    label: "Guia do exercicio",
+  };
+}
+
 export function PersonalWorkoutWizardCard({
   onCreateWorkout,
   isCreatingWorkout,
+  studentOptions,
   onClose: _onClose,
   onCreated,
 }: PersonalWorkoutWizardCardProps) {
   const { toast } = useToast();
 
   const [currentStep, setCurrentStep] = useState(0);
+  const [selectedStudentId, setSelectedStudentId] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [targetGender, setTargetGender] = useState<"masculino" | "feminino">(
@@ -561,7 +585,7 @@ export function PersonalWorkoutWizardCard({
 
   const canProceed = useMemo(() => {
     if (currentStep === 0) {
-      return Boolean(title.trim());
+      return Boolean(selectedStudentId.trim()) && Boolean(title.trim());
     }
     if (currentStep === 1) {
       return muscleGroups.length > 0;
@@ -576,6 +600,7 @@ export function PersonalWorkoutWizardCard({
     estimatedDurationMin,
     muscleGroups.length,
     selectedExercises.length,
+    selectedStudentId,
     title,
   ]);
 
@@ -769,6 +794,7 @@ export function PersonalWorkoutWizardCard({
           restSec: prescription.restSec,
           suggestedLoadKg: prescription.suggestedLoadKg,
           source,
+          supportMedia: buildExerciseSupportMedia(exercise),
         },
       ];
     });
@@ -873,6 +899,7 @@ export function PersonalWorkoutWizardCard({
           restSec: prescription.restSec,
           suggestedLoadKg: prescription.suggestedLoadKg,
           source: "manual",
+          supportMedia: buildExerciseSupportMedia(exercise),
         });
       });
 
@@ -991,6 +1018,9 @@ export function PersonalWorkoutWizardCard({
           restSec: parsedRest,
           suggestedLoadKg: parsedLoad,
           source: "manual",
+          supportMedia: selectedManualCatalogExercise
+            ? buildExerciseSupportMedia(selectedManualCatalogExercise)
+            : null,
         },
       ];
     });
@@ -1088,6 +1118,15 @@ export function PersonalWorkoutWizardCard({
   }
 
   async function handleFinalizeWorkout() {
+    if (!selectedStudentId.trim()) {
+      toast({
+        title: "Aluno obrigatorio",
+        description: "Selecione um aluno do sistema antes de criar o treino.",
+        tone: "warning",
+      });
+      return;
+    }
+
     if (selectedExercises.length === 0) {
       toast({
         title: "Adicione exercicios",
@@ -1114,6 +1153,7 @@ export function PersonalWorkoutWizardCard({
     );
 
     const payload: CreatePersonalWorkoutInput = {
+      studentId: selectedStudentId.trim(),
       title: title.trim(),
       description: description.trim() || undefined,
       frequencyWeekly: 3,
@@ -1132,6 +1172,7 @@ export function PersonalWorkoutWizardCard({
         muscleGroup: exercise.bodyRegion,
         equipment: exercise.equipment,
         durationMin: 6,
+        supportMedia: exercise.supportMedia ?? null,
       })),
     };
 
@@ -1144,6 +1185,7 @@ export function PersonalWorkoutWizardCard({
       });
 
       setCurrentStep(0);
+      setSelectedStudentId("");
       setTitle("");
       setDescription("");
       setTargetGender("masculino");
@@ -1212,6 +1254,14 @@ export function PersonalWorkoutWizardCard({
                   placeholder="Ex: Treino A - Peito e Triceps"
                   value={title}
                   onChange={(event) => setTitle(event.target.value)}
+                />
+                <FqSelect
+                  label="Aluno"
+                  value={selectedStudentId}
+                  onChange={(event) => setSelectedStudentId(event.target.value)}
+                  options={studentOptions}
+                  placeholder="Selecione um aluno"
+                  helperText="Lista carregada diretamente do sistema."
                 />
                 <FqTextarea
                   label="Descricao"

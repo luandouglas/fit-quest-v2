@@ -25,6 +25,11 @@ export type AuthCredentials = {
   password: string
 }
 
+export type AuthRegistrationInput = AuthCredentials & {
+  name: string
+  role: AuthUserRole
+}
+
 export type AuthStatus = 'anonymous' | 'authenticated' | 'loading'
 
 export type AuthContextValue = {
@@ -34,6 +39,7 @@ export type AuthContextValue = {
   status: AuthStatus
   error: string | null
   login: (credentials: AuthCredentials) => Promise<void>
+  register: (input: AuthRegistrationInput) => Promise<void>
   logout: () => Promise<void>
   updateUser: (patch: Partial<AuthUser>) => void
   clearError: () => void

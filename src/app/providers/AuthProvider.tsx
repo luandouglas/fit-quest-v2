@@ -1,15 +1,17 @@
 import {
   createContext,
+  useEffect,
   useCallback,
   useContext,
   useMemo,
   useReducer,
 } from "react";
 
-import { mockAuthRepository } from "@/features/auth/data";
+import { getAuthRepository } from "@/features/auth/data";
 import type {
   AuthContextValue,
   AuthCredentials,
+  AuthRegistrationInput,
   AuthSession,
   AuthStatus,
 } from "@/shared/types";
@@ -25,44 +27,56 @@ type AuthState = {
 };
 
 type AuthAction =
-  | { type: "login_start" }
-  | { type: "login_success"; session: AuthSession }
-  | { type: "login_error"; message: string }
+  | { type: "auth_start" }
+  | { type: "auth_success"; session: AuthSession }
+  | { type: "auth_error"; message: string }
+  | { type: "auth_resolved"; session: AuthSession | null }
   | { type: "logout" }
   | { type: "session_user_updated"; session: AuthSession }
   | { type: "clear_error" };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
+const authRepository = getAuthRepository();
 
 function createInitialState(): AuthState {
-  const session = mockAuthRepository.getStoredSession();
+  const session = authRepository.getStoredSession();
 
   return {
     session,
-    status: session ? "authenticated" : "anonymous",
+    status: authRepository.shouldHydrateSession
+      ? "loading"
+      : session
+        ? "authenticated"
+        : "anonymous",
     error: null,
   };
 }
 
 function authReducer(state: AuthState, action: AuthAction): AuthState {
   switch (action.type) {
-    case "login_start":
+    case "auth_start":
       return {
         ...state,
         status: "loading",
         error: null,
       };
-    case "login_success":
+    case "auth_success":
       return {
         session: action.session,
         status: "authenticated",
         error: null,
       };
-    case "login_error":
+    case "auth_error":
       return {
         session: null,
         status: "anonymous",
         error: action.message,
+      };
+    case "auth_resolved":
+      return {
+        session: action.session,
+        status: action.session ? "authenticated" : "anonymous",
+        error: null,
       };
     case "logout":
       return {
@@ -100,25 +114,47 @@ export function AuthProvider({ children }: AuthProviderProps) {
     createInitialState,
   );
 
+  useEffect(() => {
+    if (!authRepository.subscribeToSession) {
+      return undefined;
+    }
+
+    return authRepository.subscribeToSession((session) => {
+      dispatch({ type: "auth_resolved", session });
+    });
+  }, []);
+
   const login = useCallback(async (credentials: AuthCredentials) => {
-    dispatch({ type: "login_start" });
+    dispatch({ type: "auth_start" });
 
     try {
-      const session = await mockAuthRepository.login(credentials);
-      dispatch({ type: "login_success", session });
+      const session = await authRepository.login(credentials);
+      dispatch({ type: "auth_success", session });
     } catch (error) {
-      dispatch({ type: "login_error", message: getErrorMessage(error) });
+      dispatch({ type: "auth_error", message: getErrorMessage(error) });
+      throw error;
+    }
+  }, []);
+
+  const register = useCallback(async (input: AuthRegistrationInput) => {
+    dispatch({ type: "auth_start" });
+
+    try {
+      const session = await authRepository.register(input);
+      dispatch({ type: "auth_success", session });
+    } catch (error) {
+      dispatch({ type: "auth_error", message: getErrorMessage(error) });
       throw error;
     }
   }, []);
 
   const logout = useCallback(async () => {
-    await mockAuthRepository.logout();
+    await authRepository.logout();
     dispatch({ type: "logout" });
   }, []);
 
   const updateUser = useCallback((patch: Partial<AuthSession["user"]>) => {
-    const nextSession = mockAuthRepository.updateStoredSessionUser(patch);
+    const nextSession = authRepository.updateStoredSessionUser(patch);
 
     if (!nextSession) {
       return;
@@ -140,11 +176,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
       status: state.status,
       error: state.error,
       login,
+      register,
       logout,
       updateUser,
       clearError,
     }),
-    [state, login, logout, updateUser, clearError],
+    [state, login, register, logout, updateUser, clearError],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

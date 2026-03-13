@@ -8,11 +8,12 @@ import { progressQueryKeys } from './queryKeys'
 
 export type ProgressUiState = 'loading' | 'ready' | 'empty' | 'error'
 
-export function useProgressOverview(range: ProgressRange) {
+export function useProgressOverview(range: ProgressRange, enabled = true) {
   const queryClient = useQueryClient()
   const query = useQuery({
     queryKey: progressQueryKeys.overview(range),
     queryFn: () => progressService.getOverview(range),
+    enabled,
     staleTime: 30_000,
   })
 
@@ -50,6 +51,10 @@ export function useProgressOverview(range: ProgressRange) {
   const overview = useMemo(() => query.data ?? null, [query.data])
 
   const uiState: ProgressUiState = useMemo(() => {
+    if (!enabled) {
+      return 'empty'
+    }
+
     if (query.isPending) {
       return 'loading'
     }
@@ -69,7 +74,7 @@ export function useProgressOverview(range: ProgressRange) {
     }
 
     return 'ready'
-  }, [overview, query.isError, query.isPending])
+  }, [enabled, overview, query.isError, query.isPending])
 
   return {
     overview,

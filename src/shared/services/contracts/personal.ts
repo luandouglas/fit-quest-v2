@@ -1,4 +1,5 @@
 import type { MeasurementsUpdateRequest } from '@/shared/services/contracts/requests'
+import type { WorkoutSupportMedia } from '@/shared/services/contracts/workout'
 
 export type PersonalStudent = {
   id: string
@@ -114,6 +115,7 @@ export type PersonalWorkoutExerciseInput = {
   muscleGroup?: string
   equipment?: string
   durationMin?: number
+  supportMedia?: WorkoutSupportMedia | null
 }
 
 export type PersonalWorkoutExercise = Required<

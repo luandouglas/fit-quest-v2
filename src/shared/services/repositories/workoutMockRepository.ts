@@ -9,6 +9,7 @@ import {
 import type { CreateQuickWorkoutInput } from '@/shared/services/contracts/workout'
 import { workoutSessionMockRepository } from '@/shared/services/repositories/workoutSessionMockRepository'
 import { storage } from '@/shared/services/storage'
+import { deriveWorkoutMuscleGroups, resolveExerciseMuscleGroupLabel } from '@/shared/utils/exerciseFocus'
 
 const weekdayLabels = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'] as const
 
@@ -48,6 +49,29 @@ type StoredWorkoutExercise = {
 
 type StoredWorkoutPlanByStudent = Record<string, StoredWorkoutPlanItem[]>
 type StoredExercisesByStudent = Record<string, ExerciseItem[]>
+
+const legacySeedExerciseMap: Record<string, { name: string; muscleGroup: string }> = {
+  'bench-press': {
+    name: '1 prancha de supino',
+    muscleGroup: 'Peito',
+  },
+  'shoulder-press': {
+    name: 'Arnold Press Sentado',
+    muscleGroup: 'Ombros',
+  },
+  'tricep-dips': {
+    name: 'Extensao de cabo triceps de dois bracos',
+    muscleGroup: 'Triceps',
+  },
+  'lateral-raises': {
+    name: 'Elevacao lateral com halteres',
+    muscleGroup: 'Ombros',
+  },
+  'push-ups': {
+    name: 'Flexao (no banco)',
+    muscleGroup: 'Peito',
+  },
+}
 
 type CreateAssignedWorkoutInput = {
   studentId: string
@@ -121,14 +145,17 @@ function normalizeStoredWorkoutExercise(
   },
   index: number,
 ): StoredWorkoutExercise {
+  const legacySeed = input.id ? legacySeedExerciseMap[input.id] : null
+  const nextMuscleGroup = resolveExerciseMuscleGroupLabel(input)
+
   return {
     id: input.id ?? crypto.randomUUID(),
-    name: input.name.trim() || `Exercicio ${index + 1}`,
+    name: legacySeed?.name ?? (input.name.trim() || `Exercicio ${index + 1}`),
     sets: Math.max(1, Math.round(input.sets)),
     reps: Math.max(1, Math.round(input.reps)),
     restSec: clamp(Math.round(input.restSec ?? 60), 20, 300),
     suggestedLoadKg: Math.max(0, Number((input.suggestedLoadKg ?? 0).toFixed(1))),
-    muscleGroup: input.muscleGroup?.trim() ? input.muscleGroup.trim() : undefined,
+    muscleGroup: nextMuscleGroup ?? legacySeed?.muscleGroup,
     equipment: input.equipment?.trim() ? input.equipment.trim() : undefined,
     durationMin: clamp(Math.round(input.durationMin ?? 6), 2, 30),
     note: input.note?.trim() ? input.note.trim() : undefined,
@@ -160,11 +187,11 @@ function createDefaultWeekPlan(): StoredWorkoutPlanItem[] {
   const weekStart = startOfWeek(now)
 
   return [
-    { id: crypto.randomUUID(), title: 'Upper Body Day', date: toIsoDate(addDays(weekStart, 0)), isActive: true, estimatedDurationMin: 44, frequencyWeekly: 4, createdAt: new Date().toISOString() },
-    { id: crypto.randomUUID(), title: 'Lower Body Day', date: toIsoDate(addDays(weekStart, 1)), isActive: true, estimatedDurationMin: 48, frequencyWeekly: 4, createdAt: new Date().toISOString(), personalNote: 'Priorize amplitude e controle no agachamento.' },
-    { id: crypto.randomUUID(), title: 'Core and Mobility', date: toIsoDate(addDays(weekStart, 2)), isActive: true, estimatedDurationMin: 35, frequencyWeekly: 4, createdAt: new Date().toISOString(), personalNote: 'Faça as transicoes com calma para preservar a tecnica.' },
-    { id: crypto.randomUUID(), title: 'Push Strength', date: toIsoDate(addDays(weekStart, 3)), isActive: true, estimatedDurationMin: 46, frequencyWeekly: 4, createdAt: new Date().toISOString(), personalNote: 'Hoje a meta e manter carga, sem sacrificar execução.' },
-    { id: crypto.randomUUID(), title: 'Cardio and Recovery', date: toIsoDate(addDays(weekStart, 4)), isActive: true, estimatedDurationMin: 32, frequencyWeekly: 4, createdAt: new Date().toISOString(), personalNote: 'Use esta sessão para acelerar recuperação e manter consistencia.' },
+    { id: crypto.randomUUID(), title: 'Upper Body Day', date: toIsoDate(addDays(weekStart, 0)), isActive: true, estimatedDurationMin: 44, frequencyWeekly: 4, muscleGroups: ['Peito', 'Ombros', 'Triceps'], createdAt: new Date().toISOString() },
+    { id: crypto.randomUUID(), title: 'Lower Body Day', date: toIsoDate(addDays(weekStart, 1)), isActive: true, estimatedDurationMin: 48, frequencyWeekly: 4, muscleGroups: ['Quadriceps', 'Gluteos'], createdAt: new Date().toISOString(), personalNote: 'Priorize amplitude e controle no agachamento.' },
+    { id: crypto.randomUUID(), title: 'Core and Mobility', date: toIsoDate(addDays(weekStart, 2)), isActive: true, estimatedDurationMin: 35, frequencyWeekly: 4, muscleGroups: ['Abdomen', 'Obliquos'], createdAt: new Date().toISOString(), personalNote: 'Faça as transicoes com calma para preservar a tecnica.' },
+    { id: crypto.randomUUID(), title: 'Push Strength', date: toIsoDate(addDays(weekStart, 3)), isActive: true, estimatedDurationMin: 46, frequencyWeekly: 4, muscleGroups: ['Peito', 'Ombros', 'Triceps'], createdAt: new Date().toISOString(), personalNote: 'Hoje a meta e manter carga, sem sacrificar execução.' },
+    { id: crypto.randomUUID(), title: 'Cardio and Recovery', date: toIsoDate(addDays(weekStart, 4)), isActive: true, estimatedDurationMin: 32, frequencyWeekly: 4, muscleGroups: ['Panturrilhas', 'Gluteos'], createdAt: new Date().toISOString(), personalNote: 'Use esta sessão para acelerar recuperação e manter consistencia.' },
   ]
 }
 
@@ -239,12 +266,42 @@ function saveExercisesMap(map: StoredExercisesByStudent) {
   storage.set(WORKOUT_EXERCISES_BY_STUDENT_STORAGE_KEY, map)
 }
 
+function normalizeStoredPlanItem(workout: StoredWorkoutPlanItem) {
+  const nextExercises = workout.exercises?.map((exercise, index) => normalizeStoredWorkoutExercise(exercise, index))
+  const nextMuscleGroups = deriveWorkoutMuscleGroups(nextExercises ?? [], workout.muscleGroups)
+
+  return {
+    ...workout,
+    exercises: nextExercises,
+    muscleGroups: nextMuscleGroups.length > 0 ? nextMuscleGroups : undefined,
+  }
+}
+
+function normalizeExerciseItem(exercise: ExerciseItem, index: number): ExerciseItem {
+  const legacySeed = legacySeedExerciseMap[exercise.id]
+  const nextMuscleGroup = resolveExerciseMuscleGroupLabel(exercise)
+
+  return {
+    ...exercise,
+    name: legacySeed?.name ?? exercise.name,
+    order: exercise.order || index + 1,
+    muscleGroup: nextMuscleGroup ?? legacySeed?.muscleGroup,
+  }
+}
+
 function getStoredPlan(studentId: string): StoredWorkoutPlanItem[] {
   const planMap = getPlanMap()
   const existing = planMap[studentId]
 
   if (existing && existing.length > 0) {
-    return existing
+    const normalized = existing.map(normalizeStoredPlanItem)
+    const hasChanges = JSON.stringify(normalized) !== JSON.stringify(existing)
+
+    if (hasChanges) {
+      saveStoredPlan(studentId, normalized)
+    }
+
+    return normalized
   }
 
   const seeded = createDefaultWeekPlan()
@@ -270,7 +327,14 @@ function getStoredExercises(studentId: string): ExerciseItem[] {
   const existing = exercisesMap[studentId]
 
   if (existing && existing.length > 0) {
-    return existing
+    const normalized = existing.map((exercise, index) => normalizeExerciseItem(exercise, index))
+    const hasChanges = JSON.stringify(normalized) !== JSON.stringify(existing)
+
+    if (hasChanges) {
+      saveStoredExercises(studentId, normalized)
+    }
+
+    return normalized
   }
 
   const seeded = createDefaultExercises()
@@ -358,7 +422,7 @@ function toWorkoutItems(studentId: string, includeInactive = false): WorkoutPlan
         isQuickWorkout: workout.isQuickWorkout,
         frequencyWeekly: workout.frequencyWeekly,
         assignedByPersonalId: workout.assignedByPersonalId,
-        muscleGroups: workout.muscleGroups,
+        muscleGroups: deriveWorkoutMuscleGroups(workout.exercises ?? [], workout.muscleGroups),
         intensity: workout.intensity,
         starsReward: workout.starsReward,
         weekdays: workout.weekdays,
@@ -725,6 +789,7 @@ export const workoutMockRepository = {
     muscleGroup?: string
     equipment?: string
     durationMin: number
+    supportMedia?: ExerciseItem['supportMedia']
   }> {
     const workout = getStoredPlan(studentId).find((item) => item.id === workoutId)
 
