@@ -1,7 +1,6 @@
 import { type FormEvent, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { getAuthRepository } from "@/features/auth/data";
 import { appRoutePaths } from "@/app/router/routes";
 import { useAuth } from "@/shared/hooks";
 import {
