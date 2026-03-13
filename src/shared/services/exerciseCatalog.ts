@@ -74,7 +74,8 @@ function scoreCatalogEntry(exercise: WorkoutExercise, entry: PtbrExerciseCatalog
 
 export async function loadPtbrExerciseCatalog() {
   if (!catalogPromise) {
-    catalogPromise = fetch('/exercises_all_ptbr.json')
+    const base = import.meta.env.BASE_URL ?? '/'
+    catalogPromise = fetch(`${base}exercises_all_ptbr.json`)
       .then(async (response) => {
         if (!response.ok) {
           throw new Error('Nao foi possivel carregar exercises_all_ptbr.json')

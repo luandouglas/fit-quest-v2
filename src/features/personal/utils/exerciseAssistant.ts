@@ -70,8 +70,9 @@ type RawPtbrExercise = {
 
 const VALID_OBJECTIVES = new Set(['hipertrofia', 'forca', 'emagrecimento', 'resistencia', 'saude'])
 const VALID_EXPERIENCE = new Set(['iniciante', 'intermediario', 'avancado'])
-const PTBR_CATALOG_PATH = '/exercises_all_ptbr.json'
-const FALLBACK_CATALOG_PATH = '/exercises.json'
+const BASE = import.meta.env.BASE_URL ?? '/'
+const PTBR_CATALOG_PATH = `${BASE}exercises_all_ptbr.json`
+const FALLBACK_CATALOG_PATH = `${BASE}exercises.json`
 
 const PTBR_BODY_REGION_MAP: Record<string, string> = {
   abdomen: 'abdomen',
@@ -517,8 +518,8 @@ export function mergeFocusAreas(selectedGroups: string[], profile?: AssistantPro
 export async function loadExerciseAssistantAssets() {
   const [catalog, profileResponse, classifierResponse] = await Promise.all([
     loadAssistantCatalog(),
-    fetch('/perfil.json'),
-    fetch('/scripts/exercise-classifier.js'),
+    fetch(`${BASE}perfil.json`),
+    fetch(`${BASE}scripts/exercise-classifier.js`),
   ])
 
   if (!profileResponse.ok) {
