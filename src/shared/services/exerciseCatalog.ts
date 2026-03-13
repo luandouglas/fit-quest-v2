@@ -74,20 +74,15 @@ function scoreCatalogEntry(exercise: WorkoutExercise, entry: PtbrExerciseCatalog
 
 export async function loadPtbrExerciseCatalog() {
   if (!catalogPromise) {
-    const base = import.meta.env.BASE_URL ?? '/'
-    catalogPromise = fetch(`${base}exercises_all_ptbr.json`)
-      .then(async (response) => {
-        if (!response.ok) {
-          throw new Error('Nao foi possivel carregar exercises_all_ptbr.json')
-        }
+    catalogPromise = import('@/data-final/exercises_all_ptbr.json')
+      .then(({ default: payload }) => {
+        const catalog = payload as unknown as PtbrExerciseCatalogEntry[]
 
-        const payload = await response.json() as PtbrExerciseCatalogEntry[]
-
-        if (!Array.isArray(payload)) {
+        if (!Array.isArray(catalog)) {
           throw new Error('Catalogo PT-BR invalido')
         }
 
-        return payload
+        return catalog
       })
   }
 

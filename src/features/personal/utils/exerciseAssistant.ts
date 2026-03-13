@@ -70,9 +70,6 @@ type RawPtbrExercise = {
 
 const VALID_OBJECTIVES = new Set(['hipertrofia', 'forca', 'emagrecimento', 'resistencia', 'saude'])
 const VALID_EXPERIENCE = new Set(['iniciante', 'intermediario', 'avancado'])
-const BASE = import.meta.env.BASE_URL ?? '/'
-const PTBR_CATALOG_PATH = `${BASE}exercises_all_ptbr.json`
-const FALLBACK_CATALOG_PATH = `${BASE}exercises.json`
 
 const PTBR_BODY_REGION_MAP: Record<string, string> = {
   abdomen: 'abdomen',
@@ -228,37 +225,22 @@ function mapPtbrExercise(rawExercise: RawPtbrExercise, index: number): Assistant
 }
 
 async function loadAssistantCatalog(): Promise<AssistantExercise[]> {
-  try {
-    const ptbrCatalogResponse = await fetch(PTBR_CATALOG_PATH)
-    if (ptbrCatalogResponse.ok) {
-      const ptbrCatalogPayload = await ptbrCatalogResponse.json() as RawPtbrExercise[]
-      if (!Array.isArray(ptbrCatalogPayload)) {
-        throw new Error('Arquivo de exercicios PT-BR invalido.')
-      }
+  const { default: ptbrCatalog } = await import('@/data-final/exercises_all_ptbr.json')
+  const ptbrCatalogPayload = ptbrCatalog as unknown as RawPtbrExercise[]
 
-      const mappedCatalog = ptbrCatalogPayload
-        .map((exercise, index) => mapPtbrExercise(exercise, index))
-        .filter((exercise): exercise is AssistantExercise => Boolean(exercise))
-
-      if (mappedCatalog.length > 0) {
-        return mappedCatalog
-      }
-    }
-  } catch {
-    // fallback abaixo
+  if (!Array.isArray(ptbrCatalogPayload)) {
+    throw new Error('Arquivo de exercicios PT-BR invalido.')
   }
 
-  const fallbackCatalogResponse = await fetch(FALLBACK_CATALOG_PATH)
-  if (!fallbackCatalogResponse.ok) {
+  const mappedCatalog = ptbrCatalogPayload
+    .map((exercise, index) => mapPtbrExercise(exercise, index))
+    .filter((exercise): exercise is AssistantExercise => Boolean(exercise))
+
+  if (mappedCatalog.length === 0) {
     throw new Error('Nao foi possivel carregar o catalogo de exercicios.')
   }
 
-  const fallbackCatalogPayload = await fallbackCatalogResponse.json() as { exercises?: AssistantExercise[] }
-  if (!Array.isArray(fallbackCatalogPayload.exercises)) {
-    throw new Error('Arquivo de exercicios invalido: campo exercises ausente.')
-  }
-
-  return fallbackCatalogPayload.exercises
+  return mappedCatalog
 }
 
 function scoreObjective(exercise: AssistantExercise, objective: string): ScorePayload {
@@ -516,26 +498,20 @@ export function mergeFocusAreas(selectedGroups: string[], profile?: AssistantPro
 }
 
 export async function loadExerciseAssistantAssets() {
-  const [catalog, profileResponse, classifierResponse] = await Promise.all([
+  const [catalog, profileModule] = await Promise.all([
     loadAssistantCatalog(),
-    fetch(`${BASE}perfil.json`),
-    fetch(`${BASE}scripts/exercise-classifier.js`),
+    import('@/data-final/exercises_all_ptbr.json').then(() =>
+      // perfil.json is still a small static asset
+      fetch(`${import.meta.env.BASE_URL ?? '/'}perfil.json`).then(async (r) => {
+        if (!r.ok) throw new Error('Nao foi possivel carregar perfil.json')
+        return r.json() as Promise<AssistantProfile>
+      })
+    ),
   ])
-
-  if (!profileResponse.ok) {
-    throw new Error('Nao foi possivel carregar perfil.json')
-  }
-
-  if (!classifierResponse.ok) {
-    throw new Error('Nao foi possivel carregar exercise-classifier.js')
-  }
-
-  const profilePayload = await profileResponse.json() as AssistantProfile
-  const classifierSource = await classifierResponse.text()
 
   return {
     exercises: catalog,
-    profile: profilePayload,
-    classifierSignature: classifierSource.length,
+    profile: profileModule,
+    classifierSignature: catalog.length,
   }
 }
