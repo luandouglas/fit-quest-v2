@@ -74,8 +74,8 @@ export function SignUpPage() {
   }
 
   return (
-    <div className="min-h-dvh bg-background px-4 py-4 sm:px-6 sm:py-6">
-      <div className="mx-auto grid min-h-[calc(100dvh-2rem)] max-w-6xl overflow-hidden rounded-[32px] border border-border/70 bg-card shadow-[0_20px_60px_rgba(36,49,44,0.12)] lg:grid-cols-[1fr_0.95fr]">
+    <div className="min-h-svh bg-background px-4 py-4 sm:px-6 sm:py-6">
+      <div className="mx-auto grid max-w-6xl overflow-visible rounded-[32px] border border-border/70 bg-card shadow-[0_20px_60px_rgba(36,49,44,0.12)] lg:min-h-[calc(100dvh-2rem)] lg:overflow-hidden lg:grid-cols-[1fr_0.95fr]">
         <aside
           className="relative hidden border-r border-border/60 px-10 py-10 lg:flex lg:flex-col lg:justify-between"
           style={{
@@ -148,8 +148,8 @@ export function SignUpPage() {
           </div>
         </aside>
 
-        <main className="flex min-h-full items-center justify-center px-5 py-8 sm:px-8 sm:py-10 lg:px-12 lg:py-12">
-          <div className="w-full max-w-[440px] space-y-8">
+        <main className="flex min-h-full items-start justify-center px-5 py-6 sm:px-8 sm:py-8 lg:items-center lg:px-12 lg:py-12">
+          <div className="safe-bottom w-full max-w-[440px] space-y-6 pb-4 sm:space-y-8 sm:pb-0">
             <div className="flex items-center gap-3 text-primary lg:hidden">
               <span className="inline-flex h-11 w-11 items-center justify-center rounded-[16px] bg-foreground text-background">
                 <FqIcon name="star" size={18} className="text-star" />

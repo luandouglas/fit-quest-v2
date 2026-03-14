@@ -58,8 +58,8 @@ export function LoginPage() {
   }
 
   return (
-    <div className="min-h-dvh bg-background px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
-      <div className="mx-auto grid min-h-[calc(100dvh-2rem)] max-w-6xl overflow-visible rounded-[38px] border border-border/80 bg-card/76 shadow-[0_28px_70px_rgba(36,49,44,0.14)] backdrop-blur lg:min-h-[calc(100dvh-4rem)] lg:overflow-hidden lg:grid-cols-[1.02fr_0.98fr]">
+    <div className="min-h-svh bg-background px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
+      <div className="mx-auto grid max-w-6xl overflow-visible rounded-[38px] border border-border/80 bg-card/76 shadow-[0_28px_70px_rgba(36,49,44,0.14)] backdrop-blur lg:min-h-[calc(100dvh-4rem)] lg:overflow-hidden lg:grid-cols-[1.02fr_0.98fr]">
         <aside
           className="relative hidden border-r border-border/70 px-10 py-10 lg:flex lg:flex-col lg:justify-between lg:gap-10 xl:gap-14"
           style={{
@@ -138,9 +138,9 @@ export function LoginPage() {
           </div>
         </aside>
 
-        <main className="flex items-start justify-center px-6 py-8 sm:px-8 sm:py-10 lg:px-12 lg:py-12">
-          <div className="w-full max-w-[430px]">
-            <div className="mb-8 flex items-center gap-3 text-primary lg:hidden">
+        <main className="flex items-start justify-center px-6 py-6 sm:px-8 sm:py-8 lg:px-12 lg:py-12">
+          <div className="safe-bottom w-full max-w-[430px] pb-4 sm:pb-0">
+            <div className="mb-6 flex items-center gap-3 text-primary sm:mb-8 lg:hidden">
               <span className="inline-flex h-11 w-11 items-center justify-center rounded-[18px] bg-foreground text-background">
                 <FqIcon name="star" size={18} className="text-star" />
               </span>
@@ -157,7 +157,7 @@ export function LoginPage() {
               </div>
             </div>
 
-            <header className="mb-8 space-y-3">
+            <header className="mb-6 space-y-3 sm:mb-8">
               <FqTag tone="secondary">Acesso seguro</FqTag>
               <FqText
                 as="h1"
@@ -170,7 +170,7 @@ export function LoginPage() {
               </FqText>
             </header>
 
-            <form className="space-y-5" onSubmit={handleSubmit}>
+            <form className="space-y-4 sm:space-y-5" onSubmit={handleSubmit}>
               <FqInput
                 type="email"
                 label="E-mail"
@@ -229,7 +229,7 @@ export function LoginPage() {
                 </div>
               ) : null}
 
-              <p className="pt-5 text-center text-sm text-muted-foreground">
+              <p className="pt-3 text-center text-sm text-muted-foreground sm:pt-5">
                 Nao tem conta?{" "}
                 <Link
                   to={appRoutePaths.signup}
