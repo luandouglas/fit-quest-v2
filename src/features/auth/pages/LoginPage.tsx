@@ -58,7 +58,7 @@ export function LoginPage() {
   }
 
   return (
-    <div className="min-h-svh bg-background px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
+    <div className="h-svh overflow-y-auto overscroll-y-contain bg-background px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
       <div className="mx-auto grid max-w-6xl overflow-visible rounded-[38px] border border-border/80 bg-card/76 shadow-[0_28px_70px_rgba(36,49,44,0.14)] backdrop-blur lg:min-h-[calc(100dvh-4rem)] lg:overflow-hidden lg:grid-cols-[1.02fr_0.98fr]">
         <aside
           className="relative hidden border-r border-border/70 px-10 py-10 lg:flex lg:flex-col lg:justify-between lg:gap-10 xl:gap-14"

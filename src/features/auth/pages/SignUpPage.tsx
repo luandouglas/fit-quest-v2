@@ -74,7 +74,7 @@ export function SignUpPage() {
   }
 
   return (
-    <div className="min-h-svh bg-background px-4 py-4 sm:px-6 sm:py-6">
+    <div className="h-svh overflow-y-auto overscroll-y-contain bg-background px-4 py-4 sm:px-6 sm:py-6">
       <div className="mx-auto grid max-w-6xl overflow-visible rounded-[32px] border border-border/70 bg-card shadow-[0_20px_60px_rgba(36,49,44,0.12)] lg:min-h-[calc(100dvh-2rem)] lg:overflow-hidden lg:grid-cols-[1fr_0.95fr]">
         <aside
           className="relative hidden border-r border-border/60 px-10 py-10 lg:flex lg:flex-col lg:justify-between"
