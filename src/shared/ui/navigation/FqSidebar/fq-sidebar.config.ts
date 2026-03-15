@@ -135,13 +135,13 @@ const studentConfig: FqSidebarRoleConfig = {
       ],
     },
   ],
-  // footerCard: {
-  //   title: "Continue evoluindo",
-  //   description: "Complete seus treinos e conquiste novas medalhas.",
-  //   icon: "target",
-  //   actionLabel: "Ver metas",
-  //   actionPath: "/tabs/gamification",
-  // },
+  footerCard: {
+    title: "Continue evoluindo",
+    description: "Complete seus treinos e conquiste novas medalhas.",
+    icon: "target",
+    actionLabel: "Ver metas",
+    actionPath: "/tabs/gamification",
+  },
 };
 
 // ─── Personal ──────────────────────────────────────────────────────
