@@ -105,6 +105,7 @@ export type WorkoutPlanItem = {
 export type TodayWorkout = {
   workoutId?: string
   title: string
+  status?: WorkoutPlanStatus
   durationMin: number
   calories: number
   stars: number
@@ -148,6 +149,7 @@ export type WorkoutDetail = WorkoutPlanItem & {
 
 export type StartWorkoutSessionInput = {
   workoutId?: string
+  date?: string
 }
 
 export type WorkoutSession = {

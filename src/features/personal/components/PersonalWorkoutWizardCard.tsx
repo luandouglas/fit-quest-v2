@@ -56,6 +56,7 @@ type PersonalWorkoutWizardCardProps = {
   onCreateWorkout: (input: CreatePersonalWorkoutInput) => Promise<unknown>;
   isCreatingWorkout: boolean;
   studentOptions: Array<{ value: string; label: string }>;
+  prefilledStudentId?: string;
   onClose?: () => void;
   onCreated?: () => void;
 };
@@ -250,13 +251,14 @@ export function PersonalWorkoutWizardCard({
   onCreateWorkout,
   isCreatingWorkout,
   studentOptions,
+  prefilledStudentId,
   onClose: _onClose,
   onCreated,
 }: PersonalWorkoutWizardCardProps) {
   const { toast } = useToast();
 
   const [currentStep, setCurrentStep] = useState(0);
-  const [selectedStudentId, setSelectedStudentId] = useState("");
+  const [selectedStudentId, setSelectedStudentId] = useState(prefilledStudentId ?? "");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [targetGender, setTargetGender] = useState<"masculino" | "feminino">(
@@ -1227,7 +1229,7 @@ export function PersonalWorkoutWizardCard({
             </FqText>
           </div>
 
-          <div className="rounded-2xl border border-border bg-muted/15 p-4 md:p-6 dark:border-primary/20 dark:bg-gradient-to-b dark:from-slate-900/40 dark:to-slate-800/25">
+          <div className="rounded-2xl border border-border bg-muted/15 p-4 md:p-6 dark:border-primary/20 dark:bg-linear-to-b dark:from-slate-900/40 dark:to-slate-800/25">
             {currentStep === 0 ? (
               <div className="space-y-4">
                 <div className="space-y-1 text-center">
@@ -1304,7 +1306,7 @@ export function PersonalWorkoutWizardCard({
                 </div>
 
                 <div className="flex flex-row justify-between">
-                  <div className="h-[420px] mx-3 w-full rounded-2xl border border-border/70 bg-white ">
+                  <div className="h-105 mx-3 w-full rounded-2xl border border-border/70 bg-white ">
                     <InteractiveBodySvg
                       svgRaw={bodySvgRaw}
                       shadingPngSrc={bodyPng}
@@ -1959,6 +1961,114 @@ export function PersonalWorkoutWizardCard({
                     </ul>
                   )}
                 </div>
+
+                {selectedExercises.length > 0 ? (
+                  <div className="rounded-2xl border border-primary/25 bg-primary/5 p-4 space-y-3">
+                    <FqText
+                      as="p"
+                      className="text-sm font-semibold uppercase tracking-wide text-primary"
+                    >
+                      Resumo do treino
+                    </FqText>
+
+                    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                      <div className="rounded-xl border border-border bg-card p-3">
+                        <FqText as="p" className="text-xs text-muted-foreground">
+                          Exercicios
+                        </FqText>
+                        <FqText as="p" className="mt-1 text-xl font-semibold text-success">
+                          {selectedExercises.length}
+                        </FqText>
+                      </div>
+                      <div className="rounded-xl border border-border bg-card p-3">
+                        <FqText as="p" className="text-xs text-muted-foreground">
+                          Sets totais
+                        </FqText>
+                        <FqText as="p" className="mt-1 text-xl font-semibold text-foreground">
+                          {selectedExercises.reduce((total, ex) => total + ex.sets, 0)}
+                        </FqText>
+                      </div>
+                      <div className="rounded-xl border border-border bg-card p-3">
+                        <FqText as="p" className="text-xs text-muted-foreground">
+                          Duracao estimada
+                        </FqText>
+                        <FqText as="p" className="mt-1 text-xl font-semibold text-primary">
+                          {estimatedDurationMin} min
+                        </FqText>
+                      </div>
+                      <div className="rounded-xl border border-border bg-card p-3">
+                        <FqText as="p" className="text-xs text-muted-foreground">
+                          Estrelas
+                        </FqText>
+                        <FqText as="p" className="mt-1 text-xl font-semibold text-warning">
+                          {starsReward}
+                        </FqText>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                      {muscleGroups.map((group) => (
+                        <span
+                          key={`summary-${group}`}
+                          className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary"
+                        >
+                          {getMuscleGroupLabel(group)}
+                        </span>
+                      ))}
+                    </div>
+
+                    <div className="rounded-xl border border-border bg-card overflow-hidden">
+                      <div className="border-b border-border px-3 py-2">
+                        <FqText as="p" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                          Detalhes dos exercicios
+                        </FqText>
+                      </div>
+                      <ul className="divide-y divide-border">
+                        {selectedExercises.map((exercise, exIdx) => (
+                          <li key={`detail-${exercise.id}`} className="px-3 py-2.5">
+                            <div className="flex items-start gap-2.5">
+                              <span className="inline-flex h-6 w-6 items-center justify-center rounded-md bg-success/15 text-xs font-semibold text-success">
+                                {exIdx + 1}
+                              </span>
+                              <div className="flex-1">
+                                <FqText as="p" className="text-sm font-semibold text-foreground">
+                                  {exercise.name}
+                                </FqText>
+                                <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                                  <span>{exercise.sets} series x {exercise.reps} reps</span>
+                                  <span>{exercise.restSec}s descanso</span>
+                                  <span>{exercise.suggestedLoadKg}kg</span>
+                                  {exercise.equipment ? (
+                                    <span>{getEquipmentLabel(exercise.equipment)}</span>
+                                  ) : null}
+                                </div>
+                              </div>
+                              <span className="rounded-full bg-muted px-2 py-0.5 text-[0.65rem] text-muted-foreground">
+                                {getMuscleGroupLabel(exercise.bodyRegion)}
+                              </span>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {title.trim() ? (
+                      <div className="rounded-xl border border-border bg-card p-3">
+                        <FqText as="p" className="text-xs text-muted-foreground">
+                          Titulo do treino
+                        </FqText>
+                        <FqText as="p" className="mt-1 text-base font-semibold text-foreground">
+                          {title}
+                        </FqText>
+                        {description.trim() ? (
+                          <FqText as="p" className="mt-1 text-sm text-muted-foreground">
+                            {description}
+                          </FqText>
+                        ) : null}
+                      </div>
+                    ) : null}
+                  </div>
+                ) : null}
               </div>
             ) : null}
           </div>

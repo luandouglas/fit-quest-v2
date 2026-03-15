@@ -77,7 +77,7 @@ export function useTrainingPlanState() {
   }, [planQuery.data?.workouts.length, planQuery.isError, planQuery.isPending])
 
   const data = planQuery.data
-  const allWorkouts = data?.workouts ?? []
+  const allWorkouts = useMemo(() => data?.workouts ?? [], [data?.workouts])
   const week = data?.week ?? []
   const firstAvailableDate =
     week.find((day) => day.isToday && allWorkouts.some((workout) => workout.date === day.date))?.date ??
@@ -115,7 +115,7 @@ export function useTrainingPlanState() {
 
   const permissions = data?.permissions ?? {
     hasActivePersonal: false,
-    canCreateQuickWorkout: true,
+    canCreateQuickWorkout: false,
     canExecuteOnlyAssigned: false,
     canEditPlan: false,
   }
@@ -158,7 +158,7 @@ export function useTrainingPlanState() {
 
   async function createQuickWorkout(date?: string) {
     if (!permissions.canCreateQuickWorkout) {
-      throw new Error('Criacao manual bloqueada: voce tem personal ativo com treinos atribuidos.')
+      throw new Error('O aluno nao pode criar treinos manualmente.')
     }
 
     await createQuickWorkoutMutation.mutateAsync(date)

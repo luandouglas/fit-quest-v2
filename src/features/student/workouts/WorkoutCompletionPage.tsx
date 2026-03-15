@@ -134,13 +134,6 @@ export function WorkoutCompletionPage() {
               <FqButton onClick={() => history.push(studentRoutes.workouts)}>
                 Voltar para Treinos
               </FqButton>
-              <FqButton
-                variant="outline"
-                tone="neutral"
-                onClick={() => history.push(studentRoutes.workoutSession, summary.workoutId ? { workoutId: summary.workoutId } : undefined)}
-              >
-                Repetir treino
-              </FqButton>
             </div>
           </div>
         </FqCard>

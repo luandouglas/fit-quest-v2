@@ -1,0 +1,375 @@
+.fitquest-tab-bar-layer {
+  --fq-tab-accent: var(--primary);
+  --fq-tab-accent-soft: color-mix(
+    in srgb,
+    var(--primary) 16%,
+    var(--card)
+  );
+  --fq-tab-accent-strong: color-mix(
+    in srgb,
+    var(--primary) 86%,
+    var(--background) 14%
+  );
+  --fq-tab-surface: color-mix(
+    in srgb,
+    var(--card) 92%,
+    var(--background)
+  );
+  --fq-tab-surface-border: color-mix(in srgb, var(--border) 76%, var(--background) 24%);
+  --fq-tab-text: color-mix(
+    in srgb,
+    var(--foreground) 92%,
+    var(--muted-foreground)
+  );
+  --fq-tab-text-muted: color-mix(
+    in srgb,
+    var(--muted-foreground) 82%,
+    var(--background) 18%
+  );
+  --fq-tab-shadow: 0 28px 48px color-mix(in srgb, var(--foreground) 14%, transparent);
+  --fq-tab-button-shadow: 0 20px 42px color-mix(in srgb, var(--primary) 28%, transparent);
+  position: fixed;
+  inset: 0;
+  z-index: 56;
+  pointer-events: none;
+}
+
+.fitquest-tab-bar__overlay {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: color-mix(in srgb, var(--foreground) 8%, transparent);
+  backdrop-filter: blur(14px);
+  opacity: 0;
+  transition:
+    opacity 220ms ease,
+    visibility 220ms ease;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.fitquest-tab-bar-layer[data-open="true"] .fitquest-tab-bar__overlay {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.fitquest-tab-bar__nav {
+  position: absolute;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
+  width: min(calc(100vw - 1.25rem), 430px);
+  transform: translateX(-50%);
+  pointer-events: auto;
+}
+
+.fitquest-tab-bar__shell {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 92px minmax(0, 1fr);
+  align-items: end;
+  gap: 0;
+  min-height: 88px;
+  padding: 16px 16px max(12px, env(safe-area-inset-bottom, 0px));
+  border: 1px solid var(--fq-tab-surface-border);
+  border-radius: 32px;
+  background: var(--fq-tab-surface);
+  box-shadow: var(--fq-tab-shadow);
+  overflow: visible;
+  backdrop-filter: blur(24px);
+}
+
+.fitquest-tab-bar__shell::before {
+  content: none;
+}
+
+.fitquest-tab-bar__cluster {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+  gap: 4px;
+}
+
+.fitquest-tab-bar__center-slot {
+  position: relative;
+  align-self: stretch;
+}
+
+.fitquest-tab-bar__tab {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+  min-height: 58px;
+  padding: 0 6px;
+  border: 0;
+  background: transparent;
+  color: var(--fq-tab-text-muted);
+  transition:
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 180ms ease;
+}
+
+.fitquest-tab-bar__tab:focus-visible,
+.fitquest-tab-bar__center-button:focus-visible,
+.fitquest-center-menu__button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px
+    color-mix(in srgb, var(--fq-tab-accent) 38%, transparent);
+}
+
+.fitquest-tab-bar__tab:active,
+.fitquest-tab-bar__center-button:active,
+.fitquest-center-menu__button:active {
+  transform: scale(0.97);
+}
+
+.fitquest-tab-bar__tab-orb {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 16px;
+  background: transparent;
+  transition:
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 180ms ease,
+    color 180ms ease,
+    box-shadow 200ms ease;
+}
+
+.fitquest-tab-bar__tab-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  opacity: 0.88;
+  transition:
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 180ms ease;
+}
+
+.fitquest-tab-bar__tab.is-active {
+  color: var(--fq-tab-accent-strong);
+  transform: translateY(-2px);
+}
+
+.fitquest-tab-bar__tab.is-active .fitquest-tab-bar__tab-orb {
+  transform: translateY(-4px) scale(1.04);
+  background: var(--fq-tab-accent-soft);
+  box-shadow:
+    0 16px 24px color-mix(in srgb, var(--primary) 15%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--card) 92%, transparent);
+}
+
+.fitquest-tab-bar__tab.is-active .fitquest-tab-bar__tab-label {
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+.fitquest-tab-bar__badge {
+  position: absolute;
+  top: 0;
+  right: 8px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--destructive);
+  color: var(--destructive-foreground);
+  font-size: 0.62rem;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+  box-shadow: 0 8px 18px color-mix(in srgb, var(--destructive) 24%, transparent);
+}
+
+.fitquest-tab-bar__center-button {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 74px;
+  height: 74px;
+  padding: 0;
+  border: 4px solid var(--primary-foreground);
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: var(--fq-tab-button-shadow);
+  transform: translate(-50%, 0);
+  transition:
+    transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 220ms ease,
+    border-color 180ms ease;
+  isolation: isolate;
+}
+
+.fitquest-tab-bar__center-button.is-open {
+  transform: translate(-50%, -8px) scale(1.02);
+  box-shadow: 0 28px 48px color-mix(in srgb, var(--primary) 34%, transparent);
+}
+
+.fitquest-tab-bar__center-button-glow {
+  display: none;
+}
+
+.fitquest-tab-bar__center-icon-stack {
+  position: relative;
+  width: 28px;
+  height: 28px;
+}
+
+.fitquest-tab-bar__center-icon {
+  position: absolute;
+  inset: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    opacity 180ms ease,
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.fitquest-tab-bar__center-icon--plus {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+.fitquest-tab-bar__center-icon--close {
+  opacity: 0;
+  transform: rotate(-72deg) scale(0.72);
+}
+
+.fitquest-tab-bar__center-button.is-open .fitquest-tab-bar__center-icon--plus {
+  opacity: 0;
+  transform: rotate(88deg) scale(0.72);
+}
+
+.fitquest-tab-bar__center-button.is-open .fitquest-tab-bar__center-icon--close {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+.fitquest-center-menu {
+  position: absolute;
+  left: 50%;
+  bottom: 92px;
+  width: 0;
+  height: 0;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.fitquest-center-menu[data-open="true"] {
+  pointer-events: auto;
+}
+
+.fitquest-center-menu__action {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  transform: translate(-50%, 50%) translate3d(0, 14px, 0) scale(0.68);
+  opacity: 0;
+  transition:
+    transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 180ms ease;
+  transition-delay: 0ms;
+  pointer-events: none;
+}
+
+.fitquest-center-menu[data-open="true"] .fitquest-center-menu__action {
+  transform: translate(-50%, 50%) translate3d(var(--fq-action-x), var(--fq-action-y), 0) scale(1);
+  opacity: 1;
+  transition-delay: var(--fq-action-delay);
+  pointer-events: auto;
+}
+
+.fitquest-center-menu__button {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  background: transparent;
+  color: var(--fq-tab-text);
+}
+
+.fitquest-center-menu__button-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border: 1px solid color-mix(in srgb, var(--border) 76%, var(--background) 24%);
+  border-radius: 20px;
+  background: var(--card);
+  box-shadow:
+    0 16px 28px color-mix(in srgb, var(--foreground) 12%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--card) 92%, transparent);
+}
+
+.fitquest-center-menu__button-label {
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--card) 88%, transparent);
+  color: var(--fq-tab-text);
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 12px 22px color-mix(in srgb, var(--foreground) 12%, transparent);
+  white-space: nowrap;
+}
+
+.dark .fitquest-tab-bar-layer {
+  --fq-tab-shadow: 0 28px 52px color-mix(in srgb, var(--foreground) 12%, transparent);
+  --fq-tab-button-shadow: 0 24px 46px color-mix(in srgb, var(--primary) 34%, transparent);
+}
+
+.dark .fitquest-tab-bar__center-button {
+  border-color: color-mix(in srgb, var(--border) 60%, transparent);
+}
+
+@media (max-width: 380px) {
+  .fitquest-tab-bar__nav {
+    width: min(calc(100vw - 0.85rem), 410px);
+  }
+
+  .fitquest-tab-bar__shell {
+    padding-inline: 12px;
+    border-radius: 28px;
+  }
+
+  .fitquest-tab-bar__center-button {
+    width: 70px;
+    height: 70px;
+    border-radius: 26px;
+  }
+
+  .fitquest-center-menu {
+    bottom: 88px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .fitquest-tab-bar-layer {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fitquest-tab-bar__overlay,
+  .fitquest-tab-bar__tab,
+  .fitquest-tab-bar__tab-orb,
+  .fitquest-tab-bar__tab-label,
+  .fitquest-tab-bar__center-button,
+  .fitquest-tab-bar__center-icon,
+  .fitquest-center-menu__action {
+    transition-duration: 0ms;
+  }
+}

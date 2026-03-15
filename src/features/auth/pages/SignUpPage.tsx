@@ -169,7 +169,6 @@ export function SignUpPage() {
             </div>
 
             <header className="space-y-3">
-              <FqTag tone="secondary">Novo acesso</FqTag>
 
               <FqText
                 as="h1"

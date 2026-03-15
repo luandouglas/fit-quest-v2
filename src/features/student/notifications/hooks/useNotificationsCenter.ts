@@ -122,7 +122,7 @@ function getNotificationIcon(trigger: NotificationTrigger): IconName {
 function getDefaultAction(trigger: NotificationTrigger) {
   switch (trigger) {
     case 'workout_pending':
-      return { label: 'Iniciar treino', route: '/tabs/workouts/session' }
+      return { label: 'Ver treinos', route: '/tabs/workouts' }
     case 'workout_assigned':
       return { label: 'Ver treino', route: '/tabs/workouts' }
     case 'meal_pending':

@@ -2,6 +2,7 @@ import { useHistory, useLocation } from 'react-router-dom'
 
 import { FqButton, FqCard, FqQuickActions, FqTag, FqText, useToast } from '@/shared/ui'
 import { studentService } from '@/shared/services'
+import { canStudentStartWorkout, isStudentWorkoutExpired } from '@/shared/utils'
 
 import { studentRoutes } from '../routes'
 import { getStudentNavigationItem } from '../navigation'
@@ -32,6 +33,19 @@ export function StudentExperienceBanner() {
   } = useStudentHub(today)
   const dataSource = studentService.getDataSource()
   const showDataSourceBadge = import.meta.env.DEV
+  const canOpenWorkoutSession = canStudentStartWorkout(dashboard?.todayWorkout?.status)
+  const workoutShortcutLabel =
+    dashboard?.todayWorkout?.status === 'in_progress'
+      ? 'Retomar treino'
+      : canOpenWorkoutSession
+        ? 'Iniciar treino'
+        : isStudentWorkoutExpired(dashboard?.todayWorkout?.status)
+          ? 'Treino expirado'
+          : 'Ver treinos'
+
+  function openWorkoutShortcut() {
+    history.push(canOpenWorkoutSession ? studentRoutes.workoutSession : studentRoutes.workouts)
+  }
 
   async function handleQuickMeal() {
     try {
@@ -76,9 +90,9 @@ export function StudentExperienceBanner() {
       ? [
           {
             id: 'student-float-workout',
-            label: dashboard.todayWorkout?.status === 'completed' ? 'Treino' : 'Iniciar treino',
+            label: workoutShortcutLabel,
             icon: 'play' as const,
-            onClick: () => history.push(studentRoutes.workoutSession),
+            onClick: openWorkoutShortcut,
           },
           {
             id: 'student-float-meal',
@@ -173,8 +187,8 @@ export function StudentExperienceBanner() {
                 </FqText>
               </div>
 
-              <FqButton leftIcon="play" onClick={() => history.push(studentRoutes.workoutSession)} className="w-full justify-start">
-                Abrir treino
+              <FqButton leftIcon="play" onClick={openWorkoutShortcut} className="w-full justify-start">
+                {workoutShortcutLabel}
               </FqButton>
               <FqButton
                 variant="outline"

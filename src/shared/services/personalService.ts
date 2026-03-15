@@ -30,7 +30,7 @@ export const personalService = {
     return personalFirebaseService.getStudentWorkoutHistory(studentId)
   },
   async generateStudentInviteLink(): Promise<PersonalStudentInviteLink> {
-    return httpClient.post<PersonalStudentInviteLink, Record<string, never>>('/personal/students/invite-link', {})
+    return personalFirebaseService.generateStudentInviteLink()
   },
   async sendMotivationalMessage(input: SendPersonalMotivationInput): Promise<{ sent: boolean }> {
     return httpClient.post<{ sent: boolean }, SendPersonalMotivationInput>('/personal/students/motivation', input)

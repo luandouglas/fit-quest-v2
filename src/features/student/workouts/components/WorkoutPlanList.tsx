@@ -1,14 +1,11 @@
 import { FqButton, FqCard, FqTag, FqText } from '@/shared/ui'
+import { canStudentStartWorkout, isStudentWorkoutExpired } from '@/shared/utils'
 import type { WorkoutPlanItem } from '../types'
 
 type WorkoutPlanListProps = {
   workouts: WorkoutPlanItem[]
   onStartSession: (workoutId?: string) => void
   onOpenDetail: (workoutId: string) => void
-  onCreateQuickWorkout: () => void
-  isCreatingQuickWorkout?: boolean
-  canCreateQuickWorkout?: boolean
-  quickWorkoutBlockedReason?: string
 }
 
 const statusToneMap = {
@@ -35,49 +32,19 @@ export function WorkoutPlanList({
   workouts,
   onStartSession,
   onOpenDetail,
-  onCreateQuickWorkout,
-  isCreatingQuickWorkout = false,
-  canCreateQuickWorkout = true,
-  quickWorkoutBlockedReason,
 }: WorkoutPlanListProps) {
   return (
     <FqCard className="border-border bg-card">
       <div className="space-y-3">
-        <div className="flex items-center justify-between gap-2">
-          <FqText as="h3" className="text-lg font-semibold text-foreground">
-            Treinos disponiveis
-          </FqText>
-          <FqButton
-            size="sm"
-            variant="outline"
-            tone="secondary"
-            leftIcon="plus"
-            onClick={onCreateQuickWorkout}
-            isLoading={isCreatingQuickWorkout}
-            isDisabled={!canCreateQuickWorkout}
-          >
-            Criar treino rapido
-          </FqButton>
-        </div>
-        {!canCreateQuickWorkout && quickWorkoutBlockedReason ? (
-          <FqText as="p" className="text-xs text-muted-foreground">
-            {quickWorkoutBlockedReason}
-          </FqText>
-        ) : null}
+        <FqText as="h3" className="text-lg font-semibold text-foreground">
+          Treinos disponiveis
+        </FqText>
 
         {workouts.length === 0 ? (
           <div className="rounded-xl border border-dashed border-border bg-accent/20 p-4">
             <FqText as="p" className="text-sm text-muted-foreground">
               Sem treino planejado para este dia.
             </FqText>
-            <FqButton className="mt-3" size="sm" onClick={onCreateQuickWorkout} leftIcon="plus" isDisabled={!canCreateQuickWorkout}>
-              Criar treino rapido
-            </FqButton>
-            {!canCreateQuickWorkout && quickWorkoutBlockedReason ? (
-              <FqText as="p" className="mt-2 text-xs text-muted-foreground">
-                {quickWorkoutBlockedReason}
-              </FqText>
-            ) : null}
           </div>
         ) : (
           <ul className="space-y-2">
@@ -121,14 +88,16 @@ export function WorkoutPlanList({
                     <FqButton size="sm" variant="outline" tone="neutral" onClick={() => onOpenDetail(workout.id)}>
                       Ver treino
                     </FqButton>
-                    {workout.status === 'completed' ? (
-                      <FqButton size="sm" variant="outline" tone="secondary" onClick={() => onStartSession(workout.id)}>
-                        Repetir
-                      </FqButton>
-                    ) : (
+                    {canStudentStartWorkout(workout.status) ? (
                       <FqButton size="sm" leftIcon="play" onClick={() => onStartSession(workout.id)}>
                         Iniciar sessão
                       </FqButton>
+                    ) : (
+                      <FqText as="p" className="text-xs font-medium text-muted-foreground">
+                        {isStudentWorkoutExpired(workout.status)
+                          ? 'Janela encerrada para inicio'
+                          : 'Treino ja concluido'}
+                      </FqText>
                     )}
                   </div>
                 </div>

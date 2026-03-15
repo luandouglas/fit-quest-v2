@@ -86,6 +86,9 @@ export function usePersonalDashboard() {
 
   const generateStudentInviteLinkMutation = useMutation({
     mutationFn: () => personalService.generateStudentInviteLink(),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: personalQueryKeys.dashboard })
+    },
   })
 
   const uiState: PersonalUiState = useMemo(() => {

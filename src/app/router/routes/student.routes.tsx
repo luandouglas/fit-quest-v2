@@ -113,6 +113,14 @@ const StudentNotificationsPage = lazy(() =>
   })),
 );
 
+const LazyStudentQuickActionPageRoute = lazy(() =>
+  import("@/features/student/quick-actions/StudentQuickActionPage").then(
+    (module) => ({
+      default: module.StudentQuickActionPage,
+    }),
+  ),
+);
+
 function withStudentGuard(
   role: AuthUserRole,
   fallback: ReactNode,
@@ -166,6 +174,18 @@ export function renderStudentRoutes(args: {
       }
     />,
     <Route
+      key="student-workout-log-create"
+      path={studentRoutes.workoutLogCreate}
+      exact
+      render={() =>
+        withStudentGuard(
+          role,
+          fallback,
+          <LazyStudentQuickActionPageRoute kind="workout" />,
+        )
+      }
+    />,
+    <Route
       key="student-workout-detail"
       path={`${studentRoutes.workouts}/:workoutId`}
       exact
@@ -206,6 +226,30 @@ export function renderStudentRoutes(args: {
       path={studentRoutes.nutrition}
       exact
       render={() => withStudentGuard(role, fallback, <StudentNutritionPage />)}
+    />,
+    <Route
+      key="student-water-log-create"
+      path={studentRoutes.waterLogCreate}
+      exact
+      render={() =>
+        withStudentGuard(
+          role,
+          fallback,
+          <LazyStudentQuickActionPageRoute kind="water" />,
+        )
+      }
+    />,
+    <Route
+      key="student-meal-log-create"
+      path={studentRoutes.mealLogCreate}
+      exact
+      render={() =>
+        withStudentGuard(
+          role,
+          fallback,
+          <LazyStudentQuickActionPageRoute kind="meal" />,
+        )
+      }
     />,
     <Route
       key="student-progress"

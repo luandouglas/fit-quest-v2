@@ -82,12 +82,9 @@ describe('TrainingPlanPage permissions', () => {
     vi.clearAllMocks()
   })
 
-  it('disables quick workout creation for students with active personal trainer', async () => {
+  it('does not show quick workout creation for students', async () => {
     renderPage()
 
-    const quickButtons = await screen.findAllByRole('button', { name: 'Criar treino rapido' })
-    quickButtons.forEach((button) => {
-      expect(button).toBeDisabled()
-    })
+    expect(screen.queryByRole('button', { name: 'Criar treino rapido' })).not.toBeInTheDocument()
   })
 })

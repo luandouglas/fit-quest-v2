@@ -6,6 +6,7 @@ import {
   type StudentQuickAction,
   type WorkoutDay,
 } from '@/shared/services/contracts/student'
+import { isStudentWorkoutExpired } from '@/shared/utils'
 
 type StudentActionBoardProps = {
   quickActions: StudentQuickAction[]
@@ -35,6 +36,10 @@ function getWorkoutStatusLabel(todayWorkout: WorkoutDay | null) {
     return 'Dia de recuperação'
   }
 
+  if (todayWorkout.status === 'skipped') {
+    return 'Janela encerrada'
+  }
+
   return 'Pronto para execução'
 }
 
@@ -62,7 +67,10 @@ export function StudentActionBoard({
           </div>
 
           <div className="flex flex-wrap gap-2">
-            <FqTag tone={todayWorkout?.status === 'completed' ? 'success' : 'warning'} leftIcon="dumbbell">
+            <FqTag
+              tone={todayWorkout?.status === 'completed' ? 'success' : isStudentWorkoutExpired(todayWorkout?.status) ? 'warning' : 'warning'}
+              leftIcon="dumbbell"
+            >
               {getWorkoutStatusLabel(todayWorkout)}
             </FqTag>
             {cardioSession ? (

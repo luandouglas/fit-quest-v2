@@ -1,5 +1,6 @@
 import { FqButton, FqCard, FqProgressBar, FqTag, FqText } from '@/shared/ui'
 import type { StudentDashboard } from '@/shared/services/contracts/student'
+import { canStudentStartWorkout, isStudentWorkoutExpired } from '@/shared/utils'
 
 type StudentWorkoutTodayCardProps = {
   dashboard: StudentDashboard
@@ -22,6 +23,9 @@ export function StudentWorkoutTodayCard({ dashboard, onOpenWorkout }: StudentWor
     )
   }
 
+  const canOpenWorkoutSession = canStudentStartWorkout(workout.status)
+  const isExpiredWorkout = isStudentWorkoutExpired(workout.status)
+
   return (
     <FqCard className="border-border bg-card">
       <div className="space-y-4">
@@ -35,7 +39,13 @@ export function StudentWorkoutTodayCard({ dashboard, onOpenWorkout }: StudentWor
             </FqText>
           </div>
           <FqTag tone={workout.status === 'completed' ? 'success' : workout.status === 'in_progress' ? 'primary' : 'warning'}>
-            {workout.status === 'completed' ? 'Concluído' : workout.status === 'in_progress' ? 'Em execução' : 'Pendente'}
+            {workout.status === 'completed'
+              ? 'Concluído'
+              : workout.status === 'in_progress'
+                ? 'Em execução'
+                : isExpiredWorkout
+                  ? 'Expirado'
+                  : 'Pendente'}
           </FqTag>
         </div>
 
@@ -71,8 +81,14 @@ export function StudentWorkoutTodayCard({ dashboard, onOpenWorkout }: StudentWor
           ))}
         </div>
 
-        <FqButton leftIcon="play" onClick={onOpenWorkout}>
-          {workout.status === 'completed' ? 'Revisar treino' : workout.status === 'in_progress' ? 'Voltar para treino' : 'Iniciar treino'}
+        <FqButton leftIcon="play" onClick={onOpenWorkout} isDisabled={!canOpenWorkoutSession}>
+          {workout.status === 'completed'
+            ? 'Revisar treino'
+            : workout.status === 'in_progress'
+              ? 'Voltar para treino'
+              : isExpiredWorkout
+                ? 'Treino expirado'
+                : 'Iniciar treino'}
         </FqButton>
       </div>
     </FqCard>

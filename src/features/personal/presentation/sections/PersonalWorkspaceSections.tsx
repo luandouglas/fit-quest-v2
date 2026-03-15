@@ -195,6 +195,8 @@ export function PersonalWorkspaceSections({
   const selectedWorkoutId =
     tab === "workouts" ? (forcedWorkoutId ?? workoutId ?? null) : null;
   const [isCreatingWorkoutFlow, setIsCreatingWorkoutFlow] = useState(false);
+  const [prefilledStudentId, setPrefilledStudentId] = useState("");
+  const [studentWorkoutsViewId, setStudentWorkoutsViewId] = useState<string | null>(null);
   const [workoutSearch, setWorkoutSearch] = useState("");
   const [workoutFilter, setWorkoutFilter] =
     useState<WorkoutCatalogFilter>("all");
@@ -468,6 +470,32 @@ export function PersonalWorkspaceSections({
     setIsEditingWorkoutDetails(false);
     setHistorySnapshot(null);
   }
+
+  function handleCreateWorkoutForStudent(studentId: string) {
+    setPrefilledStudentId(studentId);
+    setIsCreatingWorkoutFlow(true);
+    history.push(`${basePath}/workouts`);
+  }
+
+  function handleViewStudentWorkouts(studentId: string) {
+    setStudentWorkoutsViewId(studentId);
+    history.push(`${basePath}/workouts`);
+  }
+
+  const studentWorkoutsForView = useMemo(() => {
+    if (!studentWorkoutsViewId) return [];
+    return (overview?.workouts ?? []).filter(
+      (workout) => workout.studentId === studentWorkoutsViewId,
+    );
+  }, [overview?.workouts, studentWorkoutsViewId]);
+
+  const studentWorkoutsViewName = useMemo(() => {
+    if (!studentWorkoutsViewId) return "";
+    const student = (overview?.students ?? []).find(
+      (s) => s.id === studentWorkoutsViewId,
+    );
+    return student?.name ?? "Aluno";
+  }, [overview?.students, studentWorkoutsViewId]);
 
   function toggleEditingWeekday(weekday: PersonalWorkoutWeekday) {
     setEditingWeekdays((current) => {
@@ -1091,13 +1119,16 @@ export function PersonalWorkspaceSections({
                           />
                         </button>
                       </th>
+                      <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                        Acoes
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredStudents.length === 0 ? (
                       <tr>
                         <td
-                          colSpan={4}
+                          colSpan={5}
                           className="px-4 py-6 text-sm text-muted-foreground"
                         >
                           Nenhum aluno encontrado para os filtros aplicados.
@@ -1131,6 +1162,27 @@ export function PersonalWorkspaceSections({
                             >
                               {student.activeWorkouts}
                             </span>
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex flex-wrap gap-2">
+                              <FqButton
+                                size="sm"
+                                leftIcon="plus"
+                                onClick={() => handleCreateWorkoutForStudent(student.id)}
+                              >
+                                Criar treino
+                              </FqButton>
+                              {student.activeWorkouts > 0 ? (
+                                <FqButton
+                                  size="sm"
+                                  variant="outline"
+                                  tone="neutral"
+                                  onClick={() => handleViewStudentWorkouts(student.id)}
+                                >
+                                  Ver treinos
+                                </FqButton>
+                              ) : null}
+                            </div>
                           </td>
                         </tr>
                       ))
@@ -1176,9 +1228,163 @@ export function PersonalWorkspaceSections({
                 onCreateWorkout={createWorkout}
                 isCreatingWorkout={isCreatingWorkout}
                 studentOptions={studentOptions}
-                onCreated={() => setIsCreatingWorkoutFlow(false)}
+                prefilledStudentId={prefilledStudentId}
+                onCreated={() => {
+                  setIsCreatingWorkoutFlow(false);
+                  setPrefilledStudentId("");
+                }}
               />
             </div>
+          </div>
+        ) : studentWorkoutsViewId ? (
+          <div className="space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex flex-row gap-2">
+                <FqIcon
+                  className="cursor-pointer"
+                  name="arrowLeft"
+                  size={28}
+                  onClick={() => {
+                    setStudentWorkoutsViewId(null);
+                    history.push(`${basePath}/students`);
+                  }}
+                />
+                <div>
+                  <FqText
+                    as="h2"
+                    className="text-2xl font-semibold text-foreground"
+                  >
+                    Treinos de {studentWorkoutsViewName}
+                  </FqText>
+                  <FqText as="p" className="text-sm text-muted-foreground">
+                    {studentWorkoutsForView.length} treino{studentWorkoutsForView.length !== 1 ? "s" : ""} cadastrado{studentWorkoutsForView.length !== 1 ? "s" : ""} para esse aluno.
+                  </FqText>
+                </div>
+              </div>
+              <FqButton
+                leftIcon="plus"
+                onClick={() => handleCreateWorkoutForStudent(studentWorkoutsViewId)}
+              >
+                Criar treino
+              </FqButton>
+            </div>
+
+            {studentWorkoutsForView.length === 0 ? (
+              <FqCard className="border-border bg-card">
+                <FqText as="p" className="text-sm text-muted-foreground">
+                  Nenhum treino atribuido para esse aluno ainda.
+                </FqText>
+              </FqCard>
+            ) : (
+              <div className="grid gap-3 xl:grid-cols-2">
+                {studentWorkoutsForView.map((workout) => {
+                  const statusMeta = resolveWorkoutStatusMeta(workout);
+                  return (
+                    <article
+                      key={workout.id}
+                      className="rounded-2xl border border-border bg-card p-4 shadow-sm"
+                    >
+                      <div className="space-y-3">
+                        <div className="flex items-start justify-between gap-2">
+                          <div>
+                            <FqText
+                              as="h3"
+                              className="text-lg font-semibold text-foreground"
+                            >
+                              {workout.title}
+                            </FqText>
+                            <FqText
+                              as="p"
+                              className="text-sm text-muted-foreground"
+                            >
+                              {workout.description || "Sem descricao"}
+                            </FqText>
+                          </div>
+                          <span className="rounded-full bg-primary/10 px-2 py-1 text-xs font-semibold text-primary">
+                            {resolveWorkoutIntensityLabel(workout)}
+                          </span>
+                        </div>
+
+                        <div className="flex flex-wrap gap-2">
+                          {(workout.muscleGroups ?? [])
+                            .slice(0, 4)
+                            .map((group) => (
+                              <span
+                                key={`${workout.id}-${group}`}
+                                className="rounded-full bg-muted px-2 py-1 text-xs text-muted-foreground"
+                              >
+                                {group}
+                              </span>
+                            ))}
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+                          <span className="inline-flex items-center gap-1">
+                            <FqIcon name="list" size={14} />
+                            {workout.exercisesCount} exercicios
+                          </span>
+                          <span className="inline-flex items-center gap-1">
+                            <FqIcon name="star" size={14} />
+                            {workout.starsReward ?? 0} estrelas
+                          </span>
+                          <span className="inline-flex items-center gap-1">
+                            <FqIcon name="clock" size={14} />
+                            {workout.estimatedDurationMin ?? 0} min
+                          </span>
+                        </div>
+
+                        {workout.exercises && workout.exercises.length > 0 ? (
+                          <div className="rounded-xl border border-border bg-muted/10 p-3">
+                            <FqText
+                              as="p"
+                              className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2"
+                            >
+                              Exercicios
+                            </FqText>
+                            <ul className="space-y-1.5">
+                              {workout.exercises.map((exercise, exIdx) => (
+                                <li key={exercise.id} className="flex items-start gap-2">
+                                  <span className="inline-flex h-5 w-5 items-center justify-center rounded bg-success/15 text-[0.65rem] font-semibold text-success">
+                                    {exIdx + 1}
+                                  </span>
+                                  <div>
+                                    <FqText as="p" className="text-sm font-medium text-foreground">
+                                      {exercise.name}
+                                    </FqText>
+                                    <FqText as="p" className="text-xs text-muted-foreground">
+                                      {exercise.sets}x{exercise.reps} • {exercise.restSec ?? 60}s descanso • {exercise.suggestedLoadKg}kg
+                                    </FqText>
+                                  </div>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        ) : null}
+
+                        <div className="flex items-center justify-between border-t border-border pt-3">
+                          <span
+                            className={`rounded-full px-2.5 py-1 text-xs font-semibold ${statusMeta.className}`}
+                          >
+                            {statusMeta.label}
+                          </span>
+                          <button
+                            type="button"
+                            className="inline-flex items-center gap-1 text-sm font-semibold text-primary transition hover:opacity-80"
+                            onClick={() => {
+                              setStudentWorkoutsViewId(null);
+                              selectWorkoutForDetails(workout);
+                            }}
+                          >
+                            Ver detalhes
+                            <FqIcon name="chevronRight" size={14} />
+                          </button>
+                        </div>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            )}
           </div>
         ) : (
           <div className="space-y-4">

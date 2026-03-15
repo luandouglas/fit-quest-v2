@@ -40,6 +40,7 @@ import type {
   WorkoutDay,
 } from '@/shared/services/contracts/student'
 import type { WorkoutDetail, WorkoutSession, WorkoutWeekday } from '@/shared/services/contracts/workout'
+import { canStudentStartWorkout } from '@/shared/utils'
 
 import type { StudentDashboardQuery, StudentRepository } from './studentRepository'
 import {
@@ -80,6 +81,14 @@ function studentDoc<T>(studentId: string, ...segments: string[]) {
 
 function studentCollection<T>(studentId: string, ...segments: string[]) {
   return collection(getDb(), 'students', studentId, ...segments) as CollectionReference<T>
+}
+
+function toIsoDate(date: Date) {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+
+  return `${year}-${month}-${day}`
 }
 
 async function getRequiredDoc<T>(reference: DocumentReference<T>, label: string) {
@@ -173,13 +182,22 @@ function buildWorkoutDayFromPlan(
 ): WorkoutDay {
   const isActiveSession = activeSession?.workoutId === plan.id
   const completionPct = buildWorkoutCompletionPct(plan, activeSession)
+  const todayKey = toIsoDate(new Date())
+  const status =
+    isActiveSession
+      ? workoutDayStatuses.inProgress
+      : plan.status === 'completed'
+        ? workoutDayStatuses.completed
+        : date < todayKey
+          ? workoutDayStatuses.skipped
+          : workoutDayStatuses.scheduled
 
   return {
     id: plan.id,
     date,
     title: plan.title,
     focus: plan.focusLabel || 'Treino do dia',
-    status: isActiveSession ? workoutDayStatuses.inProgress : plan.status === 'completed' ? workoutDayStatuses.completed : workoutDayStatuses.scheduled,
+    status,
     estimatedDurationMin: plan.estimatedDurationMin,
     completionPct,
     rewardStars: plan.starsReward ?? 0,
@@ -379,7 +397,12 @@ function buildQuickActions(
     {
       id: 'firebase-workout',
       key: studentQuickActionKeys.startWorkout,
-      label: todayWorkout?.status === workoutDayStatuses.completed ? 'Treino concluído' : 'Iniciar treino',
+      label:
+        todayWorkout?.status === workoutDayStatuses.completed
+          ? 'Treino concluído'
+          : todayWorkout?.status === workoutDayStatuses.skipped
+            ? 'Treino expirado'
+            : 'Iniciar treino',
       description: todayWorkout?.title ?? 'Abrir próximos treinos',
       icon: 'play',
       status:
@@ -387,7 +410,9 @@ function buildQuickActions(
           ? 'locked'
           : todayWorkout.status === workoutDayStatuses.completed
             ? 'completed'
-            : 'available',
+            : canStudentStartWorkout(todayWorkout.status)
+              ? 'available'
+              : 'locked',
       targetRoute: '/tabs/workouts',
     },
     {
@@ -455,6 +480,7 @@ function buildDailyProgress(input: {
   const hasPendingWorkout =
     workoutStatus !== undefined &&
     workoutStatus !== workoutDayStatuses.completed &&
+    workoutStatus !== workoutDayStatuses.skipped &&
     workoutStatus !== workoutDayStatuses.restDay
 
   return {

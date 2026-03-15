@@ -156,7 +156,9 @@ function syncExerciseStatuses(session: WorkoutSession): WorkoutSession {
 
 export function TrainingSessionPage() {
   const history = useHistory();
-  const location = useLocation<{ workoutId?: string } | undefined>();
+  const location = useLocation<
+    { workoutId?: string; workoutDate?: string } | undefined
+  >();
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -184,8 +186,11 @@ export function TrainingSessionPage() {
 
       try {
         const selectedWorkoutId = location.state?.workoutId;
+        const selectedWorkoutDate = location.state?.workoutDate;
         const activeSession = await workoutService.startSession(
-          selectedWorkoutId ? { workoutId: selectedWorkoutId } : undefined,
+          selectedWorkoutId
+            ? { workoutId: selectedWorkoutId, date: selectedWorkoutDate }
+            : undefined,
         );
 
         if (!mounted) {

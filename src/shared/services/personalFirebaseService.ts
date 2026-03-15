@@ -18,6 +18,7 @@ import type {
   PersonalDashboardOverview,
   PersonalMetrics,
   PersonalStudent,
+  PersonalStudentInviteLink,
   PersonalStudentWorkoutHistory,
   UpdatePersonalWorkoutInput,
 } from '@/shared/services/contracts/personal'
@@ -56,6 +57,25 @@ function resolvePersonalId() {
   }
 
   return session.user.id
+}
+
+function resolvePersonalSession() {
+  const session = authService.getStoredSession()
+
+  if (!session || session.user.role !== 'PERSONAL') {
+    throw new Error('Authenticated personal session is required for Firebase access.')
+  }
+
+  return session
+}
+
+function generateInviteCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+  let code = 'PT-'
+  for (let i = 0; i < 6; i++) {
+    code += chars[Math.floor(Math.random() * chars.length)]
+  }
+  return code
 }
 
 function safeRound(value: unknown, fallback: number, min: number, max: number) {
@@ -376,5 +396,25 @@ export const personalFirebaseService = {
         totalSets: session.totalSets,
       })),
     }
+  },
+  async generateStudentInviteLink(): Promise<PersonalStudentInviteLink> {
+    const session = resolvePersonalSession()
+    const personalId = session.user.id
+    const personalName = session.user.name || 'Personal'
+    const code = generateInviteCode()
+    const db = getDb()
+
+    await setDoc(doc(db, 'personalInvites', code), {
+      code,
+      personalId,
+      personalName,
+      personalRole: 'PERSONAL',
+      createdAt: new Date().toISOString(),
+      status: 'active',
+    })
+
+    const inviteLink = `${window.location.origin}/tabs/profile?invite=${code}`
+
+    return { code, inviteLink }
   },
 }

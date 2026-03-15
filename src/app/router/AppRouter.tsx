@@ -104,6 +104,30 @@ export function AppRouter() {
               </PrivateRoute>
             </Route>
 
+            <Route path="/student/workout-log/create" exact>
+              <PrivateRoute>
+                <RoleGuard allowedRoles={["STUDENT"]}>
+                  <Redirect to={studentRoutes.workoutLogCreate} />
+                </RoleGuard>
+              </PrivateRoute>
+            </Route>
+
+            <Route path="/student/water-log/create" exact>
+              <PrivateRoute>
+                <RoleGuard allowedRoles={["STUDENT"]}>
+                  <Redirect to={studentRoutes.waterLogCreate} />
+                </RoleGuard>
+              </PrivateRoute>
+            </Route>
+
+            <Route path="/student/meal-log/create" exact>
+              <PrivateRoute>
+                <RoleGuard allowedRoles={["STUDENT"]}>
+                  <Redirect to={studentRoutes.mealLogCreate} />
+                </RoleGuard>
+              </PrivateRoute>
+            </Route>
+
             <Route
               path="/nutrition/meal/:mealId"
               exact

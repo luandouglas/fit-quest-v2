@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 
 import { useRole } from '@/shared/hooks'
 import {
@@ -55,6 +55,7 @@ function createEmptyForm(): ProfileFormState {
 
 export function ProfilePage() {
   const history = useHistory()
+  const location = useLocation()
   const { toast } = useToast()
   const { isStudent, role } = useRole()
   const notificationsCenter = useNotificationsCenter()
@@ -73,6 +74,20 @@ export function ProfilePage() {
   } = useProfileHubViewModel(isStudent, isStudent)
   const [form, setForm] = useState<ProfileFormState>(createEmptyForm)
   const [inviteCodeOrId, setInviteCodeOrId] = useState('')
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    const inviteCode = params.get('invite')
+    if (inviteCode) {
+      setInviteCodeOrId(inviteCode)
+      params.delete('invite')
+      const nextSearch = params.toString()
+      history.replace({
+        pathname: location.pathname,
+        search: nextSearch ? `?${nextSearch}` : '',
+      })
+    }
+  }, [history, location.pathname, location.search])
 
   useEffect(() => {
     if (!data) {

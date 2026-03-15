@@ -103,6 +103,8 @@ export function StudentDailyFocusCard({ dashboard, onNavigate }: StudentDailyFoc
                     ? 'Concluido'
                     : dashboard.todayWorkout?.status === 'in_progress'
                       ? 'Em andamento'
+                      : dashboard.todayWorkout?.status === 'skipped'
+                        ? 'Expirado'
                       : dashboard.todayWorkout
                         ? 'Pendente'
                         : 'Livre'}

@@ -1,65 +1,71 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from "react";
 
-import { CirclePlay, Dumbbell, Flame, Info, TimerReset } from 'lucide-react'
+import { CirclePlay, Dumbbell, Flame, Info, TimerReset } from "lucide-react";
 
-import { FqModal } from '@/shared/ui/feedback'
-import { FqDrawer } from '@/shared/ui/navigation'
-import { cx } from '@/shared/utils'
+import { FqModal } from "@/shared/ui/feedback";
+import { FqDrawer } from "@/shared/ui/navigation";
+import { cx } from "@/shared/utils";
 
-import type { WorkoutExercise } from '../types'
+import type { WorkoutExercise } from "../types";
 
 type ExerciseInsightModalProps = {
-  open: boolean
-  exercise: WorkoutExercise | null
-  onOpenChange: (open: boolean) => void
-}
+  open: boolean;
+  exercise: WorkoutExercise | null;
+  onOpenChange: (open: boolean) => void;
+};
 
 function formatLoad(exercise: WorkoutExercise) {
-  return typeof exercise.suggestedLoadKg === 'number' ? `${exercise.suggestedLoadKg} kg` : 'Carga livre'
+  return typeof exercise.suggestedLoadKg === "number"
+    ? `${exercise.suggestedLoadKg} kg`
+    : "Carga livre";
 }
 
 function buildExecutionSteps(exercise: WorkoutExercise) {
   return [
     exercise.equipment
       ? `Prepare ${exercise.equipment.toLowerCase()} e ajuste a base antes de iniciar a primeira serie.`
-      : 'Prepare o espaco e estabilize o corpo antes da primeira repeticao.',
-    exercise.note ?? 'Busque uma execucao limpa, com ritmo constante e postura alinhada.',
+      : "Prepare o espaco e estabilize o corpo antes da primeira repeticao.",
+    exercise.note ??
+      "Busque uma execucao limpa, com ritmo constante e postura alinhada.",
     `Execute ${exercise.sets} series de ${exercise.reps} repeticoes, mantendo amplitude controlada do inicio ao fim.`,
-    typeof exercise.suggestedLoadKg === 'number'
+    typeof exercise.suggestedLoadKg === "number"
       ? `Use ${exercise.suggestedLoadKg} kg como referencia e reduza a carga se perder controle tecnico.`
-      : 'Ajuste a carga para preservar tecnica e ritmo sem compensacoes.',
+      : "Ajuste a carga para preservar tecnica e ritmo sem compensacoes.",
     `Respeite ${exercise.restSec}s de descanso entre as series antes de avancar para a proxima rodada.`,
-  ]
+  ];
 }
 
 function buildCoachTips(exercise: WorkoutExercise) {
   return [
     exercise.muscleGroup
       ? `Mantenha a tensao principal em ${exercise.muscleGroup.toLowerCase()} durante toda a serie.`
-      : 'Mantenha tensao continua no musculo alvo durante toda a serie.',
-    'Use a primeira serie para calibrar amplitude, respiracao e velocidade de execucao.',
+      : "Mantenha tensao continua no musculo alvo durante toda a serie.",
+    "Use a primeira serie para calibrar amplitude, respiracao e velocidade de execucao.",
     exercise.supportMedia
-      ? 'Se surgir duvida de forma, abra a demonstracao antes da primeira serie pesada.'
-      : 'Se a execucao variar demais, reduza a carga antes de continuar.',
-  ]
+      ? "Se surgir duvida de forma, abra a demonstracao antes da primeira serie pesada."
+      : "Se a execucao variar demais, reduza a carga antes de continuar.",
+  ];
 }
 
 function buildCommonMistakes(exercise: WorkoutExercise) {
   return [
-    typeof exercise.suggestedLoadKg === 'number'
-      ? 'Subir a carga acima do que voce consegue controlar com postura estavel.'
-      : 'Acelerar demais a repeticao e perder controle na volta.',
-    'Encurtar a amplitude para terminar a serie mais rapido.',
+    typeof exercise.suggestedLoadKg === "number"
+      ? "Subir a carga acima do que voce consegue controlar com postura estavel."
+      : "Acelerar demais a repeticao e perder controle na volta.",
+    "Encurtar a amplitude para terminar a serie mais rapido.",
     `Ignorar o descanso de ${exercise.restSec}s e deixar a tecnica cair nas ultimas series.`,
-  ]
+  ];
 }
 
 function getIsMobileViewport() {
-  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
-    return false
+  if (
+    typeof window === "undefined" ||
+    typeof window.matchMedia !== "function"
+  ) {
+    return false;
   }
 
-  return window.matchMedia('(max-width: 767px)').matches
+  return window.matchMedia("(max-width: 767px)").matches;
 }
 
 export function ExerciseInsightModal({
@@ -67,50 +73,61 @@ export function ExerciseInsightModal({
   exercise,
   onOpenChange,
 }: ExerciseInsightModalProps) {
-  const [isMobileViewport, setIsMobileViewport] = useState(getIsMobileViewport)
+  const [isMobileViewport, setIsMobileViewport] = useState(getIsMobileViewport);
 
   useEffect(() => {
-    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
-      setIsMobileViewport(false)
-      return undefined
+    if (
+      typeof window === "undefined" ||
+      typeof window.matchMedia !== "function"
+    ) {
+      setIsMobileViewport(false);
+      return undefined;
     }
 
-    const mediaQuery = window.matchMedia('(max-width: 767px)')
+    const mediaQuery = window.matchMedia("(max-width: 767px)");
 
-    const handleViewportChange = (event: MediaQueryListEvent | MediaQueryList) => {
-      setIsMobileViewport(event.matches)
-    }
+    const handleViewportChange = (
+      event: MediaQueryListEvent | MediaQueryList,
+    ) => {
+      setIsMobileViewport(event.matches);
+    };
 
-    handleViewportChange(mediaQuery)
-    if (typeof mediaQuery.addEventListener === 'function') {
-      mediaQuery.addEventListener('change', handleViewportChange)
+    handleViewportChange(mediaQuery);
+    if (typeof mediaQuery.addEventListener === "function") {
+      mediaQuery.addEventListener("change", handleViewportChange);
     } else {
-      mediaQuery.addListener(handleViewportChange)
+      mediaQuery.addListener(handleViewportChange);
     }
 
     return () => {
-      if (typeof mediaQuery.removeEventListener === 'function') {
-        mediaQuery.removeEventListener('change', handleViewportChange)
+      if (typeof mediaQuery.removeEventListener === "function") {
+        mediaQuery.removeEventListener("change", handleViewportChange);
       } else {
-        mediaQuery.removeListener(handleViewportChange)
+        mediaQuery.removeListener(handleViewportChange);
       }
-    }
-  }, [])
+    };
+  }, []);
 
   if (!exercise) {
-    return null
+    return null;
   }
 
-  const executionSteps = buildExecutionSteps(exercise)
-  const coachTips = buildCoachTips(exercise)
-  const commonMistakes = buildCommonMistakes(exercise)
+  const executionSteps = buildExecutionSteps(exercise);
+  const coachTips = buildCoachTips(exercise);
+  const commonMistakes = buildCommonMistakes(exercise);
   const content = (
     <div className="space-y-5 px-1 pb-2">
       <div className="space-y-3">
         <div className="flex flex-wrap items-center gap-2 text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground">
           <span>Exercise detail</span>
           <span className="h-1 w-1 rounded-full bg-muted-foreground/40" />
-          <span>{exercise.status === 'done' ? 'feito' : exercise.status === 'current' ? 'em foco' : 'planejado'}</span>
+          <span>
+            {exercise.status === "done"
+              ? "feito"
+              : exercise.status === "current"
+                ? "em foco"
+                : "planejado"}
+          </span>
         </div>
 
         <div className="flex flex-wrap gap-2">
@@ -146,8 +163,10 @@ export function ExerciseInsightModal({
               <p className="text-base font-semibold text-foreground">
                 Abrir demonstracao
               </p>
+
               <p className="text-sm text-muted-foreground">
-                {exercise.supportMedia.label ?? 'Veja o movimento antes de comecar a serie.'}
+                {exercise.supportMedia.label ??
+                  "Veja o movimento antes de comecar a serie."}
               </p>
             </div>
           </div>
@@ -166,7 +185,7 @@ export function ExerciseInsightModal({
               Grupo alvo
             </p>
             <p className="mt-2 text-sm font-semibold text-foreground">
-              {exercise.muscleGroup ?? 'Full body'}
+              {exercise.muscleGroup ?? "Full body"}
             </p>
           </div>
 
@@ -175,7 +194,7 @@ export function ExerciseInsightModal({
               Equipamento
             </p>
             <p className="mt-2 text-sm font-semibold text-foreground">
-              {exercise.equipment ?? 'Peso corporal / livre'}
+              {exercise.equipment ?? "Peso corporal / livre"}
             </p>
           </div>
 
@@ -198,7 +217,10 @@ export function ExerciseInsightModal({
 
         <ol className="mt-5 space-y-4">
           {executionSteps.map((step, index) => (
-            <li key={`${exercise.id}-step-${index}`} className="flex items-start gap-3">
+            <li
+              key={`${exercise.id}-step-${index}`}
+              className="flex items-start gap-3"
+            >
               <span className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-secondary/14 text-sm font-semibold text-secondary">
                 {index + 1}
               </span>
@@ -217,7 +239,10 @@ export function ExerciseInsightModal({
 
           <ul className="mt-4 space-y-3">
             {coachTips.map((tip, index) => (
-              <li key={`${exercise.id}-tip-${index}`} className="flex items-start gap-3 text-sm leading-6 text-foreground/88">
+              <li
+                key={`${exercise.id}-tip-${index}`}
+                className="flex items-start gap-3 text-sm leading-6 text-foreground/88"
+              >
                 <span className="mt-2 h-1.5 w-1.5 rounded-full bg-warning" />
                 <span>{tip}</span>
               </li>
@@ -233,7 +258,10 @@ export function ExerciseInsightModal({
 
           <ul className="mt-4 space-y-3">
             {commonMistakes.map((mistake, index) => (
-              <li key={`${exercise.id}-mistake-${index}`} className="flex items-start gap-3 text-sm leading-6 text-foreground/88">
+              <li
+                key={`${exercise.id}-mistake-${index}`}
+                className="flex items-start gap-3 text-sm leading-6 text-foreground/88"
+              >
                 <span className="mt-2 h-1.5 w-1.5 rounded-full bg-destructive" />
                 <span>{mistake}</span>
               </li>
@@ -248,13 +276,13 @@ export function ExerciseInsightModal({
             <Info className="h-4 w-4 text-primary" />
             Nota rapida
           </div>
-          <p className={cx('mt-3 text-sm leading-7 text-foreground/88')}>
+          <p className={cx("mt-3 text-sm leading-7 text-foreground/88")}>
             {exercise.note}
           </p>
         </section>
       ) : null}
     </div>
-  )
+  );
 
   if (isMobileViewport) {
     return (
@@ -268,7 +296,7 @@ export function ExerciseInsightModal({
       >
         {content}
       </FqDrawer>
-    )
+    );
   }
 
   return (
@@ -282,5 +310,5 @@ export function ExerciseInsightModal({
     >
       {content}
     </FqModal>
-  )
+  );
 }

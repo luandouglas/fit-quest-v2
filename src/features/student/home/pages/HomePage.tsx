@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
 
+import { studentRoutes } from '@/features/student/routes'
 import { FqAlert, FqButton, FqCard, FqEmptyState, FqProgressBar, FqTag, FqText, FqStatCard, useToast } from '@/shared/ui'
 
 import { useHomeDashboard } from '../hooks/useHomeDashboard'
@@ -168,7 +169,7 @@ export function HomePage() {
               <FqButton
                 leftIcon="play"
                 onClick={() => {
-                  history.push('/tabs/workouts/session')
+                  history.push(studentRoutes.workouts)
                 }}
                 isDisabled={!overview.quickActions.canStartWorkout}
               >

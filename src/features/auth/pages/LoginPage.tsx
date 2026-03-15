@@ -89,7 +89,7 @@ export function LoginPage() {
               <FqTag tone="primary">Experiencia tranquila</FqTag>
               <FqText
                 as="h1"
-                className="fq-display max-w-[11ch] text-[clamp(2.9rem,5vw,4.5rem)] leading-[0.9] text-foreground"
+                className="fq-display max-w-[11ch] text-4xl leading-[0.9] text-foreground"
               >
                 Seu treino cabe em uma interface mais calma.
               </FqText>
@@ -158,12 +158,11 @@ export function LoginPage() {
             </div>
 
             <header className="mb-6 space-y-3 sm:mb-8">
-              <FqTag tone="secondary">Acesso seguro</FqTag>
               <FqText
                 as="h1"
                 className="fq-display text-[clamp(2.4rem,4vw,3.2rem)] leading-[0.92] text-foreground"
               >
-                Bem-vindo de volta
+                Bem-vindo
               </FqText>
               <FqText className="text-base text-muted-foreground">
                 Entre para continuar sua jornada com foco e menos distracoes.

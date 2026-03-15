@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useHistory, useParams } from 'react-router-dom'
+import { useHistory, useLocation, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import {
   Activity,
@@ -18,13 +18,18 @@ import { studentRoutes } from '@/features/student/routes'
 import { buildCatalogSupportMedia, findPtbrCatalogEntry, loadPtbrExerciseCatalog } from '@/shared/services/exerciseCatalog'
 import { workoutService } from '@/shared/services'
 import { FqAlert, FqButton } from '@/shared/ui'
-import { cx } from '@/shared/utils'
+import { canStudentStartWorkout, cx } from '@/shared/utils'
 
 import { ExercisePreviewVisual } from './components/ExercisePreviewVisual'
 import { ExerciseInsightModal } from './components/ExerciseInsightModal'
 
 type WorkoutDetailRouteParams = {
   workoutId: string
+}
+
+type WorkoutDetailLocationState = {
+  workoutDate?: string
+  workoutStatus?: 'completed' | 'pending' | 'late'
 }
 
 function formatDate(date: string, options?: Intl.DateTimeFormatOptions) {
@@ -90,6 +95,7 @@ function getExerciseStatusClasses(status: 'done' | 'current' | 'upcoming') {
 
 export function WorkoutDetailPage() {
   const history = useHistory()
+  const location = useLocation<WorkoutDetailLocationState | undefined>()
   const { workoutId } = useParams<WorkoutDetailRouteParams>()
   const [selectedExerciseId, setSelectedExerciseId] = useState<string | null>(null)
 
@@ -115,9 +121,16 @@ export function WorkoutDetailPage() {
     }
   }) ?? []
   const selectedExercise = exercises.find((exercise) => exercise.id === selectedExerciseId) ?? null
+  const workoutStatus = location.state?.workoutStatus ?? workout?.status ?? 'pending'
+  const workoutDate = location.state?.workoutDate ?? workout?.date ?? ''
+  const canStartSelectedWorkout = canStudentStartWorkout(workoutStatus)
 
   function startWorkout() {
-    history.push(studentRoutes.workoutSession, { workoutId })
+    if (!canStartSelectedWorkout) {
+      return
+    }
+
+    history.push(studentRoutes.workoutSession, { workoutId, workoutDate })
   }
 
   if (detailQuery.isPending) {
@@ -168,8 +181,8 @@ export function WorkoutDetailPage() {
         <div className="mt-6 flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
           <div className="space-y-4">
             <div className="flex flex-wrap items-center gap-2">
-              <span className={cx('rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em]', getStatusClasses(workout.status))}>
-                {workout.status === 'completed' ? 'concluido' : workout.status === 'late' ? 'atrasado' : 'programado'}
+              <span className={cx('rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em]', getStatusClasses(workoutStatus))}>
+                {workoutStatus === 'completed' ? 'concluido' : workoutStatus === 'late' ? 'expirado' : 'programado'}
               </span>
               <span className="rounded-full bg-white/72 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                 {workout.intensity ?? 'ritmo guiado'}
@@ -190,7 +203,7 @@ export function WorkoutDetailPage() {
 
             <div className="flex flex-wrap gap-2">
               <span className="rounded-full bg-white/72 px-4 py-2 text-sm font-semibold text-foreground shadow-[0_10px_22px_rgba(36,49,44,0.05)]">
-                {formatDate(workout.date, { weekday: 'long' })}
+                {formatDate(workoutDate, { weekday: 'long' })}
               </span>
               <span className="rounded-full bg-white/72 px-4 py-2 text-sm font-semibold text-foreground shadow-[0_10px_22px_rgba(36,49,44,0.05)]">
                 {workout.exercises.length} exercicios
@@ -205,16 +218,16 @@ export function WorkoutDetailPage() {
             <FqButton variant="outline" tone="neutral" onClick={() => history.push(studentRoutes.workouts)}>
               Voltar para a agenda
             </FqButton>
-            <FqButton leftIcon="play" onClick={startWorkout}>
-              {workout.status === 'completed' ? 'Treinar novamente' : 'Iniciar treino'}
+            <FqButton leftIcon="play" onClick={startWorkout} isDisabled={!canStartSelectedWorkout}>
+              {workoutStatus === 'completed' ? 'Treino concluido' : workoutStatus === 'late' ? 'Treino expirado' : 'Iniciar treino'}
             </FqButton>
           </div>
         </div>
       </div>
 
-      {workout.status === 'late' ? (
+      {workoutStatus === 'late' ? (
         <div className="rounded-[28px] border border-warning/30 bg-warning/10 px-5 py-4 text-sm font-medium text-warning-foreground">
-          Este treino esta atrasado, mas ainda da para recuperar a aderencia iniciando agora.
+          A janela deste treino foi encerrada. O aluno pode consultar os detalhes, mas nao iniciar a sessao.
         </div>
       ) : null}
 
