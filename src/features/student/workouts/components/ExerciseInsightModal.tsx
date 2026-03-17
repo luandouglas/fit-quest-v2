@@ -1,6 +1,6 @@
-import { startTransition, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
-import { CirclePlay, Dumbbell, Flame, Info, TimerReset, X } from "lucide-react";
+import { CirclePlay, Dumbbell, Flame, Info, TimerReset } from "lucide-react";
 
 import { FqModal } from "@/shared/ui/feedback";
 import { FqDrawer } from "@/shared/ui/navigation";
@@ -74,52 +74,13 @@ export function ExerciseInsightModal({
   onOpenChange,
 }: ExerciseInsightModalProps) {
   const [isMobileViewport, setIsMobileViewport] = useState(getIsMobileViewport);
-  const [videoActive, setVideoActive] = useState(false);
-  const overlayRef = useRef<HTMLDivElement>(null);
-
-  const handlePlay = () => {
-    setVideoActive(true);
-    setTimeout(() => {
-      const el = overlayRef.current;
-      if (!el) return;
-      const reqFS =
-        el.requestFullscreen?.bind(el) ??
-        (
-          el as unknown as { webkitRequestFullscreen?: () => Promise<void> }
-        ).webkitRequestFullscreen?.bind(el);
-      reqFS?.()
-        ?.then(() =>
-          (
-            screen.orientation as unknown as {
-              lock?: (o: string) => Promise<void>;
-            }
-          ).lock?.("landscape"),
-        )
-        ?.catch(() => {});
-    }, 0);
-  };
-
-  const handleCloseVideo = () => {
-    setVideoActive(false);
-    if (document.fullscreenElement) {
-      document.exitFullscreen?.().catch(() => {});
-    }
-    (screen.orientation as unknown as { unlock?: () => void }).unlock?.();
-  };
-
-  useEffect(() => {
-    if (!open) {
-      startTransition(() => setVideoActive(false));
-      (screen.orientation as unknown as { unlock?: () => void }).unlock?.();
-    }
-  }, [open]);
 
   useEffect(() => {
     if (
       typeof window === "undefined" ||
       typeof window.matchMedia !== "function"
     ) {
-      startTransition(() => setIsMobileViewport(false));
+      setIsMobileViewport(false);
       return undefined;
     }
 
@@ -150,29 +111,6 @@ export function ExerciseInsightModal({
   if (!exercise) {
     return null;
   }
-
-  const videoOverlay =
-    videoActive && exercise?.supportMedia ? (
-      <div
-        ref={overlayRef}
-        className="fixed inset-0 z-9999 flex items-center justify-center bg-black"
-      >
-        <button
-          type="button"
-          onClick={handleCloseVideo}
-          className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition hover:bg-white/30 active:scale-95"
-          aria-label="Fechar video"
-        >
-          <X className="h-5 w-5" />
-        </button>
-        <iframe
-          src={`https://drive.google.com/file/d/1_xVgBk0-boikmqzc7HgSY7rhN6Zza8PH/preview`}
-          title="Video demonstrativo do exercicio"
-          className="h-full w-full"
-          allowFullScreen
-        />
-      </div>
-    ) : null;
 
   const executionSteps = buildExecutionSteps(exercise);
   const coachTips = buildCoachTips(exercise);
@@ -237,18 +175,13 @@ export function ExerciseInsightModal({
             </a>
           </div>
           <div className="px-4 pb-4">
-            <button
-              type="button"
-              onClick={handlePlay}
-              className="group relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-2xl bg-black/85"
-            >
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/20 ring-1 ring-white/30 backdrop-blur-sm transition group-hover:bg-white/30 group-active:scale-95">
-                <CirclePlay className="h-8 w-8 text-white" />
-              </div>
-              <span className="absolute bottom-3 left-0 right-0 text-center text-xs font-medium text-white/60">
-                Toque para assistir em tela cheia
-              </span>
-            </button>
+            <iframe
+              src={`https://drive.google.com/file/d/1_xVgBk0-boikmqzc7HgSY7rhN6Zza8PH/preview`}
+              title="Video demonstrativo do exercicio"
+              className="aspect-video w-full rounded-2xl"
+              allowFullScreen
+              loading="lazy"
+            />
           </div>
         </section>
       ) : null}
@@ -366,35 +299,29 @@ export function ExerciseInsightModal({
 
   if (isMobileViewport) {
     return (
-      <>
-        {videoOverlay}
-        <FqDrawer
-          open={open}
-          onOpenChange={onOpenChange}
-          side="bottom"
-          title={exercise.name}
-          description="Tudo o que voce precisa para executar com mais confianca, ritmo e consistencia."
-          className="h-[min(88vh,860px)] max-w-md sm:max-w-2xl"
-        >
-          {content}
-        </FqDrawer>
-      </>
+      <FqDrawer
+        open={open}
+        onOpenChange={onOpenChange}
+        side="bottom"
+        title={exercise.name}
+        description="Tudo o que voce precisa para executar com mais confianca, ritmo e consistencia."
+        className="h-[min(88vh,860px)] max-w-md sm:max-w-2xl"
+      >
+        {content}
+      </FqDrawer>
     );
   }
 
   return (
-    <>
-      {videoOverlay}
-      <FqModal
-        open={open}
-        onOpenChange={onOpenChange}
-        title={exercise.name}
-        description="Tudo o que voce precisa para executar com mais confianca, ritmo e consistencia."
-        className="max-h-[88vh] w-[min(920px,92vw)] rounded-[28px] border-border/70 bg-card p-5 shadow-[0_28px_80px_rgba(15,23,42,0.18)]"
-        bodyClassName="max-h-[calc(88vh-96px)]"
-      >
-        {content}
-      </FqModal>
-    </>
+    <FqModal
+      open={open}
+      onOpenChange={onOpenChange}
+      title={exercise.name}
+      description="Tudo o que voce precisa para executar com mais confianca, ritmo e consistencia."
+      className="max-h-[88vh] w-[min(920px,92vw)] rounded-[28px] border-border/70 bg-card p-5 shadow-[0_28px_80px_rgba(15,23,42,0.18)]"
+      bodyClassName="max-h-[calc(88vh-96px)]"
+    >
+      {content}
+    </FqModal>
   );
 }
