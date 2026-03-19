@@ -1,3 +1,10 @@
+import { deleteApp, initializeApp } from 'firebase/app'
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  sendPasswordResetEmail,
+  signOut,
+} from 'firebase/auth'
 import {
   collection,
   doc,
@@ -10,11 +17,13 @@ import {
 } from 'firebase/firestore/lite'
 
 import { authService } from '@/shared/services/authService'
-import { getFirebaseFirestore } from '@/shared/services/firebase'
+import { getFirebaseAuth, getFirebaseFirestore, getFirebaseWebConfig } from '@/shared/services/firebase'
 import type {
+  CreatePersonalStudentInput,
   CreatePersonalWorkoutInput,
   DeactivatePersonalWorkoutInput,
   PersonalAssignedWorkout,
+  PersonalStudentAnamnesis,
   PersonalDashboardOverview,
   PersonalMetrics,
   PersonalStudent,
@@ -37,6 +46,16 @@ type ProfileSettingsDocument = {
   goals?: {
     workoutsPerWeek?: number
   }
+}
+
+type StudentOnboardingDocument = {
+  anamnesisStatus?: 'not_started' | 'pending' | 'completed'
+  onboardingSource?: 'invite' | 'direct'
+  requiresPasswordReset?: boolean
+  linkedPersonalId?: string
+  linkedPersonalName?: string
+  createdAt?: string
+  updatedAt?: string
 }
 
 function getDb() {
@@ -76,6 +95,34 @@ function generateInviteCode() {
     code += chars[Math.floor(Math.random() * chars.length)]
   }
   return code
+}
+
+function createTemporaryPassword() {
+  return `FitQuest!${Math.random().toString(36).slice(2, 10)}`
+}
+
+function getSecondaryAuthContext() {
+  const config = getFirebaseWebConfig()
+
+  if (!config) {
+    throw new Error('Firebase auth nao esta configurado.')
+  }
+
+  const app = initializeApp(config, `fitquest-personal-student-${crypto.randomUUID()}`)
+  return {
+    app,
+    auth: getAuth(app),
+  }
+}
+
+async function sendResetPasswordEmail(email: string) {
+  const auth = getFirebaseAuth()
+
+  if (!auth) {
+    throw new Error('Firebase auth nao esta configurado.')
+  }
+
+  await sendPasswordResetEmail(auth, email.trim())
 }
 
 function safeRound(value: unknown, fallback: number, min: number, max: number) {
@@ -165,13 +212,17 @@ async function buildStudents() {
 
   return Promise.all(
     users.map(async (user): Promise<PersonalStudent> => {
-      const [profileSettingsSnapshot, workoutPlansSnapshot] = await Promise.all([
+      const [profileSettingsSnapshot, onboardingSnapshot, workoutPlansSnapshot] = await Promise.all([
         getDoc(doc(db, 'students', user.id, 'profile', 'settings')),
+        getDoc(doc(db, 'students', user.id, 'profile', 'onboarding')),
         getDocs(collection(db, 'students', user.id, 'workoutPlans')),
       ])
 
       const profileSettings = profileSettingsSnapshot.exists()
         ? (profileSettingsSnapshot.data() as ProfileSettingsDocument)
+        : null
+      const onboarding = onboardingSnapshot.exists()
+        ? (onboardingSnapshot.data() as StudentOnboardingDocument)
         : null
 
       return {
@@ -182,6 +233,9 @@ async function buildStudents() {
         activeWorkouts: workoutPlansSnapshot.docs
           .map((entry) => entry.data() as WorkoutDetail)
           .filter((workout) => workout.isActive !== false).length,
+        anamnesisStatus: onboarding?.anamnesisStatus ?? 'not_started',
+        onboardingSource: onboarding?.onboardingSource,
+        requiresPasswordReset: onboarding?.requiresPasswordReset ?? false,
       }
     }),
   )
@@ -397,6 +451,113 @@ export const personalFirebaseService = {
       })),
     }
   },
+  async createStudentAccount(input: CreatePersonalStudentInput): Promise<{
+    dashboard: PersonalDashboardOverview
+    studentId: string
+    resetEmailSent: boolean
+  }> {
+    const session = resolvePersonalSession()
+    const { auth, app } = getSecondaryAuthContext()
+    const email = input.email.trim().toLowerCase()
+    const name = input.name.trim()
+    const temporaryPassword = createTemporaryPassword()
+    const now = new Date().toISOString()
+
+    try {
+      const result = await createUserWithEmailAndPassword(auth, email, temporaryPassword)
+      const studentId = result.user.uid
+
+      await Promise.all([
+        setDoc(
+          doc(getDb(), 'users', studentId),
+          {
+            email,
+            name,
+            role: 'STUDENT',
+            createdAt: now,
+            updatedAt: now,
+          },
+          { merge: true },
+        ),
+        setDoc(
+          doc(getDb(), 'students', studentId, 'profile', 'settings'),
+          {
+            goals: {
+              workoutsPerWeek: 4,
+            },
+          },
+          { merge: true },
+        ),
+        setDoc(
+          doc(getDb(), 'students', studentId, 'profile', 'onboarding'),
+          {
+            anamnesisStatus: 'pending',
+            onboardingSource: 'direct',
+            requiresPasswordReset: true,
+            linkedPersonalId: session.user.id,
+            linkedPersonalName: session.user.name,
+            createdAt: now,
+            updatedAt: now,
+          },
+          { merge: true },
+        ),
+      ])
+
+      await sendResetPasswordEmail(email)
+      await signOut(auth).catch(() => undefined)
+
+      return {
+        dashboard: await this.getDashboardOverview(),
+        studentId,
+        resetEmailSent: true,
+      }
+    } finally {
+      await deleteApp(app).catch(() => undefined)
+    }
+  },
+  async getStudentAnamnesis(studentId: string): Promise<PersonalStudentAnamnesis | null> {
+    await assertStudentExists(studentId)
+
+    const snapshot = await getDoc(doc(getDb(), 'students', studentId, 'profile', 'anamnesis'))
+
+    if (!snapshot.exists()) {
+      return null
+    }
+
+    return snapshot.data() as PersonalStudentAnamnesis
+  },
+  async saveStudentAnamnesis(
+    studentId: string,
+    anamnesis: PersonalStudentAnamnesis,
+  ): Promise<PersonalDashboardOverview> {
+    const session = resolvePersonalSession()
+    const now = new Date().toISOString()
+
+    await assertStudentExists(studentId)
+
+    await Promise.all([
+      setDoc(
+        doc(getDb(), 'students', studentId, 'profile', 'anamnesis'),
+        {
+          ...anamnesis,
+          updatedAt: now,
+          updatedByPersonalId: session.user.id,
+          updatedByPersonalName: session.user.name,
+        },
+        { merge: true },
+      ),
+      setDoc(
+        doc(getDb(), 'students', studentId, 'profile', 'onboarding'),
+        {
+          anamnesisStatus: 'completed',
+          updatedAt: now,
+        },
+        { merge: true },
+      ),
+    ])
+
+    return this.getDashboardOverview()
+  },
   async generateStudentInviteLink(): Promise<PersonalStudentInviteLink> {
     const session = resolvePersonalSession()
     const personalId = session.user.id
@@ -413,7 +574,7 @@ export const personalFirebaseService = {
       status: 'active',
     })
 
-    const inviteLink = `${window.location.origin}/tabs/profile?invite=${code}`
+    const inviteLink = `${window.location.origin}/signup?role=STUDENT&invite=${code}`
 
     return { code, inviteLink }
   },

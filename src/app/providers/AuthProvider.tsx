@@ -119,9 +119,27 @@ export function AuthProvider({ children }: AuthProviderProps) {
       return undefined;
     }
 
-    return authRepository.subscribeToSession((session) => {
-      dispatch({ type: "auth_resolved", session });
-    });
+    let unsubscribe: (() => void) | undefined;
+
+    try {
+      unsubscribe = authRepository.subscribeToSession((session) => {
+        dispatch({ type: "auth_resolved", session });
+      });
+    } catch {
+      dispatch({ type: "auth_resolved", session: null });
+    }
+
+    // Safety timeout: if the auth subscription never fires, fall back to anonymous
+    const timeout = setTimeout(() => {
+      if (state.status === "loading") {
+        dispatch({ type: "auth_resolved", session: null });
+      }
+    }, 5000);
+
+    return () => {
+      clearTimeout(timeout);
+      unsubscribe?.();
+    };
   }, []);
 
   const login = useCallback(async (credentials: AuthCredentials) => {
@@ -142,6 +160,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       const session = await authRepository.register(input);
       dispatch({ type: "auth_success", session });
+    } catch (error) {
+      dispatch({ type: "auth_error", message: getErrorMessage(error) });
+      throw error;
+    }
+  }, []);
+
+  const requestPasswordReset = useCallback(async (email: string) => {
+    dispatch({ type: "auth_start" });
+
+    try {
+      await authRepository.requestPasswordReset(email);
+      dispatch({ type: "auth_resolved", session: authRepository.getStoredSession() });
     } catch (error) {
       dispatch({ type: "auth_error", message: getErrorMessage(error) });
       throw error;
@@ -177,11 +207,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
       error: state.error,
       login,
       register,
+      requestPasswordReset,
       logout,
       updateUser,
       clearError,
     }),
-    [state, login, register, logout, updateUser, clearError],
+    [state, login, register, requestPasswordReset, logout, updateUser, clearError],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

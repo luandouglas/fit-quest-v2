@@ -50,6 +50,12 @@ export function renderPersonalRoutes(role: AuthUserRole) {
       render={() => withPersonalGuard(role, <PersonalStudentsPage />)}
     />,
     <Route
+      key="personal-student-detail"
+      exact
+      path={`${personalRoutes.students}/:studentId/:studentView?`}
+      render={() => withPersonalGuard(role, <PersonalStudentsPage />)}
+    />,
+    <Route
       key="personal-workouts"
       exact
       path={personalRoutes.workouts}

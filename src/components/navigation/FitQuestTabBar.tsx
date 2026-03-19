@@ -9,6 +9,7 @@ import { cx } from "@/shared/utils";
 import { FitQuestCenterActionMenu } from "./FitQuestCenterActionMenu";
 import type {
   FitQuestQuickActionItem,
+  FitQuestTabBarProfile,
   FitQuestTabItem,
 } from "./fitquest-tab-bar.config";
 
@@ -34,6 +35,7 @@ async function triggerFitQuestHaptic(variant: "soft" | "accent") {
 type FitQuestTabBarProps = {
   tabs: FitQuestTabItem[];
   quickActions: FitQuestQuickActionItem[];
+  profile: FitQuestTabBarProfile;
   pathname: string;
   onNavigate: (path: string) => void;
 };
@@ -41,17 +43,15 @@ type FitQuestTabBarProps = {
 export function FitQuestTabBar({
   tabs,
   quickActions,
+  profile,
   pathname,
   onNavigate,
 }: FitQuestTabBarProps) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [openMenuPathname, setOpenMenuPathname] = useState<string | null>(null);
+  const isMenuOpen = openMenuPathname === pathname;
   const menuId = useId();
   const leftTabs = tabs.slice(0, 2);
   const rightTabs = tabs.slice(2, 4);
-
-  useEffect(() => {
-    setIsMenuOpen(false);
-  }, [pathname]);
 
   useEffect(() => {
     if (!isMenuOpen) {
@@ -60,7 +60,7 @@ export function FitQuestTabBar({
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
-        setIsMenuOpen(false);
+        setOpenMenuPathname(null);
       }
     }
 
@@ -69,7 +69,7 @@ export function FitQuestTabBar({
   }, [isMenuOpen]);
 
   function handleNavigate(path: string) {
-    setIsMenuOpen(false);
+    setOpenMenuPathname(null);
     void triggerFitQuestHaptic("soft");
 
     if (pathname !== path) {
@@ -78,19 +78,19 @@ export function FitQuestTabBar({
   }
 
   function handleToggleMenu() {
-    setIsMenuOpen((currentValue) => {
-      const nextValue = !currentValue;
+    setOpenMenuPathname((currentValue) => {
+      const nextValue = currentValue !== pathname;
       void triggerFitQuestHaptic(nextValue ? "accent" : "soft");
-      return nextValue;
+      return nextValue ? pathname : null;
     });
   }
 
   function handleCloseMenu() {
-    setIsMenuOpen(false);
+    setOpenMenuPathname(null);
   }
 
   function handleQuickAction(action: FitQuestQuickActionItem) {
-    setIsMenuOpen(false);
+    setOpenMenuPathname(null);
     void triggerFitQuestHaptic("accent");
     onNavigate(action.path);
   }
@@ -119,11 +119,15 @@ export function FitQuestTabBar({
   }
 
   return (
-    <div className="fitquest-tab-bar-layer" data-open={isMenuOpen}>
+    <div
+      className="fitquest-tab-bar-layer"
+      data-open={isMenuOpen}
+      data-role={profile.role}
+    >
       <button
         type="button"
         className="fitquest-tab-bar__overlay"
-        aria-label="Fechar acoes rapidas"
+        aria-label={profile.closeMenuLabel}
         aria-hidden={!isMenuOpen}
         tabIndex={isMenuOpen ? 0 : -1}
         onClick={handleCloseMenu}
@@ -131,7 +135,7 @@ export function FitQuestTabBar({
 
       <nav
         className="fitquest-tab-bar__nav"
-        aria-label="Navegacao principal do aluno"
+        aria-label={profile.navLabel}
       >
         <div className="fitquest-tab-bar__shell">
           <div className="fitquest-tab-bar__cluster fitquest-tab-bar__cluster--left">
@@ -143,6 +147,7 @@ export function FitQuestTabBar({
               actions={quickActions}
               isOpen={isMenuOpen}
               menuId={menuId}
+              ariaLabel={profile.quickMenuLabel}
               onAction={handleQuickAction}
             />
 
@@ -154,8 +159,8 @@ export function FitQuestTabBar({
               )}
               aria-label={
                 isMenuOpen
-                  ? "Fechar acoes rapidas"
-                  : "Abrir acoes rapidas do aluno"
+                  ? profile.closeMenuLabel
+                  : profile.openMenuLabel
               }
               aria-controls={menuId}
               aria-expanded={isMenuOpen}

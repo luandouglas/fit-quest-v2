@@ -1,7 +1,8 @@
 import { type FormEvent, useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory, useLocation } from "react-router-dom";
 
 import { appRoutePaths } from "@/app/router/routes";
+import { relationshipService } from "@/shared/services/relationshipService";
 import { useAuth } from "@/shared/hooks";
 import {
   FqButton,
@@ -27,8 +28,17 @@ function isEmailValid(value: string) {
 }
 
 export function SignUpPage() {
+  const history = useHistory();
+  const location = useLocation();
+  const params = useMemo(() => new URLSearchParams(location.search), [location.search]);
+  const inviteCode = params.get("invite")?.trim() ?? "";
+  const forcedRole = params.get("role")?.trim().toUpperCase();
   const [name, setName] = useState("");
-  const [role, setRole] = useState<AuthUserRole>("STUDENT");
+  const [role, setRole] = useState<AuthUserRole>(
+    forcedRole === "PERSONAL" || forcedRole === "NUTRITIONIST"
+      ? (forcedRole as AuthUserRole)
+      : "STUDENT",
+  );
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -58,10 +68,17 @@ export function SignUpPage() {
     try {
       await register({
         name: name.trim(),
-        role,
+        role: inviteCode ? "STUDENT" : role,
         email: email.trim(),
         password: password.trim(),
       });
+
+      if (inviteCode) {
+        await relationshipService.acceptInviteByCodeOrId({
+          codeOrId: inviteCode,
+        });
+        history.replace("/tabs/student/profile");
+      }
     } catch {
       // AuthProvider already stores the error state.
     }
@@ -74,8 +91,8 @@ export function SignUpPage() {
   }
 
   return (
-    <div className="h-svh overflow-y-auto overscroll-y-contain bg-background px-4 py-4 sm:px-6 sm:py-6">
-      <div className="mx-auto grid max-w-6xl overflow-visible rounded-[32px] border border-border/70 bg-card shadow-[0_20px_60px_rgba(36,49,44,0.12)] lg:min-h-[calc(100dvh-2rem)] lg:overflow-hidden lg:grid-cols-[1fr_0.95fr]">
+    <div className="h-full overflow-y-auto overscroll-y-contain bg-background px-4 py-4 sm:px-6 sm:py-6">
+      <div className="mx-auto grid max-w-6xl overflow-visible rounded-[32px] border border-border/70 bg-card shadow-[0_20px_60px_rgba(36,49,44,0.12)] lg:min-h-[calc(100dvh-2rem-var(--sat,0px))] lg:overflow-hidden lg:grid-cols-[1fr_0.95fr]">
         <aside
           className="relative hidden border-r border-border/60 px-10 py-10 lg:flex lg:flex-col lg:justify-between"
           style={{
@@ -207,7 +224,17 @@ export function SignUpPage() {
                 options={roleOptions}
                 className="h-14 text-base"
                 helperText="Isso define sua área inicial após o login."
+                isDisabled={Boolean(inviteCode || forcedRole)}
               />
+
+              {inviteCode ? (
+                <div className="rounded-[calc(var(--radius)+4px)] border border-primary/20 bg-primary/8 p-4">
+                  <FqText as="p" className="text-sm font-medium text-primary">
+                    Cadastro por convite do personal. Sua conta sera criada como
+                    aluno e a anamnese inicial ficara pendente para acompanhamento.
+                  </FqText>
+                </div>
+              ) : null}
 
               <FqInput
                 type="email"

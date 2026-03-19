@@ -47,13 +47,13 @@ export const personalNavigationItems: PersonalNavigationItem[] = [
     icon: "dumbbell",
     path: personalRoutes.workouts,
   },
-  {
-    key: "metrics",
-    label: "Metricas",
-    icon: "chart",
-    path: personalRoutes.metrics,
-    exact: true,
-  },
+  // {
+  //   key: "metrics",
+  //   label: "Metricas",
+  //   icon: "chart",
+  //   path: personalRoutes.metrics,
+  //   exact: true,
+  // },
   {
     key: "messages",
     label: "Mensagens",

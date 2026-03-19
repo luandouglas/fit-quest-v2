@@ -5,13 +5,39 @@ import { cx } from "@/shared/utils";
 
 import type { FitQuestQuickActionItem } from "./fitquest-tab-bar.config";
 
-const radialActionAngles = [-150, -90, -30];
 const radialDistancePx = 118;
+
+function resolveRadialActionAngles(actionCount: number) {
+  if (actionCount <= 0) {
+    return [];
+  }
+
+  if (actionCount === 1) {
+    return [-90];
+  }
+
+  if (actionCount === 2) {
+    return [-132, -48];
+  }
+
+  if (actionCount === 3) {
+    return [-150, -90, -30];
+  }
+
+  const startAngle = -156;
+  const endAngle = -24;
+  const step = (endAngle - startAngle) / Math.max(actionCount - 1, 1);
+
+  return Array.from({ length: actionCount }, (_, index) =>
+    startAngle + step * index,
+  );
+}
 
 type FitQuestCenterActionMenuProps = {
   actions: FitQuestQuickActionItem[];
   isOpen: boolean;
   menuId: string;
+  ariaLabel: string;
   onAction: (action: FitQuestQuickActionItem) => void;
 };
 
@@ -19,15 +45,18 @@ export function FitQuestCenterActionMenu({
   actions,
   isOpen,
   menuId,
+  ariaLabel,
   onAction,
 }: FitQuestCenterActionMenuProps) {
+  const radialActionAngles = resolveRadialActionAngles(actions.length);
+
   return (
     <div
       id={menuId}
       className="fitquest-center-menu"
       data-open={isOpen}
       role="menu"
-      aria-label="Acoes rapidas do aluno"
+      aria-label={ariaLabel}
       aria-hidden={!isOpen}
     >
       {actions.map((action, index) => {

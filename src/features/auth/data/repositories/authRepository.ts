@@ -12,6 +12,7 @@ export type AuthRepository = {
   logout: () => Promise<void>
   persistSession: (session: AuthSession) => void
   register: (input: AuthRegistrationInput) => Promise<AuthSession>
+  requestPasswordReset: (email: string) => Promise<void>
   updateStoredSessionUser: (patch: Partial<AuthSession['user']>) => AuthSession | null
   subscribeToSession?: (listener: AuthSessionListener) => () => void
 }

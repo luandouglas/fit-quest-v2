@@ -1,9 +1,11 @@
 import { httpClient } from '@/shared/services/http'
 import type {
+  CreatePersonalStudentInput,
   CreatePersonalWorkoutInput,
   DeactivatePersonalWorkoutInput,
   GrantPersonalAchievementInput,
   PersonalDashboardOverview,
+  PersonalStudentAnamnesis,
   PersonalStudentInviteLink,
   PersonalStudentWorkoutHistory,
   SendPersonalMotivationInput,
@@ -28,6 +30,22 @@ export const personalService = {
   },
   async getStudentWorkoutHistory(studentId: string): Promise<PersonalStudentWorkoutHistory> {
     return personalFirebaseService.getStudentWorkoutHistory(studentId)
+  },
+  async createStudentAccount(input: CreatePersonalStudentInput): Promise<{
+    dashboard: PersonalDashboardOverview
+    studentId: string
+    resetEmailSent: boolean
+  }> {
+    return personalFirebaseService.createStudentAccount(input)
+  },
+  async getStudentAnamnesis(studentId: string): Promise<PersonalStudentAnamnesis | null> {
+    return personalFirebaseService.getStudentAnamnesis(studentId)
+  },
+  async saveStudentAnamnesis(
+    studentId: string,
+    anamnesis: PersonalStudentAnamnesis,
+  ): Promise<PersonalDashboardOverview> {
+    return personalFirebaseService.saveStudentAnamnesis(studentId, anamnesis)
   },
   async generateStudentInviteLink(): Promise<PersonalStudentInviteLink> {
     return personalFirebaseService.generateStudentInviteLink()

@@ -40,6 +40,7 @@ export type AuthContextValue = {
   error: string | null
   login: (credentials: AuthCredentials) => Promise<void>
   register: (input: AuthRegistrationInput) => Promise<void>
+  requestPasswordReset: (email: string) => Promise<void>
   logout: () => Promise<void>
   updateUser: (patch: Partial<AuthUser>) => void
   clearError: () => void

@@ -58,8 +58,8 @@ export function LoginPage() {
   }
 
   return (
-    <div className="h-svh overflow-y-auto overscroll-y-contain bg-background px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
-      <div className="mx-auto grid max-w-6xl overflow-visible rounded-[38px] border border-border/80 bg-card/76 shadow-[0_28px_70px_rgba(36,49,44,0.14)] backdrop-blur lg:min-h-[calc(100dvh-4rem)] lg:overflow-hidden lg:grid-cols-[1.02fr_0.98fr]">
+    <div className="h-full overflow-y-auto overscroll-y-contain bg-background px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
+      <div className="mx-auto grid max-w-6xl overflow-visible rounded-[38px] border border-border/80 bg-card/76 shadow-[0_28px_70px_rgba(36,49,44,0.14)] backdrop-blur lg:min-h-[calc(100dvh-4rem-var(--sat,0px))] lg:overflow-hidden lg:grid-cols-[1.02fr_0.98fr]">
         <aside
           className="relative hidden border-r border-border/70 px-10 py-10 lg:flex lg:flex-col lg:justify-between lg:gap-10 xl:gap-14"
           style={{
@@ -201,9 +201,12 @@ export function LoginPage() {
               </div>
 
               <div className="pt-1 text-right">
-                <FqText className="text-sm text-muted-foreground">
-                  Recuperacao de senha em breve.
-                </FqText>
+                <Link
+                  to={appRoutePaths.resetPassword}
+                  className="text-sm font-medium text-primary hover:underline"
+                >
+                  Esqueci minha senha
+                </Link>
               </div>
 
               <FqButton

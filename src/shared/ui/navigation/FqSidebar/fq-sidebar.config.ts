@@ -171,13 +171,13 @@ const personalConfig: FqSidebarRoleConfig = {
       path: "/tabs/personal/workouts",
       matcher: (p) => p.startsWith("/tabs/personal/workouts"),
     },
-    {
-      id: "metrics",
-      icon: "chart",
-      label: "Metricas",
-      path: "/tabs/personal/metrics",
-      matcher: (p) => p.startsWith("/tabs/personal/metrics"),
-    },
+    // {
+    //   id: "metrics",
+    //   icon: "chart",
+    //   label: "Metricas",
+    //   path: "/tabs/personal/metrics",
+    //   matcher: (p) => p.startsWith("/tabs/personal/metrics"),
+    // },
     {
       id: "messages",
       icon: "bell",

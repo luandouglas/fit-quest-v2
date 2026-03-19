@@ -105,6 +105,12 @@
     @apply border-border outline-ring/50;
   }
 
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -317,4 +323,21 @@ ion-app,
 ion-router-outlet,
 ion-content {
   background: var(--background);
+}
+
+/* Safe area: ensure content never sits behind the iOS status bar or home indicator */
+ion-app {
+  --sat: env(safe-area-inset-top, 0px);
+  --sal: env(safe-area-inset-left, 0px);
+  --sar: env(safe-area-inset-right, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  padding-top: var(--sat);
+  padding-left: var(--sal);
+  padding-right: var(--sar);
+  height: 100%;
+  box-sizing: border-box;
+}
+
+ion-router-outlet {
+  height: 100%;
 }

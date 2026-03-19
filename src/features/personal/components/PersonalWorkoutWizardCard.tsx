@@ -252,7 +252,6 @@ export function PersonalWorkoutWizardCard({
   isCreatingWorkout,
   studentOptions,
   prefilledStudentId,
-  onClose: _onClose,
   onCreated,
 }: PersonalWorkoutWizardCardProps) {
   const { toast } = useToast();
@@ -332,6 +331,16 @@ export function PersonalWorkoutWizardCard({
   const bodyPng = targetGender === "feminino" ? femaleBodyPng : maleBodyPng;
   const bodyMuscleMap =
     targetGender === "feminino" ? femaleSvgMuscleMap : maleSvgMuscleMap;
+  const isStudentPrefilled = Boolean(prefilledStudentId?.trim());
+
+  useEffect(() => {
+    if (prefilledStudentId?.trim()) {
+      setSelectedStudentId(prefilledStudentId);
+      return;
+    }
+
+    setSelectedStudentId("");
+  }, [prefilledStudentId]);
 
   useEffect(() => {
     let mounted = true;
@@ -1263,7 +1272,12 @@ export function PersonalWorkoutWizardCard({
                   onChange={(event) => setSelectedStudentId(event.target.value)}
                   options={studentOptions}
                   placeholder="Selecione um aluno"
-                  helperText="Lista carregada diretamente do sistema."
+                  helperText={
+                    isStudentPrefilled
+                      ? "Aluno definido automaticamente pela tela atual."
+                      : "Lista carregada diretamente do sistema."
+                  }
+                  isDisabled={isStudentPrefilled}
                 />
                 <FqTextarea
                   label="Descricao"

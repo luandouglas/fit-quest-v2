@@ -4,9 +4,11 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { personalService } from '@/shared/services'
 import type {
+  CreatePersonalStudentInput,
   CreatePersonalWorkoutInput,
   DeactivatePersonalWorkoutInput,
   GrantPersonalAchievementInput,
+  PersonalStudentAnamnesis,
   SendPersonalMotivationInput,
   UpdatePersonalWorkoutInput,
 } from '@/shared/services/contracts/personal'
@@ -91,6 +93,23 @@ export function usePersonalDashboard() {
     },
   })
 
+  const createStudentAccountMutation = useMutation({
+    mutationFn: (input: CreatePersonalStudentInput) => personalService.createStudentAccount(input),
+    onSuccess: async ({ dashboard }) => {
+      queryClient.setQueryData(personalQueryKeys.dashboard, dashboard)
+      await queryClient.invalidateQueries({ queryKey: personalQueryKeys.dashboard })
+    },
+  })
+
+  const saveStudentAnamnesisMutation = useMutation({
+    mutationFn: (input: { studentId: string; anamnesis: PersonalStudentAnamnesis }) =>
+      personalService.saveStudentAnamnesis(input.studentId, input.anamnesis),
+    onSuccess: async (dashboard) => {
+      queryClient.setQueryData(personalQueryKeys.dashboard, dashboard)
+      await queryClient.invalidateQueries({ queryKey: personalQueryKeys.dashboard })
+    },
+  })
+
   const uiState: PersonalUiState = useMemo(() => {
     if (query.isPending) {
       return 'loading'
@@ -119,6 +138,9 @@ export function usePersonalDashboard() {
     grantSpecialAchievement: grantSpecialAchievementMutation.mutateAsync,
     updateMeasurementsRequestStatus: updateMeasurementsRequestStatusMutation.mutateAsync,
     generateStudentInviteLink: generateStudentInviteLinkMutation.mutateAsync,
+    createStudentAccount: createStudentAccountMutation.mutateAsync,
+    saveStudentAnamnesis: saveStudentAnamnesisMutation.mutateAsync,
+    getStudentAnamnesis: personalService.getStudentAnamnesis,
     getStudentWorkoutHistory: personalService.getStudentWorkoutHistory,
     isCreatingWorkout: createWorkoutMutation.isPending,
     isUpdatingWorkout: updateWorkoutMutation.isPending,
@@ -127,5 +149,7 @@ export function usePersonalDashboard() {
     isGrantingSpecialAchievement: grantSpecialAchievementMutation.isPending,
     isUpdatingMeasurementsRequestStatus: updateMeasurementsRequestStatusMutation.isPending,
     isGeneratingStudentInviteLink: generateStudentInviteLinkMutation.isPending,
+    isCreatingStudentAccount: createStudentAccountMutation.isPending,
+    isSavingStudentAnamnesis: saveStudentAnamnesisMutation.isPending,
   }
 }

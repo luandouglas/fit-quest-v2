@@ -7,6 +7,9 @@ export type PersonalStudent = {
   email: string
   workoutsPerWeekTarget: number
   activeWorkouts: number
+  anamnesisStatus?: 'not_started' | 'pending' | 'completed'
+  onboardingSource?: 'invite' | 'direct'
+  requiresPasswordReset?: boolean
 }
 
 export type PersonalAssignedWorkout = {
@@ -103,6 +106,53 @@ export type PersonalDashboardOverview = {
 export type PersonalStudentInviteLink = {
   code: string
   inviteLink: string
+}
+
+export type PersonalStudentAnamnesis = {
+  fullName: string
+  sex: string
+  birthDate: string
+  email: string
+  phone: string
+  occupation: string
+  weight: string
+  height: string
+  chronicDiseases: string
+  injuriesHistory: string
+  surgeriesHistory: string
+  familyHistory: string
+  medications: string
+  painHistory: string
+  smoker: string
+  alcoholUse: string
+  sleepQuality: string
+  lifestyleLevel: 'sedentario' | 'leve' | 'moderado' | 'ativo'
+  exerciseHistory: string
+  hasNutritionist: string
+  routineDiet: string
+  mainGoal: 'emagrecimento' | 'hipertrofia' | 'saude' | 'condicionamento' | 'reabilitacao'
+  specificGoals: string
+  preferredActivity: string
+  preferredTrainingStyle: string
+  academyAccess: string
+  homeEquipment: string
+  availabilitySeg: boolean
+  availabilityTer: boolean
+  availabilityQua: boolean
+  availabilityQui: boolean
+  availabilitySex: boolean
+  availabilitySab: boolean
+  availabilityDom: boolean
+  availabilityFlexibility: string
+  photoConsent: string
+  responsibilityAccepted: boolean
+  signatureName: string
+  updatedAt?: string
+}
+
+export type CreatePersonalStudentInput = {
+  name: string
+  email: string
 }
 
 export type PersonalWorkoutExerciseInput = {

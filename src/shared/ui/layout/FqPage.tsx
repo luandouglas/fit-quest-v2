@@ -8,7 +8,7 @@ type FqPageProps = FqBaseProps & Omit<HTMLAttributes<HTMLDivElement>, 'style' | 
 export function FqPage({ className, testId, children, ...rest }: FqPageProps) {
   return (
     <div
-      className={cx('min-h-screen bg-zinc-50 text-zinc-900', className)}
+      className={cx('min-h-full bg-zinc-50 text-zinc-900', className)}
      
       data-testid={testId}
       {...rest}

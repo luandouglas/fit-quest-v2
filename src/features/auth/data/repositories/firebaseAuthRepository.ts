@@ -3,6 +3,7 @@ import {
   createUserWithEmailAndPassword,
   getIdTokenResult,
   onIdTokenChanged,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signOut,
   updateProfile,
@@ -233,6 +234,19 @@ async function syncSessionFromUser(
   patch?: Partial<Pick<FirebaseAuthUserProfileDocument, 'name' | 'role' | 'professionalProfile'>>,
 ) {
   const session = await buildSessionFromUser(user, patch)
+  const db = getFirebaseFirestore()
+
+  if (db && session.user.role === 'STUDENT') {
+    await setDoc(
+      doc(db, 'students', user.uid, 'profile', 'onboarding'),
+      {
+        requiresPasswordReset: false,
+        updatedAt: new Date().toISOString(),
+      },
+      { merge: true },
+    ).catch(() => undefined)
+  }
+
   authService.persistSession(session)
   return session
 }
@@ -325,6 +339,15 @@ export const firebaseAuthRepository: AuthRepository = {
         role: input.role,
         professionalProfile: createProfessionalProfileByRole(input.role),
       })
+    } catch (error) {
+      throw new Error(getFirebaseErrorMessage(error))
+    }
+  },
+  async requestPasswordReset(email) {
+    const auth = getRequiredAuth()
+
+    try {
+      await sendPasswordResetEmail(auth, email.trim())
     } catch (error) {
       throw new Error(getFirebaseErrorMessage(error))
     }

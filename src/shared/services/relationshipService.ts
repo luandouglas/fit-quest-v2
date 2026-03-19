@@ -195,6 +195,70 @@ export const relationshipService = {
     await setDoc(doc(db, "relationshipInvites", inviteId), newInvite);
     return buildRelationshipsOverview(studentId);
   },
+  async acceptInviteByCodeOrId(params: {
+    codeOrId: string;
+  }): Promise<StudentRelationshipsOverview> {
+    const studentId = resolveStudentId();
+    const db = getDb();
+    const code = params.codeOrId.trim().toUpperCase();
+
+    const inviteDocSnapshot = await getDoc(doc(db, "personalInvites", code));
+
+    if (!inviteDocSnapshot.exists()) {
+      throw new Error(
+        "Codigo de convite nao encontrado. Verifique e tente novamente.",
+      );
+    }
+
+    const inviteData = inviteDocSnapshot.data() as PersonalInviteDocument;
+
+    const existingInvites = await getDocs(
+      query(
+        collection(db, "relationshipInvites"),
+        where("studentId", "==", studentId),
+        where("professionalId", "==", inviteData.personalId),
+      ),
+    );
+
+    const acceptedInvite = existingInvites.docs.find(
+      (entry) => (entry.data() as InviteDocument).status === "accepted",
+    );
+
+    if (acceptedInvite) {
+      return buildRelationshipsOverview(studentId);
+    }
+
+    const inviteId = crypto.randomUUID();
+    const now = new Date().toISOString();
+
+    await setDoc(doc(db, "relationshipInvites", inviteId), {
+      id: inviteId,
+      studentId,
+      professionalId: inviteData.personalId,
+      professionalRole: "PERSONAL",
+      professionalName: inviteData.personalName,
+      professionalCode: code,
+      status: "accepted",
+      createdAt: now,
+      respondedAt: now,
+    } satisfies InviteDocument);
+
+    await setDoc(
+      doc(db, "students", studentId, "profile", "onboarding"),
+      {
+        anamnesisStatus: "pending",
+        onboardingSource: "invite",
+        requiresPasswordReset: false,
+        linkedPersonalId: inviteData.personalId,
+        linkedPersonalName: inviteData.personalName,
+        createdAt: now,
+        updatedAt: now,
+      },
+      { merge: true },
+    );
+
+    return buildRelationshipsOverview(studentId);
+  },
   async respondToInvite(params: {
     inviteId: string;
     action: "accept" | "reject";

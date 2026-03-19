@@ -11,9 +11,10 @@ const srcPath = fileURLToPath(new URL('./src', import.meta.url))
 const isAnalyze = process.env.ANALYZE === 'true'
 
 const isProduction = process.env.NODE_ENV === 'production'
+const isCapacitor = process.env.CAPACITOR === 'true'
 
 export default defineConfig({
-  base: isProduction ? '/fit-quest-v2/' : '/',
+  base: isCapacitor ? '/' : isProduction ? '/fit-quest-v2/' : '/',
   build: {
     rollupOptions: {
       output: {

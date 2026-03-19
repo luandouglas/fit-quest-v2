@@ -11,6 +11,7 @@ import {
 } from "react-router-dom";
 
 import { getDefaultTabsPathByRole } from "@/app/router/guards/Guards";
+import { TabsProfileRoute } from "@/app/router/components/TabsProfileRoute";
 import {
   renderNutritionistRoutes,
   renderPersonalRoutes,
@@ -19,11 +20,14 @@ import {
 import { nutritionistNavigationItems } from "@/features/nutritionist/presentation";
 import { personalNavigationItems } from "@/features/personal/presentation";
 import { useNotificationsInbox } from "@/features/student/application";
-import { StudentProfilePage } from "@/features/student/presentation/pages/StudentProfilePage";
 import { studentNavigationItems } from "@/features/student/presentation";
 import { FitQuestTabBar } from "@/components/navigation/FitQuestTabBar";
 import {
+  fitQuestPersonalQuickActions,
+  fitQuestPersonalTabBarProfile,
+  fitQuestPersonalTabItems,
   fitQuestStudentQuickActions,
+  fitQuestStudentTabBarProfile,
   fitQuestStudentTabItems,
 } from "@/components/navigation/fitquest-tab-bar.config";
 import { useAuth, useRole } from "@/shared/hooks";
@@ -323,18 +327,31 @@ function MobileBottomNav({
   onNavigate: (path: string) => void;
   role: AuthUserRole;
 }) {
-  if (role !== "STUDENT") {
-    return null;
+  if (role === "STUDENT") {
+    return (
+      <FitQuestTabBar
+        tabs={fitQuestStudentTabItems}
+        quickActions={fitQuestStudentQuickActions}
+        profile={fitQuestStudentTabBarProfile}
+        pathname={pathname}
+        onNavigate={onNavigate}
+      />
+    );
   }
 
-  return (
-    <FitQuestTabBar
-      tabs={fitQuestStudentTabItems}
-      quickActions={fitQuestStudentQuickActions}
-      pathname={pathname}
-      onNavigate={onNavigate}
-    />
-  );
+  if (role === "PERSONAL") {
+    return (
+      <FitQuestTabBar
+        tabs={fitQuestPersonalTabItems}
+        quickActions={fitQuestPersonalQuickActions}
+        profile={fitQuestPersonalTabBarProfile}
+        pathname={pathname}
+        onNavigate={onNavigate}
+      />
+    );
+  }
+
+  return null;
 }
 
 export function AppTabsLayout({
@@ -377,7 +394,7 @@ export function AppTabsLayout({
     [role, unreadCount],
   );
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="flex h-full overflow-hidden bg-background">
       <FqSidebar
         config={getSidebarConfig(role)}
         pathname={location.pathname}
@@ -401,7 +418,7 @@ export function AppTabsLayout({
         <div
           className={cx(
             "mx-auto w-full max-w-7xl px-4 pt-4 md:px-6 md:pt-5 lg:px-8 lg:pt-6",
-            role === "STUDENT"
+            role === "STUDENT" || role === "PERSONAL"
               ? "pb-[calc(env(safe-area-inset-bottom,0px)+9rem)] md:pb-32 lg:pb-8"
               : "pb-28 md:pb-32 lg:pb-8",
           )}
@@ -413,7 +430,7 @@ export function AppTabsLayout({
             <Route
               path="/tabs/profile"
               exact
-              render={() => <StudentProfilePage />}
+              render={() => <TabsProfileRoute />}
             />
             <Route exact path="/tabs">
               <Redirect to={getDefaultTabsPathByRole(role)} />
