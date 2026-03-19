@@ -53,6 +53,15 @@ function createEmptyForm(): ProfileFormState {
   }
 }
 
+function getProfilePreferencesDefaults() {
+  return {
+    notificationsEnabled: true,
+    remindersEnabled: true,
+    measurementSystem: 'metric' as const,
+    themePreference: 'system' as const,
+  }
+}
+
 export function ProfilePage() {
   const history = useHistory()
   const location = useLocation()
@@ -94,6 +103,11 @@ export function ProfilePage() {
       return
     }
 
+    const preferences = {
+      ...getProfilePreferencesDefaults(),
+      ...(data.profile.preferences ?? {}),
+    }
+
     setForm({
       name: data.profile.name,
       city: data.profile.city,
@@ -102,16 +116,21 @@ export function ProfilePage() {
       goal: data.profile.goal,
       waterMlDaily: String(data.profile.goals.waterMlDaily),
       workoutsPerWeek: String(data.profile.goals.workoutsPerWeek),
-      notificationsEnabled: data.profile.preferences.notificationsEnabled,
-      remindersEnabled: data.profile.preferences.remindersEnabled,
-      measurementSystem: data.profile.preferences.measurementSystem,
-      themePreference: data.profile.preferences.themePreference,
+      notificationsEnabled: preferences.notificationsEnabled,
+      remindersEnabled: preferences.remindersEnabled,
+      measurementSystem: preferences.measurementSystem,
+      themePreference: preferences.themePreference,
     })
   }, [data])
 
   const hasChanges = useMemo(() => {
     if (!data) {
       return false
+    }
+
+    const preferences = {
+      ...getProfilePreferencesDefaults(),
+      ...(data.profile.preferences ?? {}),
     }
 
     return (
@@ -122,10 +141,10 @@ export function ProfilePage() {
       form.goal !== data.profile.goal ||
       Number(form.waterMlDaily) !== data.profile.goals.waterMlDaily ||
       Number(form.workoutsPerWeek) !== data.profile.goals.workoutsPerWeek ||
-      form.notificationsEnabled !== data.profile.preferences.notificationsEnabled ||
-      form.remindersEnabled !== data.profile.preferences.remindersEnabled ||
-      form.measurementSystem !== data.profile.preferences.measurementSystem ||
-      form.themePreference !== data.profile.preferences.themePreference
+      form.notificationsEnabled !== preferences.notificationsEnabled ||
+      form.remindersEnabled !== preferences.remindersEnabled ||
+      form.measurementSystem !== preferences.measurementSystem ||
+      form.themePreference !== preferences.themePreference
     )
   }, [data, form])
 

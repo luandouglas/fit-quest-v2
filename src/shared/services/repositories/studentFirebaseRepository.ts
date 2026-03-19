@@ -91,14 +91,15 @@ function toIsoDate(date: Date) {
   return `${year}-${month}-${day}`
 }
 
-async function getRequiredDoc<T>(reference: DocumentReference<T>, label: string) {
+async function getOrCreateDoc<T>(reference: DocumentReference<T>, fallback: T) {
   const snapshot = await getDoc(reference)
 
-  if (!snapshot.exists()) {
-    throw new Error(`Firebase document not found for ${label}.`)
+  if (snapshot.exists()) {
+    return snapshot.data()
   }
 
-  return snapshot.data()
+  await setDoc(reference, fallback, { merge: true })
+  return fallback
 }
 
 function getDailyProgressStatus(completionPct: number): DailyProgress['status'] {
@@ -235,6 +236,112 @@ function getWeekdayLabel(date: string): WorkoutWeekday {
   return ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'][new Date(`${date}T12:00:00`).getDay()] as WorkoutWeekday
 }
 
+function getSessionStudentIdentity() {
+  const session = authService.getStoredSession()
+  const fullName = session?.user.name?.trim() || 'Aluno FitQuest'
+  const firstName = fullName.split(' ')[0] || 'Aluno'
+
+  return {
+    id: session?.user.id || '',
+    fullName,
+    firstName,
+  }
+}
+
+function createDefaultStudentProfile(): StudentProfile {
+  const identity = getSessionStudentIdentity()
+
+  return {
+    id: identity.id,
+    firstName: identity.firstName,
+    fullName: identity.fullName,
+    city: 'Sao Paulo',
+    neighborhood: 'Centro',
+    gym: 'Academia nao informada',
+    memberSince: toIsoDate(new Date()),
+    primaryGoal: 'Saude e consistencia',
+    headline: 'Comece seu acompanhamento ajustando seu perfil e seus objetivos.',
+    supportTeam: [],
+  }
+}
+
+function createDefaultNutritionDay(date: string): NutritionDay {
+  return {
+    date,
+    goals: {
+      calories: 2000,
+      protein: 120,
+      carbs: 220,
+      fat: 60,
+      waterMl: 2500,
+    },
+    consumed: {
+      calories: 0,
+      protein: 0,
+      carbs: 0,
+      fat: 0,
+      waterMl: 0,
+    },
+    meals: [],
+    notes: '',
+    starsEarned: 0,
+    waterLog: {
+      entries: [],
+    },
+  }
+}
+
+function createDefaultGamificationProfile(): GamificationProfile {
+  return {
+    level: 1,
+    totalXp: 0,
+    currentLevelXp: 0,
+    nextLevelXp: 400,
+    weeklyXp: 0,
+    weeklyXpTarget: 1000,
+    stars: 0,
+    streakDays: 0,
+    streakStatus: getStreakStatus(0),
+  }
+}
+
+function createDefaultStudentMetrics(): StudentMetrics {
+  return {
+    workoutsCompletedMonth: 0,
+    nutritionAdherencePct: 0,
+    cardioMinutesMonth: 0,
+    averageWaterMl: 0,
+    currentWeightKg: 0,
+    consistencyScore: 0,
+  }
+}
+
+function createDefaultRankingSummary(): RankingSummary {
+  return {
+    scope: 'gym',
+    period: 'weekly',
+    league: 'bronze',
+    position: 1,
+    totalParticipants: 1,
+    points: 0,
+    gapToNext: 0,
+    gapToLeader: 0,
+    trend: 'stable',
+    lastUpdatedAt: new Date().toISOString(),
+  }
+}
+
+function createDefaultProfilePreferences(): FirestoreStudentPreferencesDocument {
+  return {
+    preferences: {
+      notificationsEnabled: true,
+      remindersEnabled: true,
+      measurementSystem: 'metric',
+      themePreference: 'system',
+    },
+  }
+}
+
 function buildWaterProgressFromDay(day: NutritionDay): WaterProgress {
   const completionPct = Math.round((day.consumed.waterMl / Math.max(day.goals.waterMl, 1)) * 100)
   const checkpointsTotal = Math.max(Math.ceil(day.goals.waterMl / 500), 1)
@@ -251,10 +358,13 @@ function buildWaterProgressFromDay(day: NutritionDay): WaterProgress {
 }
 
 async function getNutritionDay(studentId: string, date: string) {
-  const snapshot = await getDoc(studentDoc<NutritionDay>(studentId, 'nutritionDays', date))
+  const reference = studentDoc<NutritionDay>(studentId, 'nutritionDays', date)
+  const snapshot = await getDoc(reference)
 
   if (!snapshot.exists()) {
-    throw new Error(`Firebase document not found for nutrition day (${date}).`)
+    const fallback = createDefaultNutritionDay(date)
+    await setDoc(reference, fallback, { merge: true })
+    return fallback
   }
 
   return snapshot.data()
@@ -584,7 +694,7 @@ export const studentFirebaseRepository: StudentRepository = {
   },
   async getProfile(): Promise<StudentProfile> {
     const studentId = resolveStudentId()
-    return getRequiredDoc(studentDoc<StudentProfile>(studentId, 'profile', 'core'), 'student profile')
+    return getOrCreateDoc(studentDoc<StudentProfile>(studentId, 'profile', 'core'), createDefaultStudentProfile())
   },
   async getDailyProgress(date: string): Promise<DailyProgress> {
     const dashboard = await this.getDashboard({ date })
@@ -727,21 +837,24 @@ export const studentFirebaseRepository: StudentRepository = {
   },
   async getGamificationProfile(): Promise<GamificationProfile> {
     const studentId = resolveStudentId()
-    return getRequiredDoc(studentDoc<GamificationProfile>(studentId, 'gamification', 'summary'), 'gamification summary')
+    return getOrCreateDoc(
+      studentDoc<GamificationProfile>(studentId, 'gamification', 'summary'),
+      createDefaultGamificationProfile(),
+    )
   },
   async getMetrics(): Promise<StudentDashboard['metrics']> {
     const studentId = resolveStudentId()
-    return getRequiredDoc(studentDoc<StudentDashboard['metrics']>(studentId, 'metrics', 'summary'), 'student metrics')
+    return getOrCreateDoc(studentDoc<StudentDashboard['metrics']>(studentId, 'metrics', 'summary'), createDefaultStudentMetrics())
   },
   async getRankingSummary(): Promise<RankingSummary> {
     const studentId = resolveStudentId()
-    return getRequiredDoc(studentDoc<RankingSummary>(studentId, 'ranking', 'summary'), 'ranking summary')
+    return getOrCreateDoc(studentDoc<RankingSummary>(studentId, 'ranking', 'summary'), createDefaultRankingSummary())
   },
   async getProfilePreferences(): Promise<ProfilePreferences> {
     const studentId = resolveStudentId()
-    const document = await getRequiredDoc(
+    const document = await getOrCreateDoc(
       studentDoc<FirestoreStudentPreferencesDocument>(studentId, 'preferences', 'profile'),
-      'profile preferences',
+      createDefaultProfilePreferences(),
     )
     return document.preferences
   },

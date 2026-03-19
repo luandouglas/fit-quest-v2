@@ -50,12 +50,66 @@ function createDefaultProfileSettings(name?: string): ProfileSettings {
   }
 }
 
+function isProfileGoal(value: unknown): value is ProfileSettings['goal'] {
+  return (
+    value === 'lose_weight' ||
+    value === 'gain_muscle' ||
+    value === 'maintenance' ||
+    value === 'performance'
+  )
+}
+
 function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(max, value))
 }
 
 function isThemePreference(value: unknown): value is ThemePreference {
   return value === 'system' || value === 'light' || value === 'dark'
+}
+
+function normalizeProfileSettings(
+  candidate: Partial<ProfileSettings> | undefined,
+  fallback: ProfileSettings,
+): ProfileSettings {
+  const requestedWaterGoal = Number(candidate?.goals?.waterMlDaily)
+  const requestedWorkoutsPerWeek = Number(candidate?.goals?.workoutsPerWeek)
+
+  return {
+    name: typeof candidate?.name === 'string' && candidate.name.trim().length > 0 ? candidate.name.trim() : fallback.name,
+    city: typeof candidate?.city === 'string' && candidate.city.trim().length > 0 ? candidate.city.trim() : fallback.city,
+    neighborhood:
+      typeof candidate?.neighborhood === 'string' && candidate.neighborhood.trim().length > 0
+        ? candidate.neighborhood.trim()
+        : fallback.neighborhood,
+    gym: typeof candidate?.gym === 'string' && candidate.gym.trim().length > 0 ? candidate.gym.trim() : fallback.gym,
+    goal: isProfileGoal(candidate?.goal) ? candidate.goal : fallback.goal,
+    goals: {
+      waterMlDaily: Number.isFinite(requestedWaterGoal)
+        ? clamp(Math.round(requestedWaterGoal), 500, 8000)
+        : fallback.goals.waterMlDaily,
+      workoutsPerWeek: Number.isFinite(requestedWorkoutsPerWeek)
+        ? clamp(Math.round(requestedWorkoutsPerWeek), 1, 14)
+        : fallback.goals.workoutsPerWeek,
+    },
+    preferences: {
+      notificationsEnabled:
+        typeof candidate?.preferences?.notificationsEnabled === 'boolean'
+          ? candidate.preferences.notificationsEnabled
+          : fallback.preferences.notificationsEnabled,
+      remindersEnabled:
+        typeof candidate?.preferences?.remindersEnabled === 'boolean'
+          ? candidate.preferences.remindersEnabled
+          : fallback.preferences.remindersEnabled,
+      measurementSystem:
+        candidate?.preferences?.measurementSystem === 'imperial' ||
+        candidate?.preferences?.measurementSystem === 'metric'
+          ? candidate.preferences.measurementSystem
+          : fallback.preferences.measurementSystem,
+      themePreference: isThemePreference(candidate?.preferences?.themePreference)
+        ? candidate.preferences.themePreference
+        : fallback.preferences.themePreference,
+    },
+  }
 }
 
 function applyProfilePatch(current: ProfileSettings, patch: UpdateProfilePayload): ProfileSettings {
@@ -106,12 +160,14 @@ export const profileFirebaseRepository: ProfileRepository = {
     const studentId = resolveStudentId()
     const reference = studentDoc<ProfileSettings>(studentId, 'profile', 'settings')
     const snapshot = await getDoc(reference)
+    const fallback = createDefaultProfileSettings(session?.user.name)
 
     if (snapshot.exists()) {
-      return snapshot.data()
+      const normalized = normalizeProfileSettings(snapshot.data(), fallback)
+      await setDoc(reference, normalized, { merge: true })
+      return normalized
     }
 
-    const fallback = createDefaultProfileSettings(session?.user.name)
     await setDoc(reference, fallback, { merge: true })
     return fallback
   },

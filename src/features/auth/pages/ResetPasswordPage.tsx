@@ -43,8 +43,8 @@ export function ResetPasswordPage() {
   }
 
   return (
-    <div className="h-full overflow-y-auto bg-background px-4 py-6 sm:px-6">
-      <div className="mx-auto max-w-[480px] rounded-[32px] border border-border/70 bg-card px-6 py-6 shadow-[0_20px_60px_rgba(36,49,44,0.12)] sm:px-8 sm:py-8">
+    <div className="flex min-h-[100dvh] items-center overflow-y-auto bg-background px-4 py-6 sm:px-6">
+      <div className="mx-auto w-full max-w-[480px] rounded-[32px] border border-border/70 bg-card px-6 py-6 shadow-[0_20px_60px_rgba(36,49,44,0.12)] sm:px-8 sm:py-8">
         <div className="space-y-3">
           <FqText
             as="h1"

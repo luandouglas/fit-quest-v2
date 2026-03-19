@@ -3,6 +3,14 @@ import { getProfileRepository } from '@/shared/services/repositories/profileRepo
 import { storage } from '@/shared/services/storage'
 import type { ProfileSettings, ThemePreference, UpdateProfilePayload } from '@/shared/services/contracts/profile'
 
+function getSafeThemePreference(profile: Partial<ProfileSettings> | null | undefined): ThemePreference {
+  const themePreference = profile?.preferences?.themePreference
+
+  return themePreference === 'dark' || themePreference === 'light' || themePreference === 'system'
+    ? themePreference
+    : 'system'
+}
+
 function resolveThemePreference(themePreference: ThemePreference) {
   if (themePreference !== 'system') {
     return themePreference
@@ -35,16 +43,16 @@ export const profileService = {
       return
     }
 
-    applyThemeClass(stored.profile.preferences.themePreference)
+    applyThemeClass(getSafeThemePreference(stored.profile))
   },
   async getProfile(): Promise<ProfileSettings> {
     const profile = await getProfileRepository().getProfile()
-    applyThemeClass(profile.preferences.themePreference)
+    applyThemeClass(getSafeThemePreference(profile))
     return profile
   },
   async updateProfile(payload: UpdateProfilePayload): Promise<ProfileSettings> {
     const profile = await getProfileRepository().updateProfile(payload)
-    applyThemeClass(profile.preferences.themePreference)
+    applyThemeClass(getSafeThemePreference(profile))
     return profile
   },
 }

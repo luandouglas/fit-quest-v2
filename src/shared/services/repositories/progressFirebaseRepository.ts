@@ -41,14 +41,128 @@ function studentCollection<T>(studentId: string, ...segments: string[]) {
   return collection(getDb(), 'students', studentId, ...segments) as CollectionReference<T>
 }
 
+function toIsoDate(date: Date) {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+
+  return `${year}-${month}-${day}`
+}
+
+function getRangeDays(range: ProgressRange) {
+  if (range === '7d') {
+    return 7
+  }
+
+  if (range === '90d') {
+    return 90
+  }
+
+  return 30
+}
+
+function createDefaultProgressOverview(range: ProgressRange): ProgressOverview {
+  const today = new Date()
+  const totalDays = getRangeDays(range)
+  const chart = Array.from({ length: totalDays }, (_, index) => {
+    const current = new Date(today)
+    current.setDate(today.getDate() - (totalDays - index - 1))
+
+    return {
+      date: toIsoDate(current),
+      completedTrainings: 0,
+      completedWorkouts: 0,
+      completedRuns: 0,
+      runDistanceKm: 0,
+      durationMin: 0,
+      waterMl: 0,
+      waterGoalMl: 2500,
+      caloriesEstimated: 0,
+      weightKg: null,
+    }
+  })
+
+  return {
+    range,
+    monthSummary: {
+      completedWorkouts: 0,
+      totalTrainingMin: 0,
+      completedRuns: 0,
+      totalRunKm: 0,
+      hydrationAdherencePct: 0,
+      nutritionConsistencyPct: 0,
+      activeDays: 0,
+    },
+    weeklySummary: {
+      completedTrainings: 0,
+      targetTrainings: 3,
+      totalDurationMin: 0,
+      averageCompletionPct: 0,
+      completedRuns: 0,
+      nutritionConsistencyPct: 0,
+      waterAdherencePct: 0,
+      activeDays: 0,
+    },
+    metrics: {
+      currentWeightKg: 0,
+      weightDeltaKg: 0,
+      workoutsPerWeek: 0,
+      avgWaterMl: 0,
+      estimatedCalories: 0,
+      heightCm: 0,
+      bmi: 0,
+    },
+    bodyComposition: {
+      heightCm: 0,
+      bmi: 0,
+      bmiStatus: 'healthy',
+      latestMeasurements: null,
+      previousMeasurements: null,
+    },
+    comparisons: {
+      weekly: {
+        workouts: { current: 0, previous: 0, deltaValue: 0, deltaPct: 0, trend: 'stable' },
+        cardioSessions: { current: 0, previous: 0, deltaValue: 0, deltaPct: 0, trend: 'stable' },
+        nutritionConsistencyPct: { current: 0, previous: 0, deltaValue: 0, deltaPct: 0, trend: 'stable' },
+        waterAdherencePct: { current: 0, previous: 0, deltaValue: 0, deltaPct: 0, trend: 'stable' },
+      },
+      monthly: {
+        trainingMin: { current: 0, previous: 0, deltaValue: 0, deltaPct: 0, trend: 'stable' },
+        cardioDistanceKm: { current: 0, previous: 0, deltaValue: 0, deltaPct: 0, trend: 'stable' },
+        activeDays: { current: 0, previous: 0, deltaValue: 0, deltaPct: 0, trend: 'stable' },
+      },
+    },
+    strengthPrs: [],
+    strengthWeeklyVolume: [],
+    weightTrend: {
+      trend7dKg: 0,
+      trend30dKg: 0,
+    },
+    measurementSummary: {
+      lastUpdatedAt: null,
+      lastUpdatedByLabel: 'Sem registros',
+    },
+    insights: [],
+    chart,
+    weightHistory: [],
+    weightLogs: [],
+    bodyMeasurementLogs: [],
+    recentHistory: [],
+    cardioHistory: [],
+  }
+}
+
 export const progressFirebaseRepository: ProgressRepository = {
   source: 'firebase',
   async getOverview(range: ProgressRange): Promise<ProgressOverview> {
     const studentId = resolveStudentId()
-    const snapshot = await getDoc(studentDoc<ProgressOverview>(studentId, 'progressOverviews', range))
+    const reference = studentDoc<ProgressOverview>(studentId, 'progressOverviews', range)
+    const snapshot = await getDoc(reference)
 
     if (!snapshot.exists()) {
-      throw new Error(`Firebase document not found for progress overview (${range}).`)
+      const fallback = createDefaultProgressOverview(range)
+      await setDoc(reference, fallback, { merge: true })
+      return fallback
     }
 
     return snapshot.data()
@@ -77,11 +191,12 @@ export const progressFirebaseRepository: ProgressRepository = {
 
     return { saved: true }
   },
-  async registerBodyMeasurements(_params: {
+  async registerBodyMeasurements(params: {
     measurements: BodyMeasurements
     date?: string
     comment?: string
   }): Promise<{ saved: boolean }> {
+    void params
     throw new Error('Body measurements can only be updated by professionals.')
   },
   async requestMeasurementsUpdate(params?: { note?: string }): Promise<{ sent: boolean }> {
