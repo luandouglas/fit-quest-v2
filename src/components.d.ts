@@ -21,6 +21,7 @@ declare global{
 	const StudentShell: typeof import('./app/router/layouts/StudentShell')['StudentShell']
 	const TabsShellResolver: typeof import('./app/router/layouts/TabsShellResolver')['TabsShellResolver']
 	const LoginPage: typeof import('./features/auth/pages/LoginPage')['LoginPage']
+	const ResetPasswordPage: typeof import('./features/auth/pages/ResetPasswordPage')['ResetPasswordPage']
 	const SignUpPage: typeof import('./features/auth/pages/SignUpPage')['SignUpPage']
 	const StudentActionBoard: typeof import('./features/student/components/StudentActionBoard')['StudentActionBoard']
 	const StudentAlertsCard: typeof import('./features/student/components/StudentAlertsCard')['StudentAlertsCard']
