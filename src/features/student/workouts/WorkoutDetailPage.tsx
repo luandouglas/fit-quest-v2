@@ -2,15 +2,9 @@ import { useState } from "react";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
-  Activity,
   ArrowLeft,
-  CheckCircle2,
-  Clock3,
-  Dumbbell,
-  Flame,
   PlayCircle,
   Sparkles,
-  Target,
   Trophy,
 } from "lucide-react";
 
@@ -44,33 +38,8 @@ function formatDate(date: string, options?: Intl.DateTimeFormatOptions) {
   }).format(new Date(`${date}T12:00:00`));
 }
 
-function formatDateTime(date: string) {
-  return new Intl.DateTimeFormat("pt-BR", {
-    day: "2-digit",
-    month: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date(date));
-}
-
-function formatDuration(totalSec: number) {
-  return `${Math.max(Math.round(totalSec / 60), 1)} min`;
-}
-
 function formatLoad(load?: number) {
   return typeof load === "number" ? `${load} kg` : "Carga livre";
-}
-
-function getAdherenceLabel(adherencePct: number) {
-  if (adherencePct >= 90) {
-    return "Aderencia alta";
-  }
-
-  if (adherencePct >= 60) {
-    return "Boa consistencia";
-  }
-
-  return "Espaco para ganhar ritmo";
 }
 
 function getStatusClasses(status: "completed" | "pending" | "late") {
