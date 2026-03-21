@@ -36,7 +36,7 @@ export function StudentModuleState({
               <FqText as="p" className="fq-subtle-label">
                 Aguarde um instante
               </FqText>
-              <FqText as="h1" className="text-lg font-semibold text-foreground">
+              <FqText as="h1" className="text-card-title font-semibold text-foreground">
                 {title}
               </FqText>
               <FqText as="p" className="text-sm text-muted-foreground">
@@ -45,10 +45,10 @@ export function StudentModuleState({
             </div>
 
             <div className="space-y-3">
-              <FqSkeleton className="h-12 w-full rounded-[calc(var(--radius)+4px)]" rounded="lg" />
+              <FqSkeleton className="h-12 w-full rounded-xl" rounded="lg" />
               <div className="grid gap-3 sm:grid-cols-2">
-                <FqSkeleton className="h-28 w-full rounded-[calc(var(--radius)+4px)]" rounded="lg" />
-                <FqSkeleton className="h-28 w-full rounded-[calc(var(--radius)+4px)]" rounded="lg" />
+                <FqSkeleton className="h-28 w-full rounded-xl" rounded="lg" />
+                <FqSkeleton className="h-28 w-full rounded-xl" rounded="lg" />
               </div>
             </div>
           </div>
@@ -81,7 +81,7 @@ export function StudentModuleState({
 
   return (
     <section className={cx('fq-page-shell-medium', shellClassName)}>
-      <div className="rounded-[calc(var(--radius)+10px)] border border-dashed border-border/75 bg-card/78 px-4 py-8 shadow-[0_18px_40px_rgba(36,49,44,0.05)]">
+      <div className="rounded-2xl border border-dashed border-border/70 bg-card/80 px-4 py-8 shadow-overlay">
         <FqEmptyState icon={icon} title={title} description={description} />
         {actionLabel && onAction ? (
           <div className="mt-5 flex justify-center">

@@ -27,7 +27,7 @@ export function NotificationsInboxSection({
   return (
     <section className="space-y-4">
       <div>
-        <FqText as="h2" className="text-base font-semibold text-foreground">
+        <FqText as="h2" className="text-sm font-semibold text-foreground">
           {title}
         </FqText>
         <FqText as="p" className="text-sm text-muted-foreground">
@@ -36,7 +36,7 @@ export function NotificationsInboxSection({
       </div>
 
       {items.length === 0 ? (
-        <div className="rounded-[calc(var(--radius)+8px)] border border-dashed border-border/75 bg-card/70 px-4 py-6">
+        <div className="rounded-2xl border border-dashed border-border/70 bg-card/70 px-4 py-6">
           <FqEmptyState icon="check" title={emptyTitle} description={emptyDescription} />
         </div>
       ) : (

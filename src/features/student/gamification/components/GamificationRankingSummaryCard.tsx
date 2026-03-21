@@ -54,19 +54,19 @@ export function GamificationRankingSummaryCard({ ranking }: GamificationRankingS
         </div>
 
         <div className="grid gap-3 sm:grid-cols-2">
-          <div className="rounded-[calc(var(--radius)+4px)] border border-border/75 bg-muted/20 p-4">
+          <div className="rounded-xl border border-border/70 bg-muted/20 p-4">
             <FqText as="p" className="text-xs text-muted-foreground">
               Gap para subir
             </FqText>
-            <FqText as="p" className="mt-2 text-lg font-semibold text-foreground">
+            <FqText as="p" className="mt-2 text-card-title font-semibold text-foreground">
               {ranking.gapToNext > 0 ? `${ranking.gapToNext} pts` : 'Voce esta no topo'}
             </FqText>
           </div>
-          <div className="rounded-[calc(var(--radius)+4px)] border border-border/75 bg-muted/20 p-4">
+          <div className="rounded-xl border border-border/70 bg-muted/20 p-4">
             <FqText as="p" className="text-xs text-muted-foreground">
               Ultima atualizacao
             </FqText>
-            <FqText as="p" className="mt-2 text-lg font-semibold text-foreground">
+            <FqText as="p" className="mt-2 text-card-title font-semibold text-foreground">
               {new Date(ranking.lastUpdatedAt).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}
             </FqText>
           </div>

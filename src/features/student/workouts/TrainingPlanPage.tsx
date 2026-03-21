@@ -31,20 +31,18 @@ function formatDate(date: string, options?: Intl.DateTimeFormatOptions) {
 
 function getWorkoutStatusClasses(status: WorkoutPlanItem["status"]) {
   if (status === "completed") {
-    return "bg-primary/12 text-primary";
+    return "bg-primary/10 text-primary";
   }
 
   if (status === "late") {
-    return "bg-destructive/12 text-destructive";
+    return "bg-destructive/10 text-destructive";
   }
 
-  return "bg-secondary/14 text-secondary";
+  return "bg-secondary/15 text-secondary";
 }
 
 function getDayStatusClasses(isSelected: boolean) {
-  const ring = isSelected
-    ? "ring-2 ring-primary/24 shadow-[0_18px_42px_rgba(36,49,44,0.1)]"
-    : "";
+  const ring = isSelected ? "ring-2 ring-primary/25 shadow-overlay" : "";
 
   return cx("border-border/70", ring);
 }
@@ -215,29 +213,27 @@ export function TrainingPlanPage() {
 
   if (uiState === "empty") {
     return (
-      <TrainingPlanEmptyState
-        onBack={() => history.push(studentRoutes.hub)}
-      />
+      <TrainingPlanEmptyState onBack={() => history.push(studentRoutes.hub)} />
     );
   }
 
   return (
     <section className="fq-page-shell space-y-5">
-      <div className="grid gap-5 xl:grid-cols-[minmax(0,1.55fr)_minmax(320px,0.95fr)]">
+      <div className="flex md:flex-row sm:flex-col gap-5 lg:gap-8">
         <div className="space-y-5">
-          <div className="fq-gradient-hero-mix overflow-hidden rounded-[32px] border border-border/70 bg-card p-5 shadow-[0_22px_52px_rgba(36,49,44,0.08)] md:p-6">
+          <div className="fq-gradient-hero-mix overflow-hidden rounded-2xl border border-border/70 bg-card p-5 shadow-deep md:p-6">
             <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
               <div className="space-y-4">
-                <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-primary">
+                <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-xs font-semibold uppercase tracking-caps-wide text-primary">
                   <Zap className="h-3.5 w-3.5" />
                   {activeSession ? "agora" : "hoje"}
                 </div>
 
                 <div className="space-y-2">
-                  <h2 className="text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
+                  <h2 className="text-screen-title font-semibold tracking-tight text-foreground">
                     {todayWorkout.title}
                   </h2>
-                  <p className="max-w-2xl text-sm leading-7 text-muted-foreground">
+                  <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
                     {activeSession
                       ? "Sua sessao continua guardada. Retome do ponto em que parou com o mesmo contexto visual."
                       : (todayWorkout.estimatedStartLabel ??
@@ -246,21 +242,21 @@ export function TrainingPlanPage() {
                 </div>
 
                 <div className="flex flex-wrap gap-2">
-                  <span className="rounded-full bg-white/78 px-4 py-2 text-sm font-semibold text-foreground shadow-[0_10px_24px_rgba(36,49,44,0.05)]">
+                  <span className="rounded-full bg-white/80 px-4 py-2 text-sm font-semibold text-foreground shadow-elevated">
                     {todayWorkout.durationMin} min
                   </span>
-                  <span className="rounded-full bg-white/78 px-4 py-2 text-sm font-semibold text-foreground shadow-[0_10px_24px_rgba(36,49,44,0.05)]">
+                  <span className="rounded-full bg-white/80 px-4 py-2 text-sm font-semibold text-foreground shadow-elevated">
                     +{todayWorkout.stars}
                     <Star className="ml-1 h-3.5 w-3.5 text-star inline" />
                   </span>
-                  <span className="rounded-full bg-white/78 px-4 py-2 text-sm font-semibold text-foreground shadow-[0_10px_24px_rgba(36,49,44,0.05)]">
+                  <span className="rounded-full bg-white/80 px-4 py-2 text-sm font-semibold text-foreground shadow-elevated">
                     {todayWorkout.completedCount}/{todayWorkout.totalCount}{" "}
                     feitos
                   </span>
                 </div>
               </div>
 
-              <div className="flex w-full flex-col gap-3 md:w-auto md:min-w-[220px]">
+              <div className="flex w-full flex-col gap-3 md:w-auto md:min-w-55">
                 <FqButton
                   leftIcon="play"
                   onClick={handleHeroAction}
@@ -295,9 +291,9 @@ export function TrainingPlanPage() {
                 <span>Execucao do treino</span>
                 <span>{todayWorkout.progressPct}%</span>
               </div>
-              <div className="h-3 overflow-hidden rounded-full bg-white/72">
+              <div className="h-3 overflow-hidden rounded-full bg-white/70">
                 <div
-                  className="h-full rounded-full bg-[linear-gradient(90deg,var(--primary)_0%,color-mix(in_srgb,var(--secondary)_34%,var(--primary))_100%)] transition-all duration-500"
+                  className="h-full rounded-full fq-progress-xp transition-all duration-500"
                   style={{
                     width: `${Math.max(todayWorkout.progressPct, hasWorkoutToday ? 8 : 0)}%`,
                   }}
@@ -308,21 +304,21 @@ export function TrainingPlanPage() {
                   ? "A janela desse treino ja foi encerrada. Consulte o plano e siga para o proximo bloco valido."
                   : todayWorkout.progressPct >= 100
                     ? "Treino do dia concluido. Agora voce pode revisar os detalhes da sessao."
-                  : todayWorkout.totalCount > 0
-                    ? `${Math.max(todayWorkout.totalCount - todayWorkout.completedCount, 0)} exercicios ainda faltam para fechar o treino do dia.`
-                    : "Nenhum exercicio carregado ainda para hoje."}
+                    : todayWorkout.totalCount > 0
+                      ? `${Math.max(todayWorkout.totalCount - todayWorkout.completedCount, 0)} exercicios ainda faltam para fechar o treino do dia.`
+                      : "Nenhum exercicio carregado ainda para hoje."}
               </p>
             </div>
           </div>
 
-          <div className="overflow-hidden rounded-[32px] border border-border/70 bg-white/76 shadow-[0_22px_52px_rgba(36,49,44,0.08)]">
+          <div className="overflow-hidden rounded-2xl border border-border/70 bg-white/80 shadow-deep">
             <div className="border-b border-border/70 px-5 py-5 md:px-6">
               <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
                 <div className="space-y-2">
-                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary">
+                  <p className="text-xs font-semibold uppercase tracking-caps-wide text-primary">
                     Agenda da semana
                   </p>
-                  <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+                  <h2 className="text-section-title font-semibold tracking-tight text-foreground">
                     Planejamento da semana
                   </h2>
                 </div>
@@ -344,7 +340,7 @@ export function TrainingPlanPage() {
                   <article
                     key={day.date}
                     className={cx(
-                      "rounded-[28px] border-2 p-4  transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_18px_40px_rgba(36,49,44,0.08)] md:p-5",
+                      "rounded-2xl border-2 p-4  transition duration-200 hover:-translate-y-0.5 hover:shadow-overlay md:p-5",
                       getDayStatusClasses(isSelected),
                     )}
                   >
@@ -355,16 +351,16 @@ export function TrainingPlanPage() {
                           onClick={() => setSelectedDate(day.date)}
                           className="text-left focus-visible:outline-none"
                         >
-                          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+                          <p className="text-xs font-semibold uppercase tracking-caps-wide text-muted-foreground">
                             {formatDate(day.date, { weekday: "long" })}
                           </p>
-                          <h3 className="mt-2 text-xl font-semibold tracking-tight text-foreground">
+                          <h3 className="mt-2 text-sm font-semibold tracking-tight text-foreground">
                             {dayWorkouts[0]?.title ??
                               (day.hasWorkout
                                 ? "Treino em aberto"
                                 : "Recuperação ativa")}
                           </h3>
-                          <p className="mt-2 max-w-2xl text-sm leading-7 text-muted-foreground">
+                          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
                             {getDayNarrative(day, dayWorkouts.length)}
                           </p>
                         </button>
@@ -372,21 +368,21 @@ export function TrainingPlanPage() {
                         <div className="flex flex-wrap items-center gap-2">
                           <span
                             className={cx(
-                              "rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em]",
+                              "rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-caps-wide",
                               getWorkoutStatusClasses(badgeStatus),
                             )}
                           >
                             {getDayStatusLabel(day)}
                           </span>
                           {day.isToday && getDayStatusLabel(day) !== "Hoje" ? (
-                            <span className="rounded-full bg-foreground/6 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-foreground">
+                            <span className="rounded-full bg-foreground/5 px-3 py-1.5 text-xs font-semibold uppercase tracking-caps-wide text-foreground">
                               Hoje
                             </span>
                           ) : null}
                         </div>
                       </div>
                     </div>
-                    <div className="flex flex-col gap-3 sm:flex-row md:flex-row justify-between">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                       <FqButton
                         onClick={() =>
                           openWorkoutDetail(
@@ -422,29 +418,72 @@ export function TrainingPlanPage() {
           </div>
         </div>
 
-        <aside className="space-y-5">
-          <div className="overflow-hidden rounded-[30px] border border-border/70 bg-white/76 p-5 shadow-[0_20px_48px_rgba(36,49,44,0.08)]">
-            <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <Activity className="h-4 w-4 text-primary" />
-              <span className="text-xl">Semana em foco</span>
+        <aside className="space-y-5 lg:sticky lg:top-5 lg:self-start">
+          <div className="overflow-hidden rounded-2xl border border-border/70 bg-white/80 p-5 shadow-deep">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                <Activity className="size-4 text-primary" />
+                <span className="text-section-title">Semana em foco</span>
+              </div>
+
+              {selectedDay ? (
+                <span
+                  className={cx(
+                    "rounded-full px-3 py-1.5 text-caption font-semibold uppercase tracking-caps-wide",
+                    getWorkoutStatusClasses(
+                      selectedDay.status === "rest"
+                        ? "pending"
+                        : selectedDay.status,
+                    ),
+                  )}
+                >
+                  {getDayStatusLabel(selectedDay)}
+                </span>
+              ) : null}
             </div>
 
-            <div className="mt-5 space-y-2">
-              <div className="rounded-[24px] bg-muted/45 p-4">
+            <div className="mt-5 space-y-4">
+              <div className="rounded-2xl bg-muted/50 p-4">
                 <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-                  <CalendarDays className="h-4 w-4 text-secondary" />
-                  Dia em foco
+                  <CalendarDays className="size-4 text-secondary" />
+                  <span>Dia em foco</span>
                 </div>
 
                 <div className="mt-4 space-y-2">
-                  <h2 className="text-lg font-semibold tracking-tight text-foreground">
+                  <h2 className="text-card-title font-semibold tracking-tight text-foreground">
                     {getSelectedDateLabel(selectedDate)}
                   </h2>
-                  <p className="text-sm leading-7 text-muted-foreground">
+                  <p className="text-sm leading-relaxed text-muted-foreground">
                     {selectedDay
                       ? getDayNarrative(selectedDay, selectedWorkouts.length)
                       : "Selecione um dia da semana para destacar a agenda."}
                   </p>
+                </div>
+
+                <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+                  <div className="rounded-xl border border-border/70 bg-card/70 p-3">
+                    <p className="text-caption font-semibold uppercase tracking-caps-wide text-muted-foreground">
+                      Treinos do dia
+                    </p>
+                    <p className="mt-2 text-card-title font-semibold tracking-tight text-foreground">
+                      {selectedWorkouts.length}
+                    </p>
+                  </div>
+
+                  <div className="rounded-xl border border-border/70 bg-card/70 p-3">
+                    <p className="text-caption font-semibold uppercase tracking-caps-wide text-muted-foreground">
+                      Disponibilidade
+                    </p>
+                    <p className="mt-2 text-body font-semibold text-foreground">
+                      {selectedWorkouts[0]
+                        ? canStudentStartWorkout(selectedWorkouts[0].status)
+                          ? "Pronto para iniciar"
+                          : selectedWorkouts[0].status === "completed"
+                            ? "Dia concluido"
+                            : "Fora da janela"
+                        : "Sem treino planejado"}
+                    </p>
+                  </div>
                 </div>
 
                 <div className="mt-5 flex items-center justify-between gap-1">
@@ -469,7 +508,7 @@ export function TrainingPlanPage() {
                       >
                         <span
                           className={cx(
-                            "text-[0.62rem] font-semibold uppercase tracking-[0.16em] transition-colors",
+                            "text-xs font-semibold uppercase  transition-colors",
                             isSelected
                               ? "text-foreground"
                               : "text-muted-foreground",
@@ -479,9 +518,9 @@ export function TrainingPlanPage() {
                         </span>
                         <span
                           className={cx(
-                            "flex h-9 w-9 items-center justify-center rounded-lg text-sm font-semibold transition-all duration-200",
+                            "flex size-9 items-center justify-center rounded-lg text-sm font-semibold transition-all duration-200",
                             isSelected
-                              ? "bg-foreground text-background shadow-[0_6px_18px_rgba(36,49,44,0.22)]"
+                              ? "bg-foreground text-background shadow-float"
                               : "text-foreground hover:bg-muted/60",
                             day.isToday && !isSelected
                               ? "ring-2 ring-primary/40"
@@ -506,7 +545,7 @@ export function TrainingPlanPage() {
 
                 <div className="mt-5 flex flex-col gap-3 sm:flex-row">
                   <FqButton
-                    className="sm:flex-1"
+                    className="sm:flex-1 lg:w-full"
                     variant="outline"
                     tone="neutral"
                     onClick={() => {
@@ -531,45 +570,54 @@ export function TrainingPlanPage() {
                 </div>
               </div>
             </div>
-            <div className="mt-5 space-y-4">
-              <div className="rounded-[24px] bg-muted/45 p-4">
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <p className="text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-                      Progresso semanal
-                    </p>
-                    <p className="mt-2 text-3xl font-semibold tracking-tight text-foreground">
-                      {weeklyCompletionPct}%
-                    </p>
-                  </div>
+          </div>
 
-                  <CheckCircle2 className="h-8 w-8 text-primary" />
-                </div>
-                <div className="h-3 mt-2 border border-primary overflow-hidden rounded-full bg-white/70">
-                  <div
-                    className="h-full rounded-full bg-[linear-gradient(90deg,var(--primary)_0%,color-mix(in_srgb,var(--primary)_58%,var(--card))_100%)] transition-all duration-500"
-                    style={{
-                      width:
-                        weeklyScheduled > 0
-                          ? `${Math.max(weeklyCompletionPct, 6)}%`
-                          : "0%",
-                    }}
-                  />
-                </div>
+          <div className="overflow-hidden rounded-2xl border border-border/70 bg-white/80 p-5 shadow-deep">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-caption font-semibold uppercase tracking-caps-wide text-muted-foreground">
+                  Resumo semanal
+                </p>
+                <p className="mt-2 text-card-title font-semibold tracking-tight text-foreground">
+                  {weeklyCompletionPct}% concluido
+                </p>
               </div>
 
-              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
-                <div className="rounded-[24px] bg-muted/45 p-4">
-                  <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-                    <TimerReset className="h-4 w-4 text-destructive" />
-                    Pendencias
-                  </div>
-                  <p className="mt-2 text-sm leading-7 text-muted-foreground">
-                    {lateCount > 0
-                      ? `${lateCount} treino${lateCount > 1 ? "s" : ""} ja passaram da janela de execucao do aluno.`
-                      : "Nenhum treino atrasado no momento."}
-                  </p>
+              <CheckCircle2 className="size-8 text-primary" />
+            </div>
+
+            <div className="mt-4 h-3 overflow-hidden rounded-full border border-primary bg-white/70">
+              <div
+                className="h-full rounded-full fq-progress-primary transition-all duration-500"
+                style={{
+                  width:
+                    weeklyScheduled > 0
+                      ? `${Math.max(weeklyCompletionPct, 6)}%`
+                      : "0%",
+                }}
+              />
+            </div>
+
+            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+              <div className="rounded-2xl bg-muted/50 p-4">
+                <p className="text-caption font-semibold uppercase tracking-caps-wide text-muted-foreground">
+                  Dias concluidos
+                </p>
+                <p className="mt-2 text-card-title font-semibold tracking-tight text-foreground">
+                  {weeklyCompleted}/{weeklyScheduled || 0}
+                </p>
+              </div>
+
+              <div className="rounded-2xl bg-muted/50 p-4">
+                <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                  <TimerReset className="size-4 text-destructive" />
+                  <span>Pendencias</span>
                 </div>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  {lateCount > 0
+                    ? `${lateCount} treino${lateCount > 1 ? "s" : ""} ja passaram da janela de execucao do aluno.`
+                    : "Nenhum treino atrasado no momento."}
+                </p>
               </div>
             </div>
           </div>

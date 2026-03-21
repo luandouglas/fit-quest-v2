@@ -37,7 +37,7 @@ export function CardioSummaryCard({ session }: CardioSummaryCardProps) {
               <FqText as="p" className="text-sm text-muted-foreground">
                 Atividade finalizada
               </FqText>
-              <FqText as="h1" className="text-2xl font-semibold text-foreground">
+              <FqText as="h1" className="text-section-title font-semibold text-foreground">
                 {session.activityType === 'run' ? 'Corrida concluída' : 'Caminhada concluída'}
               </FqText>
             </div>

@@ -33,10 +33,10 @@ export function FqDrawer({
           className={cx(
             'fixed z-50 flex border border-border bg-card p-4 shadow-2xl transition-transform duration-300 ease-out',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-            side === 'left' && 'left-0 top-0 h-full w-[min(420px,88vw)] border-r data-[state=closed]:-translate-x-full data-[state=open]:translate-x-0',
-            side === 'right' && 'right-0 top-0 h-full w-[min(420px,88vw)] border-l data-[state=closed]:translate-x-full data-[state=open]:translate-x-0',
+            side === 'left' && 'left-0 top-0 h-full w-full max-w-drawer border-r data-[state=closed]:-translate-x-full data-[state=open]:translate-x-0',
+            side === 'right' && 'right-0 top-0 h-full w-full max-w-drawer border-l data-[state=closed]:translate-x-full data-[state=open]:translate-x-0',
             side === 'bottom' &&
-              'bottom-0 left-0 right-0 mx-auto h-[min(82vh,760px)] w-full max-w-2xl rounded-t-[28px] border-x border-t data-[state=closed]:translate-y-full data-[state=open]:translate-y-0',
+              'bottom-0 left-0 right-0 mx-auto fq-h-modal-md w-full max-w-2xl rounded-t-xl border-x border-t data-[state=closed]:translate-y-full data-[state=open]:translate-y-0',
             className,
           )}
           data-testid={testId}
@@ -47,7 +47,7 @@ export function FqDrawer({
             <header className="mb-4 flex items-start justify-between gap-3 border-b border-border/70 pb-3">
               <div>
                 {title ? (
-                  <Dialog.Title className="text-base font-semibold text-foreground">
+                  <Dialog.Title className="text-card-title font-semibold text-foreground">
                     {title}
                   </Dialog.Title>
                 ) : null}

@@ -27,7 +27,7 @@ export function MealsList({
       <div className="space-y-4">
         <div className="flex items-center justify-between gap-2">
           <div>
-            <h2 className="text-lg font-semibold text-foreground">Plano alimentar do dia</h2>
+            <h2 className="text-card-title font-semibold text-foreground">Plano alimentar do dia</h2>
             <p className="text-sm text-muted-foreground">Marque, acompanhe e mantenha a adesao em poucos toques.</p>
           </div>
           <p className="text-sm text-muted-foreground">{completedCount} concluidas • {pendingCount} faltando</p>

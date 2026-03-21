@@ -14,7 +14,7 @@ export function StudentWeeklySummaryCard({ dashboard, viewModel }: StudentWeekly
       <div className="space-y-4">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <FqText as="h2" className="text-base font-semibold text-foreground">
+            <FqText as="h2" className="text-sm font-semibold text-foreground">
               Resumo semanal
             </FqText>
             <FqText as="p" className="text-sm text-muted-foreground">

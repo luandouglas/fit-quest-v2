@@ -138,13 +138,13 @@ export function RunPage() {
           />
         </div>
 
-        <div className="grid gap-5 xl:grid-cols-[minmax(0,1.3fr)_minmax(320px,0.9fr)]">
+        <div className="grid gap-5 xl:fq-grid-main-sidebar-30">
           <CardioHistoryCard history={latestHistory} onOpenSummary={handleOpenSummary} />
 
           <FqCard className="border-border bg-card">
             <div className="space-y-4">
               <div>
-                <FqText as="h2" className="text-lg font-semibold text-foreground">
+                <FqText as="h2" className="text-card-title font-semibold text-foreground">
                   Cardio e progresso diário
                 </FqText>
                 <FqText as="p" className="text-sm text-muted-foreground">
@@ -158,7 +158,7 @@ export function RunPage() {
                 <FqTag tone="neutral">Streak cardio: {overview.streakDays} dias</FqTag>
               </div>
 
-              <div className="rounded-2xl bg-muted/35 p-4">
+              <div className="rounded-2xl bg-muted/30 p-4">
                 <FqText as="p" className="text-sm text-muted-foreground">
                   A base de dados já está pronta para tracking real com geolocalização e sensores via Capacitor. Por enquanto, a atividade funciona em modo manual, sem acoplar a UI ao provider nativo.
                 </FqText>

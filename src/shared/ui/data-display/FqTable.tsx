@@ -33,7 +33,7 @@ export function FqTable<TData extends Record<string, ReactNode>>({
 }: FqTableProps<TData>) {
   return (
     <div
-      className={cx('overflow-x-auto rounded-xl border border-zinc-200 bg-white', className)}
+      className={cx('overflow-x-auto rounded-lg border border-zinc-200 bg-white', className)}
      
       data-testid={testId}
       {...rest}

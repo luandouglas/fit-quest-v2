@@ -43,16 +43,16 @@ export function ResetPasswordPage() {
   }
 
   return (
-    <div className="flex min-h-[100dvh] items-center overflow-y-auto bg-background px-4 py-6 sm:px-6">
-      <div className="mx-auto w-full max-w-[480px] rounded-[32px] border border-border/70 bg-card px-6 py-6 shadow-[0_20px_60px_rgba(36,49,44,0.12)] sm:px-8 sm:py-8">
+    <div className="flex min-h-dvh items-center overflow-y-auto bg-background px-4 py-6 sm:px-6">
+      <div className="mx-auto w-full max-w-120 rounded-2xl border border-border/70 bg-card px-6 py-6 shadow-deep sm:px-8 sm:py-8">
         <div className="space-y-3">
           <FqText
             as="h1"
-            className="fq-display text-[clamp(2rem,4vw,2.8rem)] leading-[0.96] text-foreground"
+            className="fq-display text-screen-title leading-tight text-foreground"
           >
             Redefinir senha
           </FqText>
-          <FqText className="text-base text-muted-foreground">
+          <FqText className="text-body text-muted-foreground">
             Informe seu e-mail para receber o link de recuperacao via Firebase.
           </FqText>
         </div>
@@ -65,11 +65,11 @@ export function ResetPasswordPage() {
             value={email}
             onChange={(event) => setEmail(event.currentTarget.value)}
             autoComplete="email"
-            className="h-14 text-base"
+            className="h-12 text-sm"
           />
 
           {successMessage ? (
-            <div className="rounded-[calc(var(--radius)+4px)] border border-success/30 bg-success/8 p-4">
+            <div className="rounded-xl border border-success/30 bg-success/10 p-4">
               <FqText as="p" className="text-sm font-medium text-success">
                 {successMessage}
               </FqText>
@@ -77,7 +77,7 @@ export function ResetPasswordPage() {
           ) : null}
 
           {error ? (
-            <div className="rounded-[calc(var(--radius)+4px)] border border-destructive/30 bg-destructive/8 p-4">
+            <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-4">
               <FqText as="p" className="text-sm font-medium text-destructive">
                 {error}
               </FqText>
@@ -91,7 +91,7 @@ export function ResetPasswordPage() {
               size="lg"
               isLoading={status === "loading"}
               isDisabled={isDisabled}
-              className="w-full text-base"
+              className="w-full text-sm"
             >
               Enviar link de recuperacao
             </FqButton>

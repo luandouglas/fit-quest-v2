@@ -15,7 +15,7 @@ type RoleGuardProps = GuardProps & {
 function AuthGuardLoader() {
   return (
     <div
-      className="flex min-h-[40vh] items-center justify-center px-6 text-sm text-muted-foreground"
+      className="flex fq-min-h-empty items-center justify-center px-6 text-sm text-muted-foreground"
       role="status"
       aria-live="polite"
     >

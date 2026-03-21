@@ -348,7 +348,7 @@ export function ProfilePage() {
         streakDays={data.hero.streakDays}
       />
 
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
+      <div className="grid gap-4 xl:fq-grid-balanced-inverse">
         <ProfileBasicsCard
           name={form.name}
           city={form.city}
@@ -372,7 +372,7 @@ export function ProfilePage() {
       </div>
 
       {isStudent ? (
-        <div className="grid gap-4 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
+        <div className="grid gap-4 xl:fq-grid-balanced">
           <ProfileRelationshipsCard
             overview={data.relationships ?? null}
             uiState={relationshipsUiState}
@@ -405,7 +405,7 @@ export function ProfilePage() {
       ) : null}
 
       {isStudent && data.progress ? (
-        <div className="grid gap-4 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+        <div className="grid gap-4 xl:fq-grid-balanced-wide-inverse">
           <ProfileReadOnlyBodyCard progress={data.progress} />
           <ProfileAchievementsCard achievements={data.achievements} />
         </div>

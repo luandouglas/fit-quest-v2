@@ -17,7 +17,7 @@ export function NutritionFeedbackCard({ items }: NutritionFeedbackCardProps) {
     <FqCard className="border-border bg-card">
       <div className="space-y-4">
         <div>
-          <h2 className="text-lg font-semibold text-foreground">Feedback acionavel</h2>
+          <h2 className="text-card-title font-semibold text-foreground">Feedback acionavel</h2>
           <p className="text-sm text-muted-foreground">O que ainda move seu dia alimentar agora.</p>
         </div>
 

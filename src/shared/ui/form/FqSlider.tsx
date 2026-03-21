@@ -31,7 +31,7 @@ export function FqSlider({
 
   return (
     <label className="flex w-full flex-col gap-2" htmlFor={sliderId}>
-      {label ? <span className="text-sm font-medium text-foreground">{label}</span> : null}
+      {label ? <span className="text-label font-medium text-foreground">{label}</span> : null}
       <input
         id={sliderId}
         type="range"

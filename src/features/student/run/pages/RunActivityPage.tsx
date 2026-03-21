@@ -226,7 +226,7 @@ export function RunActivityPage() {
     <>
       <section className="fq-page-shell space-y-5">
         <header className="space-y-2">
-          <FqText as="h1" className="text-2xl font-semibold text-foreground">
+          <FqText as="h1" className="text-screen-title font-semibold text-foreground">
             {session.activityType === 'run' ? 'Corrida em andamento' : 'Caminhada em andamento'}
           </FqText>
           <FqText as="p" className="text-sm text-muted-foreground">
@@ -241,7 +241,7 @@ export function RunActivityPage() {
                 <FqText as="p" className="text-sm text-muted-foreground">
                   Tracking {session.source === 'manual' ? 'manual' : 'por GPS'}
                 </FqText>
-                <FqText as="h2" className="text-xl font-semibold text-foreground">
+                <FqText as="h2" className="text-sm font-semibold text-foreground">
                   {statusLabel}
                 </FqText>
               </div>

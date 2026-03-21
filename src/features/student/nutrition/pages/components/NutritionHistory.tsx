@@ -24,7 +24,7 @@ export function NutritionHistory({ days, selectedDate, filter, onFilterChange, o
       <div className="space-y-3">
         <div className="flex items-center justify-between gap-2">
           <div>
-            <h3 className="text-lg font-semibold text-foreground">Historico alimentar</h3>
+            <h3 className="text-card-title font-semibold text-foreground">Historico alimentar</h3>
             <p className="text-sm text-muted-foreground">Compare aderencia, calorias e agua dos ultimos 7 dias.</p>
           </div>
           <p className="text-sm text-muted-foreground">7 dias</p>
@@ -87,7 +87,7 @@ export function NutritionHistory({ days, selectedDate, filter, onFilterChange, o
                 <div className="flex shrink-0 items-center gap-2">
                   <FqTag
                     tone={day.status === 'ok' ? 'success' : 'warning'}
-                    className="rounded-lg px-2 py-1 text-[11px] normal-case tracking-normal"
+                    className="rounded-lg px-2 py-1 text-caption normal-case tracking-normal"
                   >
                     {day.status === 'ok' ? 'Ok' : 'Pendente'}
                   </FqTag>

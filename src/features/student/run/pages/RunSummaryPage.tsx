@@ -71,11 +71,11 @@ export function RunSummaryPage() {
     <section className="fq-page-shell space-y-5">
       <CardioSummaryCard session={session} />
 
-      <div className="grid gap-5 xl:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.9fr)]">
+      <div className="grid gap-5 xl:fq-grid-main-sidebar-narrow">
         <FqCard className="border-border bg-card">
           <div className="space-y-4">
             <div>
-              <FqText as="h2" className="text-lg font-semibold text-foreground">
+              <FqText as="h2" className="text-card-title font-semibold text-foreground">
                 Impacto no seu dia
               </FqText>
               <FqText as="p" className="text-sm text-muted-foreground">
@@ -87,7 +87,7 @@ export function RunSummaryPage() {
               {impactMessage}
             </FqAlert>
 
-            <div className="rounded-2xl bg-muted/35 p-4">
+            <div className="rounded-2xl bg-muted/30 p-4">
               <FqText as="p" className="text-sm text-muted-foreground">
                 Distância total: {session.distanceKm.toFixed(2)} km. Calorias estimadas: {session.calories} kcal. Impacto direto: {session.progressImpactPct}% no progresso do dia.
               </FqText>
@@ -98,7 +98,7 @@ export function RunSummaryPage() {
         <FqCard className="border-border bg-card">
           <div className="space-y-4">
             <div>
-              <FqText as="h2" className="text-lg font-semibold text-foreground">
+              <FqText as="h2" className="text-card-title font-semibold text-foreground">
                 Próximo passo
               </FqText>
               <FqText as="p" className="text-sm text-muted-foreground">

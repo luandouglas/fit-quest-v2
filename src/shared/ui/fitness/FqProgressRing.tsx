@@ -62,7 +62,7 @@ export function FqProgressRing({
         />
       </svg>
       <div className="absolute text-center">
-        <p className="text-base font-semibold text-zinc-900">{Math.round(percent)}%</p>
+        <p className="text-sm font-semibold text-zinc-900">{Math.round(percent)}%</p>
         {label ? <p className="text-xs text-zinc-500">{label}</p> : null}
       </div>
     </div>

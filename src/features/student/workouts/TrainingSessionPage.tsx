@@ -545,7 +545,7 @@ export function TrainingSessionPage() {
     return (
       <section className="fq-page-shell-medium">
         <FqCard className="border-border bg-card">
-          <FqText as="h1" className="text-lg font-semibold text-foreground">
+          <FqText as="h1" className="text-card-title font-semibold text-foreground">
             Carregando sessão de treino...
           </FqText>
         </FqCard>
@@ -574,7 +574,7 @@ export function TrainingSessionPage() {
     return (
       <section className="fq-page-shell-medium space-y-4">
         <FqCard className="border-border bg-card">
-          <FqText as="h1" className="text-lg font-semibold text-foreground">
+          <FqText as="h1" className="text-card-title font-semibold text-foreground">
             Nenhum exercício disponível para esta sessão
           </FqText>
         </FqCard>
@@ -634,7 +634,7 @@ export function TrainingSessionPage() {
       <header className="space-y-1">
         <FqText
           as="h1"
-          className="text-2xl font-semibold text-foreground md:text-3xl"
+          className="text-section-title font-semibold text-foreground"
         >
           Sessao de treino
         </FqText>
@@ -655,21 +655,21 @@ export function TrainingSessionPage() {
             <div className="min-w-0">
               <FqText
                 as="h2"
-                className="truncate text-3xl font-semibold leading-tight text-foreground"
+                className="truncate text-card-title font-semibold leading-tight text-foreground"
               >
                 {sessionHeadline}
               </FqText>
             </div>
-            <div className="rounded-[18px] border border-border/70 px-4 py-2 text-right">
+            <div className="rounded-2xl border border-border/70 px-4 py-2 text-right">
               <FqText
                 as="p"
-                className="text-xs uppercase tracking-[0.14em] text-muted-foreground"
+                className="text-xs uppercase tracking-caps text-muted-foreground"
               >
                 Progresso
               </FqText>
               <FqText
                 as="p"
-                className="mt-1 text-2xl font-semibold leading-none text-foreground"
+                className="mt-1 text-card-title font-semibold leading-none text-foreground"
               >
                 {completedSets}/{totalSets}
               </FqText>
@@ -684,13 +684,13 @@ export function TrainingSessionPage() {
               <div className="space-y-2 text-center">
                 <FqText
                   as="p"
-                  className="text-xs uppercase tracking-[0.14em] text-muted-foreground"
+                  className="text-xs uppercase tracking-caps text-muted-foreground"
                 >
                   {timerLabel}
                 </FqText>
                 <FqText
                   as="p"
-                  className="text-5xl font-semibold leading-none text-foreground"
+                  className="text-display font-semibold leading-none text-foreground"
                 >
                   {timerValue}
                 </FqText>
@@ -701,7 +701,7 @@ export function TrainingSessionPage() {
           <div className="space-y-1 text-center">
             <FqText
               as="p"
-              className="text-4xl font-semibold leading-none text-foreground"
+              className="text-section-title font-semibold leading-none text-foreground"
             >
               {activeExercise
                 ? `${activeExerciseDoneSets}/${activeExercise.sets}`
@@ -721,16 +721,16 @@ export function TrainingSessionPage() {
           </div>
 
           {nextExercise ? (
-            <div className="rounded-[18px] border border-border/70 px-4 py-3">
+            <div className="rounded-2xl border border-border/70 px-4 py-3">
               <FqText
                 as="p"
-                className="text-xs uppercase tracking-[0.14em] text-muted-foreground"
+                className="text-xs uppercase tracking-caps text-muted-foreground"
               >
                 Proximo
               </FqText>
               <FqText
                 as="p"
-                className="mt-1 text-base font-semibold text-foreground"
+                className="mt-1 text-sm font-semibold text-foreground"
               >
                 {`${nextExercise.order}. ${nextExercise.name}`}
               </FqText>
@@ -873,20 +873,20 @@ export function TrainingSessionPage() {
         side="bottom"
         title="Fila"
         description="Veja a ordem do treino, mude o foco ou abra a execução."
-        className="h-[min(78vh,720px)] max-w-md"
+        className="fq-h-modal-sm max-w-md"
       >
         <div className="space-y-4 px-1 pb-2">
           <div className="flex items-center justify-between gap-4">
             <div>
               <FqText
                 as="p"
-                className="text-xs uppercase tracking-[0.14em] text-muted-foreground"
+                className="text-xs uppercase tracking-caps text-muted-foreground"
               >
                 Progresso
               </FqText>
               <FqText
                 as="p"
-                className="mt-1 text-3xl font-semibold leading-none text-foreground"
+                className="mt-1 text-card-title font-semibold leading-none text-foreground"
               >
                 {completedSets}/{totalSets}
               </FqText>
@@ -909,9 +909,9 @@ export function TrainingSessionPage() {
                   ? "Em foco"
                   : "Na fila";
               const statusClassName = isDone
-                ? "bg-tertiary/12 text-tertiary"
+                ? "bg-tertiary/10 text-tertiary"
                 : isCurrent
-                  ? "bg-primary/12 text-primary"
+                  ? "bg-primary/10 text-primary"
                   : "bg-muted text-muted-foreground";
 
               return (
@@ -919,8 +919,8 @@ export function TrainingSessionPage() {
                   key={exercise.id}
                   className={
                     isCurrent
-                      ? "rounded-[22px] border border-primary/20 bg-primary/5 px-4 py-4"
-                      : "rounded-[22px] border border-border/70 bg-background/70 px-4 py-4"
+                      ? "rounded-2xl border border-primary/20 bg-primary/5 px-4 py-4"
+                      : "rounded-2xl border border-border/70 bg-background/70 px-4 py-4"
                   }
                 >
                   <div className="flex items-start gap-3">

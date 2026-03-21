@@ -428,7 +428,7 @@ export function NutritionPage() {
                 <FqText as="p" className="text-sm font-medium text-muted-foreground">
                   {selectedDate === todayDate ? 'Hoje' : 'Historico selecionado'}
                 </FqText>
-                <FqText as="h2" className="text-xl font-semibold text-foreground capitalize">
+                <FqText as="h2" className="text-sm font-semibold text-foreground capitalize">
                   {formatDateLabel(selectedDate)}
                 </FqText>
                 <FqText as="p" className="text-sm text-muted-foreground">
@@ -453,7 +453,7 @@ export function NutritionPage() {
           </div>
         </FqCard>
 
-        <div className="grid gap-5 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.95fr)]">
+        <div className="grid gap-5 xl:fq-grid-main-sidebar-sm">
           <DailySummaryCard
             day={currentDay}
             mealCompletionPct={mealCompletionPct}
@@ -473,7 +473,7 @@ export function NutritionPage() {
           </div>
         </div>
 
-        <div className="grid gap-5 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.95fr)]">
+        <div className="grid gap-5 xl:fq-grid-main-sidebar-sm">
           <MealsList
             meals={meals}
             completedCount={completedMealsCount}

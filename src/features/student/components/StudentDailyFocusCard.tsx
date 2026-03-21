@@ -69,7 +69,7 @@ export function StudentDailyFocusCard({ dashboard, onNavigate }: StudentDailyFoc
             <FqText as="p" className="fq-subtle-label">
               Foco diário
             </FqText>
-            <FqText as="h2" className="mt-2 text-base font-semibold text-foreground">
+            <FqText as="h2" className="mt-2 text-sm font-semibold text-foreground">
               Ritmo, clareza e próximo passo
             </FqText>
             <FqText as="p" className="text-sm text-muted-foreground">
@@ -81,8 +81,8 @@ export function StudentDailyFocusCard({ dashboard, onNavigate }: StudentDailyFoc
           </FqTag>
         </div>
 
-        <div className="grid gap-4 lg:grid-cols-[minmax(0,1.15fr)_0.85fr]">
-          <div className="space-y-4 rounded-[calc(var(--radius)+6px)] border border-border/75 bg-background/72 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]">
+        <div className="grid gap-4 lg:fq-grid-split-15-85">
+          <div className="space-y-4 rounded-xl border border-border/70 bg-background/70 p-4 shadow-inset-highlight">
             <FqText as="p" className="text-sm font-semibold text-foreground">
               Progresso diário
             </FqText>
@@ -94,7 +94,7 @@ export function StudentDailyFocusCard({ dashboard, onNavigate }: StudentDailyFoc
             </FqText>
 
             <div className="grid gap-3 sm:grid-cols-3">
-              <div className="fq-soft-block px-3 py-3 shadow-[0_8px_20px_rgba(36,49,44,0.04)]">
+              <div className="fq-soft-block px-3 py-3 shadow-elevated">
                 <FqText as="p" className="fq-subtle-label">
                   Treino
                 </FqText>
@@ -110,7 +110,7 @@ export function StudentDailyFocusCard({ dashboard, onNavigate }: StudentDailyFoc
                         : 'Livre'}
                 </FqText>
               </div>
-              <div className="fq-soft-block px-3 py-3 shadow-[0_8px_20px_rgba(36,49,44,0.04)]">
+              <div className="fq-soft-block px-3 py-3 shadow-elevated">
                 <FqText as="p" className="fq-subtle-label">
                   Nutrição
                 </FqText>
@@ -118,7 +118,7 @@ export function StudentDailyFocusCard({ dashboard, onNavigate }: StudentDailyFoc
                   {completedMeals}/{dashboard.nutritionPlan.meals.length} refeições
                 </FqText>
               </div>
-              <div className="fq-soft-block px-3 py-3 shadow-[0_8px_20px_rgba(36,49,44,0.04)]">
+              <div className="fq-soft-block px-3 py-3 shadow-elevated">
                 <FqText as="p" className="fq-subtle-label">
                   Água
                 </FqText>
@@ -131,7 +131,7 @@ export function StudentDailyFocusCard({ dashboard, onNavigate }: StudentDailyFoc
             </div>
           </div>
 
-          <div className="fq-gradient-soft-primary rounded-[calc(var(--radius)+6px)] border border-primary/14 p-4 shadow-[0_14px_30px_rgba(95,141,118,0.08)]">
+          <div className="fq-gradient-soft-primary rounded-xl border border-primary/15 p-4 shadow-float">
             <FqText as="p" className="fq-subtle-label">
               Missão de hoje
             </FqText>
@@ -145,8 +145,8 @@ export function StudentDailyFocusCard({ dashboard, onNavigate }: StudentDailyFoc
               <FqTag tone="secondary">{dashboard.dailyProgress.xpEarned} XP</FqTag>
               <FqTag tone="warning">{dashboard.dailyProgress.starsEarned} estrelas</FqTag>
             </div>
-            <div className="mt-4 rounded-[calc(var(--radius)+6px)] border border-white/45 bg-card/94 p-4 shadow-[0_12px_24px_rgba(36,49,44,0.05)]">
-              <FqText as="p" className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+            <div className="mt-4 rounded-xl border border-white/50 bg-card/95 p-4 shadow-float">
+              <FqText as="p" className="text-xs font-semibold uppercase tracking-caps-wide text-muted-foreground">
                 Próximo passo recomendado
               </FqText>
               <FqText as="p" className="mt-2 text-sm font-semibold text-foreground">

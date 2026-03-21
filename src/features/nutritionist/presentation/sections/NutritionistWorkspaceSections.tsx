@@ -459,7 +459,7 @@ export function NutritionistWorkspaceSections({
     return (
       <section className="fq-page-shell">
         <FqCard className="border-border bg-card">
-          <FqText as="h1" variant="title" className="text-lg">
+          <FqText as="h1" variant="title">
             Carregando painel do nutricionista...
           </FqText>
         </FqCard>
@@ -504,7 +504,7 @@ export function NutritionistWorkspaceSections({
   return (
     <section className="theme-nutritionist fq-page-shell">
       <header className="fq-page-header">
-        <FqText as="h1" variant="title" className="role-heading text-lg">
+        <FqText as="h1" variant="title" className="role-heading text-section-title">
           Painel do Nutricionista
         </FqText>
         <FqText as="p" className="text-sm text-muted-foreground">
@@ -845,7 +845,7 @@ export function NutritionistWorkspaceSections({
               </FqText>
               <FqText
                 as="p"
-                className="mt-1 text-lg font-semibold text-foreground"
+                className="mt-1 text-card-title font-semibold text-foreground"
               >
                 {overview.assessments.length > 0
                   ? Math.round(
@@ -864,7 +864,7 @@ export function NutritionistWorkspaceSections({
               </FqText>
               <FqText
                 as="p"
-                className="mt-1 text-lg font-semibold text-foreground"
+                className="mt-1 text-card-title font-semibold text-foreground"
               >
                 {overview.assessments.length > 0
                   ? Math.round(
@@ -883,7 +883,7 @@ export function NutritionistWorkspaceSections({
               </FqText>
               <FqText
                 as="p"
-                className="mt-1 text-lg font-semibold text-foreground"
+                className="mt-1 text-card-title font-semibold text-foreground"
               >
                 {
                   overview.assessments.filter((item) =>
@@ -900,7 +900,7 @@ export function NutritionistWorkspaceSections({
               </FqText>
               <FqText
                 as="p"
-                className="mt-1 text-lg font-semibold text-foreground"
+                className="mt-1 text-card-title font-semibold text-foreground"
               >
                 {overview.assessments.reduce(
                   (total, item) => total + item.alerts.length,

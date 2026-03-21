@@ -25,7 +25,7 @@ export function FqAchievementCard({
   return (
     <article
       className={cx(
-        'rounded-xl border p-4 transition',
+        'rounded-lg border p-4 transition',
         unlocked ? 'border-amber-300 bg-amber-50' : 'border-zinc-200 bg-white',
         className,
       )}
@@ -36,7 +36,7 @@ export function FqAchievementCard({
       <div className="flex items-start gap-3">
         <span
           className={cx(
-            'rounded-xl p-2',
+            'rounded-lg p-2',
             unlocked ? 'bg-amber-200 text-amber-800' : 'bg-zinc-100 text-zinc-500',
           )}
         >

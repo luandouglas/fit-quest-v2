@@ -11,7 +11,7 @@ export function StudentRankingCard({ rankingSummary, onOpenRanking }: StudentRan
     <FqCard className="border-border bg-card">
       <div className="space-y-4">
         <div>
-          <FqText as="h2" className="text-base font-semibold text-foreground">
+          <FqText as="h2" className="text-sm font-semibold text-foreground">
             Ranking competitivo
           </FqText>
           <FqText as="p" className="text-sm text-muted-foreground">
@@ -22,7 +22,7 @@ export function StudentRankingCard({ rankingSummary, onOpenRanking }: StudentRan
         <div className="rounded-2xl border border-border bg-muted/10 p-4">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <FqText as="p" className="text-3xl font-semibold text-foreground">
+              <FqText as="p" className="text-section-title font-semibold text-foreground">
                 #{rankingSummary.position}
               </FqText>
               <FqText as="p" className="text-sm text-muted-foreground">
@@ -40,7 +40,7 @@ export function StudentRankingCard({ rankingSummary, onOpenRanking }: StudentRan
             <FqText as="p" className="text-xs uppercase tracking-wide text-muted-foreground">
               Pontos
             </FqText>
-            <FqText as="p" className="mt-1 text-xl font-semibold text-foreground">
+            <FqText as="p" className="mt-1 text-sm font-semibold text-foreground">
               {rankingSummary.points}
             </FqText>
           </div>
@@ -49,7 +49,7 @@ export function StudentRankingCard({ rankingSummary, onOpenRanking }: StudentRan
             <FqText as="p" className="text-xs uppercase tracking-wide text-muted-foreground">
               Gap para subir
             </FqText>
-            <FqText as="p" className="mt-1 text-xl font-semibold text-foreground">
+            <FqText as="p" className="mt-1 text-sm font-semibold text-foreground">
               {rankingSummary.gapToNext} XP
             </FqText>
           </div>

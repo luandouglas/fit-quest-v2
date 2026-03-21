@@ -28,7 +28,7 @@ function RewardGroup({
         {items.map((item) => (
           <div
             key={item.id}
-            className="rounded-[calc(var(--radius)+4px)] border border-border/75 bg-muted/20 p-4"
+            className="rounded-xl border border-border/70 bg-muted/20 p-4"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="space-y-1">

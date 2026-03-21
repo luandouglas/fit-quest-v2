@@ -18,7 +18,7 @@ export function StudentGoalsCard({
     <FqCard className="border-border bg-card">
       <div className="space-y-4">
         <div>
-          <FqText as="h2" className="text-base font-semibold text-foreground">
+          <FqText as="h2" className="text-sm font-semibold text-foreground">
             Metas e métricas do aluno
           </FqText>
           <FqText as="p" className="text-sm text-muted-foreground">

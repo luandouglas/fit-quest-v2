@@ -17,7 +17,7 @@ export function GamificationActivityCard({
       subtitle="Leitura curta do que gerou progresso nos ultimos dias."
       className="border-border bg-card"
     >
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
+      <div className="grid gap-4 xl:fq-grid-balanced-inverse">
         <div className="space-y-3">
           <FqText as="p" className="text-sm font-semibold text-foreground">
             Ultimos 14 dias

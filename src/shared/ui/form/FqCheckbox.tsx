@@ -33,8 +33,8 @@ export function FqCheckbox({
         {...rest}
       />
       <span className="flex flex-col">
-        {label ? <span className="text-sm font-medium text-zinc-800">{label}</span> : null}
-        {helperText ? <span className="text-xs text-zinc-500">{helperText}</span> : null}
+        {label ? <span className="text-body font-medium text-foreground">{label}</span> : null}
+        {helperText ? <span className="text-caption text-muted-foreground">{helperText}</span> : null}
       </span>
     </label>
   )

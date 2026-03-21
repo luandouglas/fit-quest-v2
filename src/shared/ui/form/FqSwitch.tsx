@@ -56,7 +56,7 @@ export function FqSwitch({
       aria-label={label}
       onClick={handleToggle}
       className={cx(
-        'inline-flex items-center gap-2 rounded-xl p-1 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+        'inline-flex items-center gap-2 rounded-lg p-1 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
         className,
       )}
      
@@ -76,7 +76,7 @@ export function FqSwitch({
           )}
         />
       </span>
-      {label ? <span className="text-sm font-medium text-zinc-800">{label}</span> : null}
+      {label ? <span className="text-body font-medium text-foreground">{label}</span> : null}
     </button>
   )
 }

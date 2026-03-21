@@ -437,7 +437,7 @@ function WorkoutDaySectionHeader({
       <div className="space-y-0.5">
         <FqText
           as="p"
-          className="text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground"
+          className="text-caption font-semibold uppercase tracking-caps-wide text-muted-foreground"
         >
           Dia da semana
         </FqText>
@@ -473,7 +473,7 @@ function WorkoutDayOffState({ label }: { label: string }) {
             Nenhum treino programado para {label.toLowerCase()}.
           </FqText>
         </div>
-        <span className="rounded-full bg-muted px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+        <span className="rounded-full bg-muted px-2.5 py-1 text-xs font-semibold uppercase tracking-caps text-muted-foreground">
           Off
         </span>
       </div>
@@ -2628,7 +2628,7 @@ export function PersonalWorkspaceSections({
     return (
       <section className="fq-page-shell">
         <FqCard className="border-border bg-card">
-          <FqText as="h1" variant="title" className="text-lg">
+          <FqText as="h1" variant="title">
             Carregando painel do personal...
           </FqText>
         </FqCard>
@@ -2705,7 +2705,7 @@ export function PersonalWorkspaceSections({
                   <div className="space-y-1">
                     <FqText
                       as="h2"
-                      className="text-2xl font-semibold text-foreground"
+                      className="text-section-title font-semibold text-foreground"
                     >
                       {selectedStudentRoute.name}
                     </FqText>
@@ -2739,14 +2739,14 @@ export function PersonalWorkspaceSections({
                 </div>
               </div>
 
-              <div className="grid gap-4 xl:grid-cols-[minmax(0,1.7fr)_minmax(320px,1fr)]">
+              <div className="grid gap-4 xl:fq-grid-main-sidebar-lg">
                 <FqCard className="border-border bg-card shadow-sm">
                   <div className="space-y-4">
                     <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
                       <div className="rounded-2xl border border-border bg-muted/10 px-4 py-3">
                         <FqText
                           as="p"
-                          className="text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground"
+                          className="text-caption font-semibold uppercase tracking-caps-wide text-muted-foreground"
                         >
                           Meta semanal
                         </FqText>
@@ -2760,7 +2760,7 @@ export function PersonalWorkspaceSections({
                       <div className="rounded-2xl border border-border bg-muted/10 px-4 py-3">
                         <FqText
                           as="p"
-                          className="text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground"
+                          className="text-caption font-semibold uppercase tracking-caps-wide text-muted-foreground"
                         >
                           Treinos ativos
                         </FqText>
@@ -2774,7 +2774,7 @@ export function PersonalWorkspaceSections({
                       <div className="rounded-2xl border border-border bg-muted/10 px-4 py-3">
                         <FqText
                           as="p"
-                          className="text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground"
+                          className="text-caption font-semibold uppercase tracking-caps-wide text-muted-foreground"
                         >
                           Concluidos na semana
                         </FqText>
@@ -2789,7 +2789,7 @@ export function PersonalWorkspaceSections({
                       <div className="rounded-2xl border border-border bg-muted/10 px-4 py-3">
                         <FqText
                           as="p"
-                          className="text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground"
+                          className="text-caption font-semibold uppercase tracking-caps-wide text-muted-foreground"
                         >
                           Historico total
                         </FqText>
@@ -2807,7 +2807,7 @@ export function PersonalWorkspaceSections({
                       <div className="rounded-2xl border border-border bg-background px-4 py-4">
                         <FqText
                           as="p"
-                          className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground"
+                          className="text-xs font-semibold uppercase tracking-caps text-muted-foreground"
                         >
                           Resumo do aluno
                         </FqText>
@@ -2864,7 +2864,7 @@ export function PersonalWorkspaceSections({
                       <div className="rounded-2xl border border-border bg-background px-4 py-4">
                         <FqText
                           as="p"
-                          className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground"
+                          className="text-xs font-semibold uppercase tracking-caps text-muted-foreground"
                         >
                           Plano atual
                         </FqText>
@@ -3001,7 +3001,7 @@ export function PersonalWorkspaceSections({
                 </FqCard>
               </div>
 
-              <div className="grid gap-4 2xl:grid-cols-[minmax(0,1.25fr)_minmax(320px,0.95fr)]">
+              <div className="grid gap-4 2xl:fq-grid-main-sidebar-25">
                 <FqCard
                   className="border-border bg-card shadow-sm"
                   title="Treinos ativos"
@@ -3017,7 +3017,7 @@ export function PersonalWorkspaceSections({
                         <div className="rounded-2xl border border-border bg-muted/10 p-4">
                           <FqText
                             as="p"
-                            className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground"
+                            className="text-xs font-semibold uppercase tracking-caps text-muted-foreground"
                           >
                             Distribuicao da semana
                           </FqText>
@@ -3047,7 +3047,7 @@ export function PersonalWorkspaceSections({
                                       }}
                                     />
                                   </div>
-                                  <div className="text-[0.7rem] font-semibold uppercase text-muted-foreground">
+                                  <div className="text-caption font-semibold uppercase text-muted-foreground">
                                     {weekdayCompactLabelMap[item.weekday]}
                                   </div>
                                   <div className="text-xs font-medium text-foreground">
@@ -3062,7 +3062,7 @@ export function PersonalWorkspaceSections({
                         <div className="rounded-2xl border border-border bg-muted/10 p-4">
                           <FqText
                             as="p"
-                            className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground"
+                            className="text-xs font-semibold uppercase tracking-caps text-muted-foreground"
                           >
                             Foco por grupo muscular
                           </FqText>
@@ -3184,7 +3184,7 @@ export function PersonalWorkspaceSections({
                         <div className="rounded-2xl border border-border bg-muted/10 p-4">
                           <FqText
                             as="p"
-                            className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground"
+                            className="text-xs font-semibold uppercase tracking-caps text-muted-foreground"
                           >
                             Objetivo principal
                           </FqText>
@@ -3200,7 +3200,7 @@ export function PersonalWorkspaceSections({
                         <div className="rounded-2xl border border-border bg-muted/10 p-4">
                           <FqText
                             as="p"
-                            className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground"
+                            className="text-xs font-semibold uppercase tracking-caps text-muted-foreground"
                           >
                             Estilo de vida
                           </FqText>
@@ -3216,7 +3216,7 @@ export function PersonalWorkspaceSections({
                         <div className="rounded-2xl border border-border bg-muted/10 p-4">
                           <FqText
                             as="p"
-                            className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground"
+                            className="text-xs font-semibold uppercase tracking-caps text-muted-foreground"
                           >
                             Peso / altura / IMC
                           </FqText>
@@ -3232,7 +3232,7 @@ export function PersonalWorkspaceSections({
                         <div className="rounded-2xl border border-border bg-muted/10 p-4">
                           <FqText
                             as="p"
-                            className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground"
+                            className="text-xs font-semibold uppercase tracking-caps text-muted-foreground"
                           >
                             Contato e contexto
                           </FqText>
@@ -3258,7 +3258,7 @@ export function PersonalWorkspaceSections({
                         <div className="rounded-2xl border border-border bg-muted/10 p-4 sm:col-span-2">
                           <FqText
                             as="p"
-                            className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground"
+                            className="text-xs font-semibold uppercase tracking-caps text-muted-foreground"
                           >
                             Preferencias
                           </FqText>
@@ -3294,7 +3294,7 @@ export function PersonalWorkspaceSections({
                         <div className="rounded-2xl border border-border bg-muted/10 p-4">
                           <FqText
                             as="p"
-                            className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground"
+                            className="text-xs font-semibold uppercase tracking-caps text-muted-foreground"
                           >
                             Doencas, lesoes e dores
                           </FqText>
@@ -3314,7 +3314,7 @@ export function PersonalWorkspaceSections({
                         <div className="rounded-2xl border border-border bg-muted/10 p-4">
                           <FqText
                             as="p"
-                            className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground"
+                            className="text-xs font-semibold uppercase tracking-caps text-muted-foreground"
                           >
                             Medicamentos e historico familiar
                           </FqText>
@@ -3335,7 +3335,7 @@ export function PersonalWorkspaceSections({
                           <div className="rounded-2xl border border-border bg-muted/10 p-4">
                             <FqText
                               as="p"
-                              className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground"
+                              className="text-xs font-semibold uppercase tracking-caps text-muted-foreground"
                             >
                               Habitos
                             </FqText>
@@ -3353,7 +3353,7 @@ export function PersonalWorkspaceSections({
                           <div className="rounded-2xl border border-border bg-muted/10 p-4">
                             <FqText
                               as="p"
-                              className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground"
+                              className="text-xs font-semibold uppercase tracking-caps text-muted-foreground"
                             >
                               Estrutura para treinar
                             </FqText>
@@ -3378,7 +3378,7 @@ export function PersonalWorkspaceSections({
                 </div>
               </div>
 
-              <div className="grid gap-4 2xl:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)]">
+              <div className="grid gap-4 2xl:fq-grid-main-sidebar-narrow-sm">
                 <FqCard
                   className="border-border bg-card shadow-sm"
                   title="Historico recente"
@@ -3394,7 +3394,7 @@ export function PersonalWorkspaceSections({
                       </FqText>
                       <FqText
                         as="p"
-                        className="mt-1 text-base font-semibold text-foreground"
+                        className="mt-1 text-sm font-semibold text-foreground"
                       >
                         {selectedStudentRouteHistorySummary.totalSessions}
                       </FqText>
@@ -3408,7 +3408,7 @@ export function PersonalWorkspaceSections({
                       </FqText>
                       <FqText
                         as="p"
-                        className="mt-1 text-base font-semibold text-foreground"
+                        className="mt-1 text-sm font-semibold text-foreground"
                       >
                         {selectedStudentRouteHistorySummary.averageDurationMinutes ??
                           0}{" "}
@@ -3424,7 +3424,7 @@ export function PersonalWorkspaceSections({
                       </FqText>
                       <FqText
                         as="p"
-                        className="mt-1 text-base font-semibold text-foreground"
+                        className="mt-1 text-sm font-semibold text-foreground"
                       >
                         {selectedStudentRouteHistorySummary.averageCompletionRate ??
                           0}
@@ -3437,7 +3437,7 @@ export function PersonalWorkspaceSections({
                     <div className="flex items-center justify-between gap-3">
                       <FqText
                         as="p"
-                        className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground"
+                        className="text-xs font-semibold uppercase tracking-caps text-muted-foreground"
                       >
                         Atividade nos ultimos 14 dias
                       </FqText>
@@ -3512,11 +3512,11 @@ export function PersonalWorkspaceSections({
                       <div className="rounded-2xl border border-border bg-muted/10 p-4">
                         <FqText
                           as="p"
-                          className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground"
+                          className="text-xs font-semibold uppercase tracking-caps text-muted-foreground"
                         >
                           Frequencia semanal
                         </FqText>
-                        <div className="mt-3 grid items-center gap-4 sm:grid-cols-[96px_minmax(0,1fr)]">
+                        <div className="mt-3 grid items-center gap-4 sm:fq-grid-avatar-content">
                           <div className="flex justify-center">
                             <FqProgressRing
                               value={selectedStudentRouteFrequencyProgress}
@@ -3559,7 +3559,7 @@ export function PersonalWorkspaceSections({
                       <div className="rounded-2xl border border-border bg-muted/10 p-4">
                         <FqText
                           as="p"
-                          className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground"
+                          className="text-xs font-semibold uppercase tracking-caps text-muted-foreground"
                         >
                           Evolucao de carga
                         </FqText>
@@ -3600,13 +3600,13 @@ export function PersonalWorkspaceSections({
                                   <div className="text-center">
                                     <FqText
                                       as="p"
-                                      className="text-[0.68rem] font-medium text-muted-foreground"
+                                      className="text-caption font-medium text-muted-foreground"
                                     >
                                       {point.label}
                                     </FqText>
                                     <FqText
                                       as="p"
-                                      className="text-[0.68rem] text-foreground"
+                                      className="text-caption text-foreground"
                                     >
                                       {point.averageLoadVolumeKg} kg
                                     </FqText>
@@ -3628,7 +3628,7 @@ export function PersonalWorkspaceSections({
                       <div className="rounded-2xl border border-border bg-muted/10 p-4">
                         <FqText
                           as="p"
-                          className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground"
+                          className="text-xs font-semibold uppercase tracking-caps text-muted-foreground"
                         >
                           Solicitacoes de medidas
                         </FqText>
@@ -3770,7 +3770,7 @@ export function PersonalWorkspaceSections({
                   <div>
                     <FqText
                       as="h2"
-                      className="text-2xl font-semibold text-foreground"
+                      className="text-section-title font-semibold text-foreground"
                     >
                       Anamnese de {anamnesisStudent.name}
                     </FqText>
@@ -3802,14 +3802,14 @@ export function PersonalWorkspaceSections({
                 </div>
               </div>
 
-              <div className="grid gap-4 xl:grid-cols-[1.4fr_0.8fr]">
+              <div className="grid gap-4 xl:fq-grid-split-14-8">
                 <div className="space-y-4">
                   <FqCard className="border-border bg-card shadow-sm">
                     <div className="space-y-4">
                       <div>
                         <FqText
                           as="h3"
-                          className="text-base font-semibold text-foreground"
+                          className="text-sm font-semibold text-foreground"
                         >
                           Dados pessoais
                         </FqText>
@@ -3913,7 +3913,7 @@ export function PersonalWorkspaceSections({
                       <div>
                         <FqText
                           as="h3"
-                          className="text-base font-semibold text-foreground"
+                          className="text-sm font-semibold text-foreground"
                         >
                           Historico clinico
                         </FqText>
@@ -4001,7 +4001,7 @@ export function PersonalWorkspaceSections({
                       <div>
                         <FqText
                           as="h3"
-                          className="text-base font-semibold text-foreground"
+                          className="text-sm font-semibold text-foreground"
                         >
                           Estilo de vida e experiencia
                         </FqText>
@@ -4123,7 +4123,7 @@ export function PersonalWorkspaceSections({
                       <div>
                         <FqText
                           as="h3"
-                          className="text-base font-semibold text-foreground"
+                          className="text-sm font-semibold text-foreground"
                         >
                           Objetivos e preferencias
                         </FqText>
@@ -4191,7 +4191,7 @@ export function PersonalWorkspaceSections({
                       <div>
                         <FqText
                           as="h3"
-                          className="text-base font-semibold text-foreground"
+                          className="text-sm font-semibold text-foreground"
                         >
                           Disponibilidade semanal
                         </FqText>
@@ -4250,7 +4250,7 @@ export function PersonalWorkspaceSections({
                     <div className="space-y-3">
                       <FqText
                         as="h3"
-                        className="text-base font-semibold text-foreground"
+                        className="text-sm font-semibold text-foreground"
                       >
                         Resumo rapido
                       </FqText>
@@ -4258,7 +4258,7 @@ export function PersonalWorkspaceSections({
                         <div className="rounded-2xl border border-border bg-muted/10 p-4">
                           <FqText
                             as="p"
-                            className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground"
+                            className="text-xs font-semibold uppercase tracking-caps-wide text-muted-foreground"
                           >
                             Objetivo
                           </FqText>
@@ -4277,7 +4277,7 @@ export function PersonalWorkspaceSections({
                         <div className="rounded-2xl border border-border bg-muted/10 p-4">
                           <FqText
                             as="p"
-                            className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground"
+                            className="text-xs font-semibold uppercase tracking-caps-wide text-muted-foreground"
                           >
                             Nivel atual
                           </FqText>
@@ -4297,7 +4297,7 @@ export function PersonalWorkspaceSections({
                         <div className="rounded-2xl border border-border bg-muted/10 p-4">
                           <FqText
                             as="p"
-                            className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground"
+                            className="text-xs font-semibold uppercase tracking-caps-wide text-muted-foreground"
                           >
                             Contato
                           </FqText>
@@ -4323,7 +4323,7 @@ export function PersonalWorkspaceSections({
                       <div>
                         <FqText
                           as="h3"
-                          className="text-base font-semibold text-foreground"
+                          className="text-sm font-semibold text-foreground"
                         >
                           Termo de responsabilidade
                         </FqText>
@@ -4425,7 +4425,7 @@ export function PersonalWorkspaceSections({
                   <div>
                     <FqText
                       as="h2"
-                      className="text-2xl font-semibold text-foreground"
+                      className="text-section-title font-semibold text-foreground"
                     >
                       Treinos de {studentWorkoutsViewName}
                     </FqText>
@@ -4550,7 +4550,7 @@ export function PersonalWorkspaceSections({
                                     <div>
                                       <FqText
                                         as="h3"
-                                        className="text-base font-semibold text-foreground"
+                                        className="text-sm font-semibold text-foreground"
                                       >
                                         {workout.title}
                                       </FqText>
@@ -4583,7 +4583,7 @@ export function PersonalWorkspaceSections({
                                     <div className="rounded-2xl border border-border/70 bg-muted/10 px-4 py-3">
                                       <FqText
                                         as="p"
-                                        className="text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground"
+                                        className="text-caption font-semibold uppercase tracking-caps-wide text-muted-foreground"
                                       >
                                         Exercicios
                                       </FqText>
@@ -4597,7 +4597,7 @@ export function PersonalWorkspaceSections({
                                     <div className="rounded-2xl border border-border/70 bg-muted/10 px-4 py-3">
                                       <FqText
                                         as="p"
-                                        className="text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground"
+                                        className="text-caption font-semibold uppercase tracking-caps-wide text-muted-foreground"
                                       >
                                         Duracao
                                       </FqText>
@@ -4637,7 +4637,7 @@ export function PersonalWorkspaceSections({
                                               key={exercise.id}
                                               className="flex items-start gap-2"
                                             >
-                                              <span className="inline-flex h-5 w-5 items-center justify-center rounded bg-success/15 text-[0.65rem] font-semibold text-success">
+                                              <span className="inline-flex h-5 w-5 items-center justify-center rounded bg-success/15 text-caption font-semibold text-success">
                                                 {exIdx + 1}
                                               </span>
                                               <div>
@@ -4728,7 +4728,7 @@ export function PersonalWorkspaceSections({
                                       <div>
                                         <FqText
                                           as="h3"
-                                          className="text-lg font-semibold text-foreground"
+                                          className="text-card-title font-semibold text-foreground"
                                         >
                                           {workout.title}
                                         </FqText>
@@ -4873,7 +4873,7 @@ export function PersonalWorkspaceSections({
                 <div>
                   <FqText
                     as="h2"
-                    className="text-2xl font-semibold text-foreground"
+                    className="text-section-title font-semibold text-foreground"
                   >
                     Alunos vinculados
                   </FqText>
@@ -4886,7 +4886,7 @@ export function PersonalWorkspaceSections({
                 </div>
               </div>
 
-              <div className="grid gap-3 xl:grid-cols-[1fr_auto]">
+              <div className="grid gap-3 xl:fq-grid-content-auto">
                 <div className="grid gap-3 sm:grid-cols-2">
                   <FqInput
                     leftIcon="search"
@@ -4956,7 +4956,7 @@ export function PersonalWorkspaceSections({
                       onClick={() => setStudentRegistrationMode("invite")}
                       className={`rounded-2xl border p-4 text-left transition ${
                         studentRegistrationMode === "invite"
-                          ? "border-primary bg-primary/8"
+                          ? "border-primary bg-primary/10"
                           : "border-border bg-card"
                       }`}
                     >
@@ -4975,7 +4975,7 @@ export function PersonalWorkspaceSections({
                       onClick={() => setStudentRegistrationMode("direct")}
                       className={`rounded-2xl border p-4 text-left transition ${
                         studentRegistrationMode === "direct"
-                          ? "border-primary bg-primary/8"
+                          ? "border-primary bg-primary/10"
                           : "border-border bg-card"
                       }`}
                     >
@@ -4996,7 +4996,7 @@ export function PersonalWorkspaceSections({
                       }
                       className={`rounded-2xl border p-4 text-left transition ${
                         studentRegistrationMode === "direct-with-anamnesis"
-                          ? "border-primary bg-primary/8"
+                          ? "border-primary bg-primary/10"
                           : "border-border bg-card"
                       }`}
                     >
@@ -5135,7 +5135,7 @@ export function PersonalWorkspaceSections({
                                 </FqText>
                               </div>
                               <span
-                                className={`shrink-0 rounded-full px-2 py-1 text-[0.68rem] font-semibold ${student.activeWorkouts > 0 ? "bg-success/20 text-success" : "bg-muted text-muted-foreground"}`}
+                                className={`shrink-0 rounded-full px-2 py-1 text-caption font-semibold ${student.activeWorkouts > 0 ? "bg-success/20 text-success" : "bg-muted text-muted-foreground"}`}
                               >
                                 {student.activeWorkouts > 0
                                   ? `${student.activeWorkouts} ativo${student.activeWorkouts > 1 ? "s" : ""}`
@@ -5145,7 +5145,7 @@ export function PersonalWorkspaceSections({
 
                             <div className="flex flex-wrap gap-2">
                               <span
-                                className={`rounded-full px-2 py-1 text-[0.68rem] font-semibold ${
+                                className={`rounded-full px-2 py-1 text-caption font-semibold ${
                                   student.anamnesisStatus === "completed"
                                     ? "bg-success/20 text-success"
                                     : student.anamnesisStatus === "pending"
@@ -5160,7 +5160,7 @@ export function PersonalWorkspaceSections({
                                     : "Sem anamnese"}
                               </span>
                               {student.requiresPasswordReset ? (
-                                <span className="rounded-full bg-secondary/15 px-2 py-1 text-[0.68rem] font-semibold text-secondary">
+                                <span className="rounded-full bg-secondary/15 px-2 py-1 text-caption font-semibold text-secondary">
                                   Reset de senha pendente
                                 </span>
                               ) : null}
@@ -5170,7 +5170,7 @@ export function PersonalWorkspaceSections({
                               <div className="rounded-2xl border border-border/70 bg-muted/10 px-3 py-2.5">
                                 <FqText
                                   as="p"
-                                  className="text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground"
+                                  className="text-caption font-semibold uppercase tracking-caps-wide text-muted-foreground"
                                 >
                                   Meta semanal
                                 </FqText>
@@ -5185,7 +5185,7 @@ export function PersonalWorkspaceSections({
                               <div className="rounded-2xl border border-border/70 bg-muted/10 px-3 py-2.5">
                                 <FqText
                                   as="p"
-                                  className="text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground"
+                                  className="text-caption font-semibold uppercase tracking-caps-wide text-muted-foreground"
                                 >
                                   Treinos ativos
                                 </FqText>
@@ -5331,13 +5331,13 @@ export function PersonalWorkspaceSections({
                                   {student.email}
                                 </td>
                                 <td className="px-4 py-2.5">
-                                  <span className="rounded-full bg-muted px-2 py-0.5 text-[0.72rem] font-semibold text-muted-foreground">
+                                  <span className="rounded-full bg-muted px-2 py-0.5 text-caption font-semibold text-muted-foreground">
                                     {student.workoutsPerWeekTarget} treinos
                                   </span>
                                 </td>
                                 <td className="px-4 py-2.5">
                                   <span
-                                    className={`rounded-full px-2 py-0.5 text-[0.72rem] font-semibold ${student.activeWorkouts > 0 ? "bg-success/20 text-success" : "bg-muted text-muted-foreground"}`}
+                                    className={`rounded-full px-2 py-0.5 text-caption font-semibold ${student.activeWorkouts > 0 ? "bg-success/20 text-success" : "bg-muted text-muted-foreground"}`}
                                   >
                                     {student.activeWorkouts}
                                   </span>
@@ -5345,7 +5345,7 @@ export function PersonalWorkspaceSections({
                                 <td className="px-4 py-2.5">
                                   <div className="flex flex-wrap gap-2">
                                     <span
-                                      className={`rounded-full px-2 py-0.5 text-[0.72rem] font-semibold ${
+                                      className={`rounded-full px-2 py-0.5 text-caption font-semibold ${
                                         student.anamnesisStatus === "completed"
                                           ? "bg-success/20 text-success"
                                           : student.anamnesisStatus === "pending"
@@ -5411,7 +5411,7 @@ export function PersonalWorkspaceSections({
                   <div className="">
                     <FqText
                       as="h2"
-                      className="text-2xl font-semibold text-foreground"
+                      className="text-section-title font-semibold text-foreground"
                     >
                       Criar Treino
                     </FqText>
@@ -5446,7 +5446,7 @@ export function PersonalWorkspaceSections({
                   <div>
                     <FqText
                       as="h2"
-                      className="text-2xl font-semibold text-foreground"
+                      className="text-section-title font-semibold text-foreground"
                     >
                       Fichas de Treino
                     </FqText>
@@ -5478,7 +5478,7 @@ export function PersonalWorkspaceSections({
                       onChange={(event) => setWorkoutSearch(event.target.value)}
                     />
                   </div>
-                  <div className="w-full lg:w-[280px]">
+                  <div className="w-full lg:w-70">
                     <FqSelect
                       value={workoutStudentFilter}
                       onChange={(event) =>
@@ -5573,7 +5573,7 @@ export function PersonalWorkspaceSections({
                               <div>
                                 <FqText
                                   as="h3"
-                                  className="text-lg font-semibold text-foreground"
+                                  className="text-card-title font-semibold text-foreground"
                                 >
                                   {workout.title}
                                 </FqText>
@@ -5649,7 +5649,7 @@ export function PersonalWorkspaceSections({
                     tone="neutral"
                     leftIcon="arrowLeft"
                     onClick={closeWorkoutDetails}
-                    className="min-h-11 px-5 text-base font-semibold"
+                    className="min-h-11 px-5 text-sm font-semibold"
                   >
                     Voltar para fichas
                   </FqButton>
@@ -5662,14 +5662,14 @@ export function PersonalWorkspaceSections({
                         onClick={() => {
                           selectWorkoutForDetails(selectedWorkout);
                         }}
-                        className="min-h-11 px-5 text-base font-semibold"
+                        className="min-h-11 px-5 text-sm font-semibold"
                       >
                         Cancelar
                       </FqButton>
                       <FqButton
                         onClick={() => void handleEditWorkout()}
                         isLoading={isUpdatingWorkout}
-                        className="min-h-11 px-5 text-base font-semibold"
+                        className="min-h-11 px-5 text-sm font-semibold"
                       >
                         Salvar alteracoes
                       </FqButton>
@@ -5679,7 +5679,7 @@ export function PersonalWorkspaceSections({
                       tone="secondary"
                       leftIcon="file"
                       onClick={() => setIsEditingWorkoutDetails(true)}
-                      className="min-h-11 px-6 text-base font-semibold"
+                      className="min-h-11 px-6 text-sm font-semibold"
                     >
                       Editar ficha
                     </FqButton>
@@ -5692,7 +5692,7 @@ export function PersonalWorkspaceSections({
                       <div className="flex flex-wrap items-center gap-2">
                         <FqText
                           as="h3"
-                          className="text-3xl font-semibold text-foreground"
+                          className="text-section-title font-semibold text-foreground"
                         >
                           {selectedWorkout.title}
                         </FqText>
@@ -5704,7 +5704,7 @@ export function PersonalWorkspaceSections({
                       </div>
                       <FqText
                         as="p"
-                        className="text-base text-muted-foreground"
+                        className="text-sm text-muted-foreground"
                       >
                         {selectedWorkout.description ||
                           "Sem descricao cadastrada"}
@@ -5721,7 +5721,7 @@ export function PersonalWorkspaceSections({
                         </FqText>
                         <FqText
                           as="p"
-                          className="mt-1 text-2xl font-semibold text-warning"
+                          className="mt-1 text-card-title font-semibold text-warning"
                         >
                           {selectedWorkout.starsReward ?? 0}
                         </FqText>
@@ -5735,7 +5735,7 @@ export function PersonalWorkspaceSections({
                         </FqText>
                         <FqText
                           as="p"
-                          className="mt-1 text-2xl font-semibold text-primary"
+                          className="mt-1 text-card-title font-semibold text-primary"
                         >
                           {selectedWorkout.estimatedDurationMin ?? 0}
                         </FqText>
@@ -5749,7 +5749,7 @@ export function PersonalWorkspaceSections({
                         </FqText>
                         <FqText
                           as="p"
-                          className="mt-1 text-2xl font-semibold text-success"
+                          className="mt-1 text-card-title font-semibold text-success"
                         >
                           {selectedWorkout.exercisesCount}
                         </FqText>
@@ -5921,7 +5921,7 @@ export function PersonalWorkspaceSections({
                       <div className="flex items-center justify-between border-b border-border px-4 py-3">
                         <FqText
                           as="p"
-                          className="text-base font-semibold text-foreground"
+                          className="text-sm font-semibold text-foreground"
                         >
                           Exercicios ({editingExercises.length})
                         </FqText>
@@ -6170,7 +6170,7 @@ export function PersonalWorkspaceSections({
                                   <div className="space-y-1">
                                     <FqText
                                       as="p"
-                                      className="text-base font-semibold text-foreground"
+                                      className="text-sm font-semibold text-foreground"
                                     >
                                       {exercise.name}
                                     </FqText>
@@ -6299,7 +6299,7 @@ export function PersonalWorkspaceSections({
                   tone="neutral"
                   leftIcon="arrowLeft"
                   onClick={closeWorkoutDetails}
-                  className="w-fit min-h-11 px-5 text-base font-semibold"
+                  className="w-fit min-h-11 px-5 text-sm font-semibold"
                 >
                   Voltar para fichas
                 </FqButton>
@@ -6307,7 +6307,7 @@ export function PersonalWorkspaceSections({
                   <div className="space-y-3">
                     <FqText
                       as="h3"
-                      className="text-lg font-semibold text-foreground"
+                      className="text-card-title font-semibold text-foreground"
                     >
                       Ficha nao encontrada
                     </FqText>
@@ -6329,7 +6329,7 @@ export function PersonalWorkspaceSections({
             <div>
               <FqText
                 as="h2"
-                className="text-2xl font-semibold text-foreground"
+                className="text-section-title font-semibold text-foreground"
               >
                 {tab === "dashboard"
                   ? "Dashboard do Personal"
@@ -6361,7 +6361,7 @@ export function PersonalWorkspaceSections({
               </FqText>
               <FqText
                 as="p"
-                className="mt-1 text-lg font-semibold text-foreground"
+                className="mt-1 text-card-title font-semibold text-foreground"
               >
                 {overview.metrics.linkedStudents}
               </FqText>
@@ -6375,7 +6375,7 @@ export function PersonalWorkspaceSections({
               </FqText>
               <FqText
                 as="p"
-                className="mt-1 text-lg font-semibold text-foreground"
+                className="mt-1 text-card-title font-semibold text-foreground"
               >
                 {overview.metrics.workoutsAssignedThisWeek}
               </FqText>
@@ -6389,7 +6389,7 @@ export function PersonalWorkspaceSections({
               </FqText>
               <FqText
                 as="p"
-                className="mt-1 text-lg font-semibold text-foreground"
+                className="mt-1 text-card-title font-semibold text-foreground"
               >
                 {overview.metrics.completedWorkoutsThisWeek}
               </FqText>
@@ -6403,7 +6403,7 @@ export function PersonalWorkspaceSections({
               </FqText>
               <FqText
                 as="p"
-                className="mt-1 text-lg font-semibold text-foreground"
+                className="mt-1 text-card-title font-semibold text-foreground"
               >
                 {overview.metrics.avgFrequencyWeekly.toFixed(1)}
               </FqText>
@@ -6606,7 +6606,7 @@ export function PersonalWorkspaceSections({
       {tab === "messages" ? (
         <div className="space-y-4">
           <div>
-            <FqText as="h2" className="text-2xl font-semibold text-foreground">
+            <FqText as="h2" className="text-section-title font-semibold text-foreground">
               Mensagens e engajamento
             </FqText>
             <FqText as="p" className="text-sm text-muted-foreground">

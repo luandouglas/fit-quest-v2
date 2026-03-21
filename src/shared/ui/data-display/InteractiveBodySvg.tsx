@@ -34,9 +34,9 @@ export function InteractiveBodySvg({
   onSelectedIdsChange,
   onHoverIdChange,
   getLabel,
-  hoverColor = '#67E8F9',
+  hoverColor = '#8FEDE1',
   hoverOpacity = 0.35,
-  selectedColor = '#2563eb',
+  selectedColor = '#2fd4c1',
   selectedOpacity = 0.6,
   interactive = true,
   showTooltip = interactive,
@@ -228,7 +228,7 @@ export function InteractiveBodySvg({
           alt=""
           aria-hidden="true"
           draggable={false}
-          className="pointer-events-none absolute inset-0 z-10 h-full w-full select-none object-contain dark:brightness-[1.26] dark:contrast-[1.2] dark:drop-shadow-[0_0_8px_rgba(241,245,249,0.32)]"
+          className="pointer-events-none absolute inset-0 z-10 h-full w-full select-none object-contain dark:brightness-125 dark:contrast-125 dark:drop-shadow-sm"
         />
       ) : null}
 

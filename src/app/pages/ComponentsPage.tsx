@@ -149,7 +149,7 @@ export function ComponentsPage() {
     <div className="h-screen w-full bg-zinc-100 text-zinc-900">
       <header className="flex h-16 items-center justify-between border-b border-zinc-200 bg-white px-6">
         <div>
-          <h1 className="text-lg font-semibold">Frontend Components</h1>
+          <h1 className="text-card-title font-semibold">Frontend Components</h1>
           <p className="text-xs text-zinc-500">Swagger interno do Design System FitQuest</p>
         </div>
         <div className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white p-1">
@@ -176,7 +176,7 @@ export function ComponentsPage() {
         </div>
       </header>
 
-      <div className="flex h-[calc(100vh-4rem)]">
+      <div className="flex fq-h-page">
         <aside className="w-72 border-r border-zinc-200 bg-white">
           <div className="sticky top-0 z-10 border-b border-zinc-200 bg-white p-3">
             <input
@@ -186,7 +186,7 @@ export function ComponentsPage() {
               className="h-9 w-full rounded-lg border border-zinc-300 px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             />
           </div>
-          <div className="h-[calc(100%-3.75rem)] overflow-y-auto p-2">
+          <div className="fq-h-page-inner overflow-y-auto p-2">
             {filteredRegistry.map((section) => {
               const isExpanded = expandedCategories[section.category]
 
@@ -237,7 +237,7 @@ export function ComponentsPage() {
               <div className="rounded-xl border border-zinc-200 bg-white p-4">
                 <div className="mb-4 flex flex-wrap items-center justify-between gap-2 border-b border-zinc-100 pb-3">
                   <div>
-                    <h2 className="text-base font-semibold">{activeComponentMeta.name}</h2>
+                    <h2 className="text-sm font-semibold">{activeComponentMeta.name}</h2>
                     <p className="text-sm text-zinc-500">{activeComponentMeta.description}</p>
                   </div>
                   <div className="flex items-center gap-2">
@@ -278,7 +278,7 @@ export function ComponentsPage() {
                 </div>
 
                 <div className="flex justify-center rounded-xl border border-dashed border-zinc-300 bg-zinc-50 p-4">
-                  <div className={cx(device === 'mobile' ? 'w-[360px]' : 'w-full max-w-4xl')}>
+                  <div className={cx(device === 'mobile' ? 'w-90' : 'w-full max-w-4xl')}>
                     {renderComponentPreview({
                       name: activeComponentMeta.name,
                       props: componentProps,
@@ -332,7 +332,7 @@ export function ComponentsPage() {
             </div>
           </div>
 
-          <div className="h-[calc(100%-4.5rem)] overflow-y-auto p-3">
+          <div className="fq-h-page-inner-lg overflow-y-auto p-3">
             {activeTab === 'props' ? (
               <div className="space-y-3">
                 {activeComponentMeta?.controls.length ? (
@@ -420,7 +420,7 @@ export function ComponentsPage() {
                         <span className="text-zinc-400">{entry.at}</span>
                       </div>
                       {entry.payload !== undefined ? (
-                        <pre className="mt-1 overflow-x-auto text-[11px] text-zinc-500">
+                        <pre className="mt-1 overflow-x-auto text-caption text-zinc-500">
                           {JSON.stringify(entry.payload, null, 2)}
                         </pre>
                       ) : null}

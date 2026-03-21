@@ -16,7 +16,7 @@ export function ProgressComparisonGrid({ items }: ProgressComparisonGridProps) {
         {items.map((item) => (
           <div
             key={item.id}
-            className="rounded-[calc(var(--radius)+4px)] border border-border/75 bg-muted/20 p-4"
+            className="rounded-xl border border-border/70 bg-muted/20 p-4"
           >
             <div className="flex items-center justify-between gap-2">
               <FqText as="p" className="text-sm font-semibold text-foreground">
@@ -29,7 +29,7 @@ export function ProgressComparisonGrid({ items }: ProgressComparisonGridProps) {
                 <FqText as="p" className="text-xs text-muted-foreground">
                   Agora
                 </FqText>
-                <FqText as="p" className="text-lg font-semibold text-foreground">
+                <FqText as="p" className="text-card-title font-semibold text-foreground">
                   {item.currentLabel}
                 </FqText>
               </div>

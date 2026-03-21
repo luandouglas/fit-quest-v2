@@ -30,15 +30,15 @@ export function ProfileReadOnlyBodyCard({ progress }: ProfileReadOnlyBodyCardPro
     >
       <div className="space-y-4">
         <div className="grid gap-3 sm:grid-cols-3">
-          <div className="rounded-[calc(var(--radius)+4px)] border border-border/75 bg-muted/20 p-4">
+          <div className="rounded-xl border border-border/70 bg-muted/20 p-4">
             <FqText as="p" className="text-xs text-muted-foreground">
               Peso atual
             </FqText>
-            <FqText as="p" className="mt-2 text-lg font-semibold text-foreground">
+            <FqText as="p" className="mt-2 text-card-title font-semibold text-foreground">
               {progress.metrics.currentWeightKg.toFixed(1)} kg
             </FqText>
           </div>
-          <div className="rounded-[calc(var(--radius)+4px)] border border-border/75 bg-muted/20 p-4">
+          <div className="rounded-xl border border-border/70 bg-muted/20 p-4">
             <div className="flex items-center justify-between gap-2">
               <FqText as="p" className="text-xs text-muted-foreground">
                 IMC
@@ -49,11 +49,11 @@ export function ProfileReadOnlyBodyCard({ progress }: ProfileReadOnlyBodyCardPro
               {resolveBmiLabel(progress.bodyComposition.bmiStatus)}
             </FqText>
           </div>
-          <div className="rounded-[calc(var(--radius)+4px)] border border-border/75 bg-muted/20 p-4">
+          <div className="rounded-xl border border-border/70 bg-muted/20 p-4">
             <FqText as="p" className="text-xs text-muted-foreground">
               Altura
             </FqText>
-            <FqText as="p" className="mt-2 text-lg font-semibold text-foreground">
+            <FqText as="p" className="mt-2 text-card-title font-semibold text-foreground">
               {progress.bodyComposition.heightCm} cm
             </FqText>
           </div>
@@ -61,7 +61,7 @@ export function ProfileReadOnlyBodyCard({ progress }: ProfileReadOnlyBodyCardPro
 
         {progress.bodyComposition.latestMeasurements ? (
           <div className="grid gap-3 sm:grid-cols-2">
-            <div className="rounded-[calc(var(--radius)+4px)] border border-border/75 bg-background/72 p-4">
+            <div className="rounded-xl border border-border/70 bg-background/70 p-4">
               <FqText as="p" className="text-xs text-muted-foreground">
                 Cintura
               </FqText>
@@ -69,7 +69,7 @@ export function ProfileReadOnlyBodyCard({ progress }: ProfileReadOnlyBodyCardPro
                 {progress.bodyComposition.latestMeasurements.waistCm} cm
               </FqText>
             </div>
-            <div className="rounded-[calc(var(--radius)+4px)] border border-border/75 bg-background/72 p-4">
+            <div className="rounded-xl border border-border/70 bg-background/70 p-4">
               <FqText as="p" className="text-xs text-muted-foreground">
                 Quadril
               </FqText>
@@ -79,7 +79,7 @@ export function ProfileReadOnlyBodyCard({ progress }: ProfileReadOnlyBodyCardPro
             </div>
           </div>
         ) : (
-          <div className="rounded-[calc(var(--radius)+4px)] border border-dashed border-border/80 bg-muted/10 p-4">
+          <div className="rounded-xl border border-dashed border-border/80 bg-muted/10 p-4">
             <FqText as="p" className="text-sm text-muted-foreground">
               Nenhuma medicao corporal registrada ainda.
             </FqText>

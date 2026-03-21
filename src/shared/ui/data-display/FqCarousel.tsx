@@ -32,12 +32,12 @@ export function FqCarousel({
 
   return (
     <div
-      className={cx('space-y-3 rounded-xl border border-zinc-200 bg-white p-4', className)}
+      className={cx('space-y-3 rounded-lg border border-zinc-200 bg-white p-4', className)}
      
       data-testid={testId}
       {...rest}
     >
-      <div className="overflow-hidden rounded-xl bg-zinc-50 p-4">{items[index]}</div>
+      <div className="overflow-hidden rounded-lg bg-zinc-50 p-4">{items[index]}</div>
       <div className="flex items-center justify-between">
         <span className="text-xs text-zinc-500">
           Item {index + 1} de {items.length}

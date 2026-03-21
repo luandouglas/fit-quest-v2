@@ -27,7 +27,7 @@ export function FqTooltip({
           <Tooltip.Content
             side={side}
             className={cx(
-              'z-[80] rounded-lg bg-zinc-900 px-2.5 py-1.5 text-xs text-white shadow-lg',
+              'z-dropdown rounded-lg bg-zinc-900 px-2.5 py-1.5 text-xs text-white shadow-lg',
               className,
             )}
            

@@ -61,7 +61,7 @@ export function FqFileUpload({
 
   return (
     <div className={cx('flex w-full flex-col gap-2', className)} data-testid={testId}>
-      {label ? <span className="text-sm font-medium text-zinc-700">{label}</span> : null}
+      {label ? <span className="text-label font-medium text-foreground">{label}</span> : null}
       <button
         type="button"
         onClick={() => inputRef.current?.click()}
@@ -88,7 +88,7 @@ export function FqFileUpload({
           applyFiles(event.dataTransfer.files)
         }}
         className={cx(
-          'flex min-h-28 w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-zinc-300 bg-zinc-50 px-4 py-5 text-zinc-600 transition',
+          'flex min-h-28 w-full flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-zinc-300 bg-zinc-50 px-4 py-5 text-zinc-600 transition',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
           isDragging ? 'border-blue-500 bg-blue-50 text-blue-700' : null,
           isDisabled ? 'cursor-not-allowed opacity-60' : null,
@@ -118,7 +118,7 @@ export function FqFileUpload({
           {previews.map((preview) => (
             <figure
               key={`${preview.file.name}-${preview.file.lastModified}`}
-              className="overflow-hidden rounded-xl border border-zinc-200 bg-white"
+              className="overflow-hidden rounded-lg border border-zinc-200 bg-white"
             >
               {preview.file.type.startsWith('image/') ? (
                 <img

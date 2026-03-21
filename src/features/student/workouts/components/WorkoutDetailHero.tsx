@@ -17,7 +17,7 @@ export function WorkoutDetailHero({ workout, onBack, onStart }: WorkoutDetailHer
             <FqText as="p" className="text-sm text-muted-foreground">
               {workout.scheduledWindowLabel}
             </FqText>
-            <FqText as="h1" className="text-2xl font-semibold text-foreground">
+            <FqText as="h1" className="text-screen-title font-semibold text-foreground">
               {workout.title}
             </FqText>
             <FqText as="p" className="max-w-2xl text-sm text-muted-foreground">

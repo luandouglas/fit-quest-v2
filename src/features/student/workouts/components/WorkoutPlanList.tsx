@@ -36,7 +36,7 @@ export function WorkoutPlanList({
   return (
     <FqCard className="border-border bg-card">
       <div className="space-y-3">
-        <FqText as="h3" className="text-lg font-semibold text-foreground">
+        <FqText as="h3" className="text-card-title font-semibold text-foreground">
           Treinos disponiveis
         </FqText>
 
@@ -53,7 +53,7 @@ export function WorkoutPlanList({
                 <div className="space-y-3">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="space-y-1">
-                      <FqText as="p" className="text-base font-semibold text-foreground">
+                      <FqText as="p" className="text-sm font-semibold text-foreground">
                       {workout.title}
                       </FqText>
                       <FqText as="p" className="text-xs text-muted-foreground">

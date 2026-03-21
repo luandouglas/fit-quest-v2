@@ -39,7 +39,7 @@ export function ProgressHistoryCard({
             {workouts.slice(0, 4).map((session) => (
               <div
                 key={session.sessionId}
-                className="rounded-[calc(var(--radius)+4px)] border border-border/75 bg-muted/20 p-4"
+                className="rounded-xl border border-border/70 bg-muted/20 p-4"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="space-y-1">
@@ -68,7 +68,7 @@ export function ProgressHistoryCard({
             {cardio.slice(0, 4).map((session) => (
               <div
                 key={session.sessionId}
-                className="rounded-[calc(var(--radius)+4px)] border border-border/75 bg-muted/20 p-4"
+                className="rounded-xl border border-border/70 bg-muted/20 p-4"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="space-y-1">

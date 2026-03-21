@@ -68,7 +68,7 @@ const actionCopy: Record<
     primaryLabel: "Iniciar sessao",
     secondaryLabel: "Ver plano completo",
     accentClassName:
-      "from-[rgba(118,92,246,0.16)] via-[rgba(94,127,255,0.08)] to-transparent",
+      "fq-accent-gamification",
   },
   water: {
     eyebrow: "Atalho central",
@@ -80,7 +80,7 @@ const actionCopy: Record<
     primaryLabel: "Salvar agua",
     secondaryLabel: "Abrir nutricao",
     accentClassName:
-      "from-[rgba(59,130,246,0.18)] via-[rgba(103,232,249,0.08)] to-transparent",
+      "fq-accent-primary",
   },
   meal: {
     eyebrow: "Atalho central",
@@ -92,7 +92,7 @@ const actionCopy: Record<
     primaryLabel: "Registrar agora",
     secondaryLabel: "Abrir nutricao",
     accentClassName:
-      "from-[rgba(249,115,22,0.16)] via-[rgba(251,191,36,0.08)] to-transparent",
+      "fq-accent-secondary",
   },
 };
 
@@ -282,7 +282,7 @@ export function StudentQuickActionPage({
   return (
     <section className="fq-page-shell space-y-5">
       <header className="fq-page-header">
-        <FqText as="h1" variant="title" className="text-lg">
+        <FqText as="h1" variant="title">
           {copy.title}
         </FqText>
         <FqText as="p" className="text-sm text-muted-foreground">
@@ -290,12 +290,12 @@ export function StudentQuickActionPage({
         </FqText>
       </header>
 
-      <FqCard className="overflow-hidden border-border/80 bg-card/96">
+      <FqCard className="overflow-hidden border-border/80 bg-card/95">
         <div className="relative space-y-5">
           <div
             aria-hidden="true"
             className={cx(
-              "pointer-events-none absolute inset-x-0 top-0 h-32 rounded-[calc(var(--radius)+6px)] bg-gradient-to-br opacity-90 blur-2xl",
+              "pointer-events-none absolute inset-x-0 top-0 h-32 rounded-xl bg-gradient-to-br opacity-90 blur-2xl",
               copy.accentClassName,
             )}
           />
@@ -304,7 +304,7 @@ export function StudentQuickActionPage({
             <div className="space-y-3">
               <FqTag tone="secondary">{copy.eyebrow}</FqTag>
               <div className="space-y-2">
-                <FqText as="h2" className="text-xl font-semibold text-foreground">
+                <FqText as="h2" className="text-sm font-semibold text-foreground">
                   {copy.title}
                 </FqText>
                 <FqText as="p" className="max-w-2xl text-sm leading-6 text-muted-foreground">
@@ -313,19 +313,19 @@ export function StudentQuickActionPage({
               </div>
             </div>
 
-            <div className="grid min-w-[220px] gap-2 sm:grid-cols-2 md:grid-cols-1">
+            <div className="grid min-w-55 gap-2 sm:grid-cols-2 md:grid-cols-1">
               {kind === "workout" ? (
                 <>
-                  <div className="rounded-2xl border border-border/70 bg-background/78 px-4 py-3 shadow-[0_12px_28px_rgba(36,49,44,0.05)]">
-                    <FqText as="p" className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                  <div className="rounded-2xl border border-border/70 bg-background/80 px-4 py-3 shadow-float">
+                    <FqText as="p" className="text-xs font-semibold uppercase tracking-caps-wide text-muted-foreground">
                       Hoje
                     </FqText>
                     <FqText as="p" className="mt-2 text-sm font-semibold text-foreground">
                       {workoutPlan?.todayWorkout.title ?? "Treino do dia"}
                     </FqText>
                   </div>
-                  <div className="rounded-2xl border border-border/70 bg-background/78 px-4 py-3 shadow-[0_12px_28px_rgba(36,49,44,0.05)]">
-                    <FqText as="p" className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                  <div className="rounded-2xl border border-border/70 bg-background/80 px-4 py-3 shadow-float">
+                    <FqText as="p" className="text-xs font-semibold uppercase tracking-caps-wide text-muted-foreground">
                       Ritmo
                     </FqText>
                     <FqText as="p" className="mt-2 text-sm font-semibold text-foreground">
@@ -335,8 +335,8 @@ export function StudentQuickActionPage({
                 </>
               ) : (
                 <>
-                  <div className="rounded-2xl border border-border/70 bg-background/78 px-4 py-3 shadow-[0_12px_28px_rgba(36,49,44,0.05)]">
-                    <FqText as="p" className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                  <div className="rounded-2xl border border-border/70 bg-background/80 px-4 py-3 shadow-float">
+                    <FqText as="p" className="text-xs font-semibold uppercase tracking-caps-wide text-muted-foreground">
                       Progresso
                     </FqText>
                     <FqText as="p" className="mt-2 text-sm font-semibold text-foreground">
@@ -345,8 +345,8 @@ export function StudentQuickActionPage({
                         : `${homeOverview?.summary.mealsLogged ?? 0}/${homeOverview?.summary.mealsTotal ?? 0} refeicoes`}
                     </FqText>
                   </div>
-                  <div className="rounded-2xl border border-border/70 bg-background/78 px-4 py-3 shadow-[0_12px_28px_rgba(36,49,44,0.05)]">
-                    <FqText as="p" className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                  <div className="rounded-2xl border border-border/70 bg-background/80 px-4 py-3 shadow-float">
+                    <FqText as="p" className="text-xs font-semibold uppercase tracking-caps-wide text-muted-foreground">
                       Aderencia
                     </FqText>
                     <FqText as="p" className="mt-2 text-sm font-semibold text-foreground">
@@ -368,8 +368,8 @@ export function StudentQuickActionPage({
                   className={cx(
                     "inline-flex min-h-12 items-center justify-center rounded-2xl border px-4 py-3 text-sm font-semibold transition",
                     selectedWaterMl === amount
-                      ? "border-primary/30 bg-primary/10 text-primary shadow-[0_12px_24px_rgba(37,99,235,0.12)]"
-                      : "border-border/70 bg-background/75 text-foreground",
+                      ? "border-primary/30 bg-primary/10 text-primary shadow-float"
+                      : "border-border/70 bg-background/80 text-foreground",
                   )}
                   onClick={() => setSelectedWaterMl(amount)}
                 >

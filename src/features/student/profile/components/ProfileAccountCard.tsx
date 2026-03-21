@@ -24,7 +24,7 @@ export function ProfileAccountCard({
           <FqTag tone="secondary">Desde {memberSinceLabel}</FqTag>
           <FqTag tone="success">{supportCount} profissional(is) ligado(s)</FqTag>
         </div>
-        <div className="rounded-[calc(var(--radius)+4px)] border border-border/75 bg-muted/20 p-4">
+        <div className="rounded-xl border border-border/70 bg-muted/20 p-4">
           <FqText as="p" className="text-xs text-muted-foreground">
             Cidade e bairro
           </FqText>
@@ -32,7 +32,7 @@ export function ProfileAccountCard({
             {cityLabel}
           </FqText>
         </div>
-        <div className="rounded-[calc(var(--radius)+4px)] border border-border/75 bg-muted/20 p-4">
+        <div className="rounded-xl border border-border/70 bg-muted/20 p-4">
           <FqText as="p" className="text-xs text-muted-foreground">
             Academia atual
           </FqText>

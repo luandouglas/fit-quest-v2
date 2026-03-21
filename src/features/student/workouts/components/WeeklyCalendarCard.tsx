@@ -29,7 +29,7 @@ export function WeeklyCalendarCard({ days, selectedDate, onSelectDate }: WeeklyC
         </FqText>
 
         <div className="overflow-x-auto scrollbar-hide px-1">
-          <div className="grid min-w-[360px] grid-cols-7 gap-2 pr-1">
+          <div className="grid min-w-90 grid-cols-7 gap-2 pr-1">
             {days.map((day) => {
               const state = getState(day)
               const isSelected = selectedDate === day.date

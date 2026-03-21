@@ -31,7 +31,7 @@ export function ProfileHeroCard({
               <FqTag tone="warning" leftIcon="flame">{streakDays} dias</FqTag>
             </div>
             <div>
-              <FqText as="h2" variant="title" className="text-2xl">
+              <FqText as="h2" variant="title">
                 {name}
               </FqText>
               <FqText as="p" className="text-sm text-muted-foreground">
@@ -41,11 +41,11 @@ export function ProfileHeroCard({
           </div>
         </div>
 
-        <div className="rounded-[calc(var(--radius)+4px)] border border-border/75 bg-background/75 p-4">
+        <div className="rounded-xl border border-border/70 bg-background/80 p-4">
           <FqText as="p" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Objetivo atual
           </FqText>
-          <FqText as="p" className="mt-2 text-lg font-semibold text-foreground">
+          <FqText as="p" className="mt-2 text-card-title font-semibold text-foreground">
             {goalLabel}
           </FqText>
         </div>

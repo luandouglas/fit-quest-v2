@@ -18,7 +18,7 @@ export function StudentDailyProgressCard({
 
   return (
     <FqCard className="border-border bg-card">
-      <div className="grid gap-5 lg:grid-cols-[180px_minmax(0,1fr)]">
+      <div className="grid gap-5 lg:fq-grid-label-content-sm">
         <div className="flex items-center justify-center">
           <FqProgressRing
             value={dailyProgress.completionPct}
@@ -31,7 +31,7 @@ export function StudentDailyProgressCard({
         <div className="space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <FqText as="h2" className="text-base font-semibold text-foreground">
+              <FqText as="h2" className="text-sm font-semibold text-foreground">
                 Progresso diário
               </FqText>
               <FqText as="p" className="text-sm text-muted-foreground">

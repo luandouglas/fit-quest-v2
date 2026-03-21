@@ -39,7 +39,7 @@ export function FqAlert({
   return (
     <div
       role="alert"
-      className={cx('fq-feedback-accent fq-soft-reveal flex items-start gap-3 rounded-xl border p-3 text-sm', toneMap[tone], className)}
+      className={cx('fq-feedback-accent fq-soft-reveal flex items-start gap-3 rounded-lg border p-3 text-sm', toneMap[tone], className)}
       data-testid={testId}
       {...rest}
     >

@@ -144,7 +144,7 @@
 }
 
 .fitquest-tab-bar__tab-label {
-  font-size: 0.68rem;
+  font-size: var(--fq-font-caption);
   font-weight: 700;
   letter-spacing: 0.01em;
   opacity: 0.88;
@@ -181,7 +181,7 @@
   border-radius: 999px;
   background: var(--destructive);
   color: var(--destructive-foreground);
-  font-size: 0.62rem;
+  font-size: var(--fq-font-caption);
   font-weight: 700;
   line-height: 18px;
   text-align: center;
@@ -320,7 +320,7 @@
   border-radius: 999px;
   background: color-mix(in srgb, var(--card) 88%, transparent);
   color: var(--fq-tab-text);
-  font-size: 0.68rem;
+  font-size: var(--fq-font-caption);
   font-weight: 700;
   line-height: 1;
   box-shadow: 0 12px 22px color-mix(in srgb, var(--foreground) 12%, transparent);

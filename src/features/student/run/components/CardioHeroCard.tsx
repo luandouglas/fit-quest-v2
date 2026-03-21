@@ -28,7 +28,7 @@ export function CardioHeroCard({
             <FqText as="p" className="text-sm text-muted-foreground">
               Cardio do aluno
             </FqText>
-            <FqText as="h1" className="text-2xl font-semibold text-foreground">
+            <FqText as="h1" className="text-screen-title font-semibold text-foreground">
               Corrida e caminhada contam de verdade no seu progresso
             </FqText>
             <FqText as="p" className="max-w-2xl text-sm text-muted-foreground">

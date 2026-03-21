@@ -50,7 +50,7 @@ export function StudentQuickActionsCard({
             <FqText as="p" className="fq-subtle-label">
               Ações essenciais
             </FqText>
-            <FqText as="h2" className="mt-2 text-base font-semibold text-foreground">
+            <FqText as="h2" className="mt-2 text-sm font-semibold text-foreground">
               Poucos toques, zero atrito
             </FqText>
             <FqText as="p" className="text-sm text-muted-foreground">
@@ -61,8 +61,8 @@ export function StudentQuickActionsCard({
         </div>
 
         {recommendedAction ? (
-          <div className="fq-gradient-soft-primary rounded-[calc(var(--radius)+6px)] border border-primary/16 p-4 shadow-[0_12px_28px_rgba(95,141,118,0.08)]">
-            <FqText as="p" className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
+          <div className="fq-gradient-soft-primary rounded-xl border border-primary/15 p-4 shadow-float">
+            <FqText as="p" className="text-xs font-semibold uppercase tracking-caps-wide text-primary">
               Ação recomendada
             </FqText>
             <FqText as="p" className="mt-2 text-sm font-semibold text-foreground">
@@ -86,10 +86,10 @@ export function StudentQuickActionsCard({
                 tone={action.status === 'available' ? action.tone : 'neutral'}
                 variant={action.status === 'available' ? 'outline' : 'ghost'}
                 className={[
-                  'min-h-[156px] items-start justify-start rounded-[calc(var(--radius)+6px)] border px-4 py-4 text-left shadow-none transition-[transform,box-shadow,border-color,background-color] duration-200',
+                  'min-h-39 items-start justify-start rounded-xl border px-4 py-4 text-left shadow-none transition-interactive duration-200',
                   isRecommended
-                    ? 'fq-gradient-soft-primary border-primary/24 shadow-[0_14px_30px_rgba(95,141,118,0.08)]'
-                    : 'border-border/75 bg-background/72',
+                    ? 'fq-gradient-soft-primary border-primary/25 shadow-float'
+                    : 'border-border/70 bg-background/70',
                 ].join(' ')}
                 leftIcon={action.icon}
                 isDisabled={action.status === 'locked'}
@@ -109,10 +109,10 @@ export function StudentQuickActionsCard({
                 }}
               >
                 <>
-                  <span className="mb-3 inline-flex rounded-full border border-border/70 bg-card/84 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground shadow-[0_8px_18px_rgba(36,49,44,0.04)]">
+                  <span className="mb-3 inline-flex rounded-full border border-border/70 bg-card/85 px-2.5 py-1 text-2xs font-semibold uppercase tracking-caps-wide text-muted-foreground shadow-card">
                     {isRecommended ? 'Recomendado' : getStatusLabel(action.status)}
                   </span>
-                  <span className="block text-base font-semibold text-foreground">{action.label}</span>
+                  <span className="block text-sm font-semibold text-foreground">{action.label}</span>
                   <span className="mt-2 block text-sm font-normal leading-relaxed text-muted-foreground">
                     {action.description}
                   </span>

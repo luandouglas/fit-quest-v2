@@ -29,7 +29,7 @@ export function FqNavbar({
   return (
     <nav
       className={cx(
-        'flex w-full items-center justify-between gap-3 rounded-xl border border-zinc-200 bg-white px-4 py-3',
+        'flex w-full items-center justify-between gap-3 rounded-lg border border-zinc-200 bg-white px-4 py-3',
         className,
       )}
      
@@ -47,7 +47,7 @@ export function FqNavbar({
         >
           Menu
         </FqButton>
-        <span className="text-base font-semibold text-zinc-900">{title}</span>
+        <span className="text-card-title font-semibold text-foreground">{title}</span>
       </div>
       <div className="hidden items-center gap-1 sm:flex">
         {items.map((item) => (

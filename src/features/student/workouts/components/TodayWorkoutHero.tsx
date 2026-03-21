@@ -27,7 +27,7 @@ export function TodayWorkoutHero({
               <FqIcon name="dumbbell" size={12} />
               Rotina de hoje
             </p>
-            <FqText as="h2" className="text-xl font-semibold text-foreground">
+            <FqText as="h2" className="text-sm font-semibold text-foreground">
               {workout.title}
             </FqText>
             <FqText as="p" className="max-w-xl text-sm text-muted-foreground">

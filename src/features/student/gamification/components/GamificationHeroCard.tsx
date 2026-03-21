@@ -39,7 +39,7 @@ export function GamificationHeroCard({
         </div>
 
         <div className="space-y-2">
-          <FqText as="h2" variant="title" className="text-xl sm:text-2xl">
+          <FqText as="h2" variant="title" className="text-section-title">
             Seu progresso precisa sempre apontar para a proxima meta.
           </FqText>
           <FqText as="p" className="max-w-2xl text-sm text-muted-foreground">
@@ -75,7 +75,7 @@ export function GamificationHeroCard({
             {feedback.map((item) => (
               <div
                 key={item}
-                className="rounded-[calc(var(--radius)+4px)] border border-border/80 bg-background/72 px-4 py-3"
+                className="rounded-xl border border-border/80 bg-background/70 px-4 py-3"
               >
                 <FqText as="p" className="text-sm text-foreground">
                   {item}

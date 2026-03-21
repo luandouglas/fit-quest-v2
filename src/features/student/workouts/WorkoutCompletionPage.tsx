@@ -75,11 +75,11 @@ export function WorkoutCompletionPage() {
     <section className="fq-page-shell space-y-5">
       <WorkoutCompletionSummaryCard summary={summary} />
 
-      <div className="grid gap-5 xl:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.9fr)]">
+      <div className="grid gap-5 xl:fq-grid-main-sidebar-narrow">
         <FqCard className="border-border bg-card">
           <div className="space-y-4">
             <div>
-              <FqText as="h2" className="text-lg font-semibold text-foreground">
+              <FqText as="h2" className="text-card-title font-semibold text-foreground">
                 Impacto desta sessão
               </FqText>
               <FqText as="p" className="text-sm text-muted-foreground">
@@ -116,7 +116,7 @@ export function WorkoutCompletionPage() {
         <FqCard className="border-border bg-card">
           <div className="space-y-4">
             <div>
-              <FqText as="h2" className="text-lg font-semibold text-foreground">
+              <FqText as="h2" className="text-card-title font-semibold text-foreground">
                 Fechamento do treino
               </FqText>
               <FqText as="p" className="text-sm text-muted-foreground">

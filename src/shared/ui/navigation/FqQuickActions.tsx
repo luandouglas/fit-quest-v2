@@ -34,8 +34,8 @@ export function FqQuickActions({
   return (
     <div
       className={cx(
-        'fixed inset-x-4 bottom-[calc(env(safe-area-inset-bottom)+5.4rem)] z-30 grid gap-2 rounded-2xl border border-border/80 bg-card/95 p-2 shadow-lg backdrop-blur',
-        'sm:left-auto sm:right-4 sm:w-auto sm:min-w-[240px] sm:max-w-[320px] sm:bottom-[calc(env(safe-area-inset-bottom)+1.25rem)]',
+        'fixed inset-x-4 fq-quick-actions-fab z-30 grid gap-2 rounded-xl border border-border/80 bg-card/95 p-2 shadow-lg backdrop-blur',
+        'sm:left-auto sm:right-4 sm:w-auto sm:min-w-60 sm:max-w-xs',
         mobileOnly ? 'lg:hidden' : '',
         className,
       )}
@@ -50,7 +50,7 @@ export function FqQuickActions({
           leftIcon={action.icon}
           onClick={action.onClick}
           isDisabled={action.disabled}
-          className="min-h-[48px] justify-start text-left"
+          className="min-h-12 justify-start text-left"
         >
           {action.label}
         </FqButton>

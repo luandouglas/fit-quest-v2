@@ -16,7 +16,7 @@ export function WorkoutCompletionSummaryCard({ summary }: WorkoutCompletionSumma
               <FqText as="p" className="text-sm text-muted-foreground">
                 Treino concluído
               </FqText>
-              <FqText as="h1" className="text-2xl font-semibold text-foreground">
+              <FqText as="h1" className="text-screen-title font-semibold text-foreground">
                 {summary.title}
               </FqText>
             </div>

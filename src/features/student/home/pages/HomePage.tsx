@@ -93,7 +93,7 @@ export function HomePage() {
     return (
       <section className="fq-page-shell">
         <FqCard className="border-border bg-card">
-          <FqText as="h1" variant="title" className="text-lg">
+          <FqText as="h1" variant="title">
             Carregando dashboard...
           </FqText>
         </FqCard>
@@ -129,7 +129,7 @@ export function HomePage() {
   return (
     <section className="fq-page-shell">
       <header className="fq-page-header">
-        <FqText as="h1" variant="title" className="text-lg">
+        <FqText as="h1" variant="title">
           Inicio
         </FqText>
         <FqText as="p" className="text-sm text-muted-foreground">

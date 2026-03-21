@@ -36,7 +36,7 @@ export function FqIconButton({
       type="button"
       aria-label={label}
       className={cx(
-        'inline-flex items-center justify-center rounded-xl transition disabled:cursor-not-allowed disabled:opacity-60',
+        'inline-flex items-center justify-center rounded-lg transition disabled:cursor-not-allowed disabled:opacity-60',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
         fqIconButtonSizeMap[size],
         fqToneVariantMap[tone][variant],

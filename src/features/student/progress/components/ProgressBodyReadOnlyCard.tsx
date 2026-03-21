@@ -32,15 +32,15 @@ export function ProgressBodyReadOnlyCard({
         </FqAlert>
 
         <div className="grid gap-3 sm:grid-cols-2">
-          <div className="rounded-[calc(var(--radius)+4px)] border border-border/75 bg-muted/20 p-4">
+          <div className="rounded-xl border border-border/70 bg-muted/20 p-4">
             <FqText as="p" className="text-xs text-muted-foreground">
               Altura de referencia
             </FqText>
-            <FqText as="p" className="mt-2 text-lg font-semibold text-foreground">
+            <FqText as="p" className="mt-2 text-card-title font-semibold text-foreground">
               {bodyComposition.heightCm} cm
             </FqText>
           </div>
-          <div className="rounded-[calc(var(--radius)+4px)] border border-border/75 bg-muted/20 p-4">
+          <div className="rounded-xl border border-border/70 bg-muted/20 p-4">
             <div className="flex items-center justify-between gap-2">
               <FqText as="p" className="text-xs text-muted-foreground">
                 IMC atual
@@ -71,12 +71,12 @@ export function ProgressBodyReadOnlyCard({
             {measurements.map((measurement) => (
               <div
                 key={measurement.id}
-                className="rounded-[calc(var(--radius)+4px)] border border-border/75 bg-muted/20 p-4"
+                className="rounded-xl border border-border/70 bg-muted/20 p-4"
               >
                 <FqText as="p" className="text-xs text-muted-foreground">
                   {measurement.label}
                 </FqText>
-                <FqText as="p" className="mt-2 text-lg font-semibold text-foreground">
+                <FqText as="p" className="mt-2 text-card-title font-semibold text-foreground">
                   {measurement.currentLabel}
                 </FqText>
                 <FqText as="p" className="mt-1 text-xs text-muted-foreground">
@@ -86,7 +86,7 @@ export function ProgressBodyReadOnlyCard({
             ))}
           </div>
         ) : (
-          <div className="rounded-[calc(var(--radius)+4px)] border border-dashed border-border/80 bg-muted/10 p-4">
+          <div className="rounded-xl border border-dashed border-border/80 bg-muted/10 p-4">
             <FqText as="p" className="text-sm text-muted-foreground">
               Nenhuma avaliacao corporal registrada ainda.
             </FqText>

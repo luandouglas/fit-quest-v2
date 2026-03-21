@@ -29,7 +29,7 @@ export function FqDropdownMenu({
       <DropdownMenu.Portal>
         <DropdownMenu.Content
           className={cx(
-            'z-[80] min-w-48 rounded-xl border border-zinc-200 bg-white p-1.5 shadow-xl',
+            'z-dropdown min-w-48 rounded-lg border border-zinc-200 bg-white p-1.5 shadow-xl',
             className,
           )}
          

@@ -43,7 +43,7 @@ export function FqRadioGroup({
       data-testid={testId}
       {...rest}
     >
-      {label ? <span className="text-sm font-medium text-zinc-700">{label}</span> : null}
+      {label ? <span className="text-label font-medium text-foreground">{label}</span> : null}
       {options.map((option) => (
         <FqRadio
           key={option.value}

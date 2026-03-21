@@ -29,7 +29,7 @@ export function FqGoalRing({
   return (
     <div
       className={cx(
-        'fq-raise-hover fq-gradient-surface rounded-[calc(var(--radius)+4px)] border border-border/75 p-4 shadow-[0_14px_30px_rgba(36,49,44,0.05)]',
+        'fq-raise-hover fq-gradient-surface rounded-lg border border-border/70 p-4 shadow-float',
         className,
       )}
       data-testid={testId}

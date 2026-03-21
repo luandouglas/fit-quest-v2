@@ -87,7 +87,7 @@ export function ProfilePreferencesCard({
         </div>
 
         <div className="grid gap-3 sm:grid-cols-2">
-          <div className="rounded-[calc(var(--radius)+4px)] border border-border/75 bg-muted/20 p-4">
+          <div className="rounded-xl border border-border/70 bg-muted/20 p-4">
             <FqSwitch
               label="Notificacoes gerais"
               checked={notificationsEnabled}
@@ -95,7 +95,7 @@ export function ProfilePreferencesCard({
               tone="success"
             />
           </div>
-          <div className="rounded-[calc(var(--radius)+4px)] border border-border/75 bg-muted/20 p-4">
+          <div className="rounded-xl border border-border/70 bg-muted/20 p-4">
             <FqSwitch
               label="Lembretes de rotina"
               checked={remindersEnabled}

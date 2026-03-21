@@ -47,7 +47,7 @@ export function FqToast({ item, onDismiss }: FqToastProps) {
   return (
     <div
       className={cx(
-        'w-[min(360px,92vw)] rounded-xl border p-3 shadow-lg',
+        'w-full max-w-toast rounded-lg border p-3 shadow-lg',
         toneMap[item.tone ?? 'neutral'],
       )}
       role="status"
@@ -131,7 +131,7 @@ export function FqToastProvider({ children }: FqToastProviderProps) {
     children,
     typeof document !== 'undefined'
       ? createPortal(
-          <div className="pointer-events-none fixed right-3 top-3 z-[90] flex flex-col gap-2">
+          <div className="pointer-events-none fixed right-3 top-3 z-toast flex flex-col gap-2">
             {toasts.map((item) => (
               <div key={item.id} className="pointer-events-auto">
                 <FqToast item={item} onDismiss={dismiss} />

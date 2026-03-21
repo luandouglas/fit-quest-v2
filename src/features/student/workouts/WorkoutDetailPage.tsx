@@ -1,6 +1,6 @@
-import { useState } from 'react'
-import { useHistory, useLocation, useParams } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
+import { useState } from "react";
+import { useHistory, useLocation, useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import {
   Activity,
   ArrowLeft,
@@ -12,145 +12,162 @@ import {
   Sparkles,
   Target,
   Trophy,
-} from 'lucide-react'
+} from "lucide-react";
 
-import { studentRoutes } from '@/features/student/routes'
-import { buildCatalogSupportMedia, findPtbrCatalogEntry, loadPtbrExerciseCatalog } from '@/shared/services/exerciseCatalog'
-import { workoutService } from '@/shared/services'
-import { FqAlert, FqButton } from '@/shared/ui'
-import { canStudentStartWorkout, cx } from '@/shared/utils'
+import { studentRoutes } from "@/features/student/routes";
+import {
+  buildCatalogSupportMedia,
+  findPtbrCatalogEntry,
+  loadPtbrExerciseCatalog,
+} from "@/shared/services/exerciseCatalog";
+import { workoutService } from "@/shared/services";
+import { FqAlert, FqButton } from "@/shared/ui";
+import { canStudentStartWorkout, cx } from "@/shared/utils";
 
-import { ExercisePreviewVisual } from './components/ExercisePreviewVisual'
-import { ExerciseInsightModal } from './components/ExerciseInsightModal'
+import { ExercisePreviewVisual } from "./components/ExercisePreviewVisual";
+import { ExerciseInsightModal } from "./components/ExerciseInsightModal";
 
 type WorkoutDetailRouteParams = {
-  workoutId: string
-}
+  workoutId: string;
+};
 
 type WorkoutDetailLocationState = {
-  workoutDate?: string
-  workoutStatus?: 'completed' | 'pending' | 'late'
-}
+  workoutDate?: string;
+  workoutStatus?: "completed" | "pending" | "late";
+};
 
 function formatDate(date: string, options?: Intl.DateTimeFormatOptions) {
-  return new Intl.DateTimeFormat('pt-BR', {
-    day: 'numeric',
-    month: 'long',
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "numeric",
+    month: "long",
     ...options,
-  }).format(new Date(`${date}T12:00:00`))
+  }).format(new Date(`${date}T12:00:00`));
 }
 
 function formatDateTime(date: string) {
-  return new Intl.DateTimeFormat('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-  }).format(new Date(date))
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(date));
 }
 
 function formatDuration(totalSec: number) {
-  return `${Math.max(Math.round(totalSec / 60), 1)} min`
+  return `${Math.max(Math.round(totalSec / 60), 1)} min`;
 }
 
 function formatLoad(load?: number) {
-  return typeof load === 'number' ? `${load} kg` : 'Carga livre'
+  return typeof load === "number" ? `${load} kg` : "Carga livre";
 }
 
 function getAdherenceLabel(adherencePct: number) {
   if (adherencePct >= 90) {
-    return 'Aderencia alta'
+    return "Aderencia alta";
   }
 
   if (adherencePct >= 60) {
-    return 'Boa consistencia'
+    return "Boa consistencia";
   }
 
-  return 'Espaco para ganhar ritmo'
+  return "Espaco para ganhar ritmo";
 }
 
-function getStatusClasses(status: 'completed' | 'pending' | 'late') {
-  if (status === 'completed') {
-    return 'bg-primary text-primary-foreground shadow-[0_12px_24px_rgba(95,141,118,0.18)]'
+function getStatusClasses(status: "completed" | "pending" | "late") {
+  if (status === "completed") {
+    return "bg-primary text-primary-foreground shadow-btn-primary";
   }
 
-  if (status === 'late') {
-    return 'bg-destructive/12 text-destructive'
+  if (status === "late") {
+    return "bg-destructive/10 text-destructive";
   }
 
-  return 'bg-secondary/14 text-secondary'
+  return "bg-secondary/15 text-secondary";
 }
 
-function getExerciseStatusClasses(status: 'done' | 'current' | 'upcoming') {
-  if (status === 'done') {
-    return 'border-primary/18 bg-primary/8'
+function getExerciseStatusClasses(status: "done" | "current" | "upcoming") {
+  if (status === "done") {
+    return "border-primary/20 bg-primary/10";
   }
 
-  if (status === 'current') {
-    return 'border-secondary/22 bg-secondary/8'
+  if (status === "current") {
+    return "border-secondary/20 bg-secondary/10";
   }
 
-  return 'border-border/70 bg-white/72'
+  return "border-border/70 bg-white/70";
 }
 
 export function WorkoutDetailPage() {
-  const history = useHistory()
-  const location = useLocation<WorkoutDetailLocationState | undefined>()
-  const { workoutId } = useParams<WorkoutDetailRouteParams>()
-  const [selectedExerciseId, setSelectedExerciseId] = useState<string | null>(null)
+  const history = useHistory();
+  const location = useLocation<WorkoutDetailLocationState | undefined>();
+  const { workoutId } = useParams<WorkoutDetailRouteParams>();
+  const [selectedExerciseId, setSelectedExerciseId] = useState<string | null>(
+    null,
+  );
 
   const detailQuery = useQuery({
-    queryKey: ['workouts', 'detail', workoutId],
+    queryKey: ["workouts", "detail", workoutId],
     queryFn: () => workoutService.getWorkoutDetail(workoutId),
     staleTime: 10_000,
-  })
+  });
   const catalogQuery = useQuery({
-    queryKey: ['exercise-catalog', 'ptbr'],
+    queryKey: ["exercise-catalog", "ptbr"],
     queryFn: loadPtbrExerciseCatalog,
     staleTime: 1000 * 60 * 60,
-  })
+  });
 
-  const workout = detailQuery.data
-  const exercises = workout?.exercises.map((exercise) => {
-    const catalogEntry = catalogQuery.data ? findPtbrCatalogEntry(exercise, catalogQuery.data) : null
-    const catalogSupportMedia = buildCatalogSupportMedia(exercise, catalogEntry)
+  const workout = detailQuery.data;
+  const exercises =
+    workout?.exercises.map((exercise) => {
+      const catalogEntry = catalogQuery.data
+        ? findPtbrCatalogEntry(exercise, catalogQuery.data)
+        : null;
+      const catalogSupportMedia = buildCatalogSupportMedia(
+        exercise,
+        catalogEntry,
+      );
 
-    return {
-      ...exercise,
-      supportMedia: exercise.supportMedia ?? catalogSupportMedia,
-    }
-  }) ?? []
-  const selectedExercise = exercises.find((exercise) => exercise.id === selectedExerciseId) ?? null
-  const workoutStatus = location.state?.workoutStatus ?? workout?.status ?? 'pending'
-  const workoutDate = location.state?.workoutDate ?? workout?.date ?? ''
-  const canStartSelectedWorkout = canStudentStartWorkout(workoutStatus)
+      return {
+        ...exercise,
+        supportMedia: exercise.supportMedia ?? catalogSupportMedia,
+      };
+    }) ?? [];
+  const selectedExercise =
+    exercises.find((exercise) => exercise.id === selectedExerciseId) ?? null;
+  const workoutStatus =
+    location.state?.workoutStatus ?? workout?.status ?? "pending";
+  const workoutDate = location.state?.workoutDate ?? workout?.date ?? "";
+  const canStartSelectedWorkout = canStudentStartWorkout(workoutStatus);
 
   function startWorkout() {
     if (!canStartSelectedWorkout) {
-      return
+      return;
     }
 
-    history.push(studentRoutes.workoutSession, { workoutId, workoutDate })
+    history.push(studentRoutes.workoutSession, { workoutId, workoutDate });
   }
 
   if (detailQuery.isPending) {
     return (
       <section className="fq-page-shell space-y-5">
-        <div className="h-[260px] animate-pulse rounded-[34px] border border-border/70 bg-white/60" />
+        <div className="h-65 animate-pulse rounded-2xl border border-border/70 bg-white/60" />
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {Array.from({ length: 4 }).map((_, index) => (
-            <div key={`detail-skeleton-stat-${index}`} className="h-[138px] animate-pulse rounded-[28px] border border-border/70 bg-white/60" />
+            <div
+              key={`detail-skeleton-stat-${index}`}
+              className="h-34.5 animate-pulse rounded-2xl border border-border/70 bg-white/60"
+            />
           ))}
         </div>
-        <div className="grid gap-5 xl:grid-cols-[minmax(0,1.55fr)_minmax(320px,0.95fr)]">
-          <div className="h-[560px] animate-pulse rounded-[30px] border border-border/70 bg-white/60" />
+        <div className="grid gap-5 xl:fq-grid-main-sidebar">
+          <div className="h-140 animate-pulse rounded-2xl border border-border/70 bg-white/60" />
           <div className="space-y-5">
-            <div className="h-[220px] animate-pulse rounded-[30px] border border-border/70 bg-white/60" />
-            <div className="h-[320px] animate-pulse rounded-[30px] border border-border/70 bg-white/60" />
+            <div className="h-55 animate-pulse rounded-2xl border border-border/70 bg-white/60" />
+            <div className="h-80 animate-pulse rounded-2xl border border-border/70 bg-white/60" />
           </div>
         </div>
       </section>
-    )
+    );
   }
 
   if (detailQuery.isError || !workout) {
@@ -159,20 +176,24 @@ export function WorkoutDetailPage() {
         <FqAlert tone="danger" title="Treino não encontrado">
           Não foi possível abrir os detalhes deste treino.
         </FqAlert>
-        <FqButton variant="outline" tone="neutral" onClick={() => history.push(studentRoutes.workouts)}>
+        <FqButton
+          variant="outline"
+          tone="neutral"
+          onClick={() => history.push(studentRoutes.workouts)}
+        >
           Voltar para Treinos
         </FqButton>
       </section>
-    )
+    );
   }
 
   return (
     <section className="fq-page-shell space-y-5">
-      <div className="fq-gradient-hero-mix overflow-hidden rounded-[36px] border border-border/70 bg-card p-6 shadow-[0_28px_72px_rgba(36,49,44,0.1)] md:p-8">
+      <div className="fq-gradient-hero-mix overflow-hidden rounded-2xl border border-border/70 bg-card p-6 shadow-deep md:p-8">
         <button
           type="button"
           onClick={() => history.push(studentRoutes.workouts)}
-          className="inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/76 px-4 py-2 text-sm font-semibold text-foreground shadow-[0_10px_24px_rgba(36,49,44,0.08)] transition hover:-translate-y-0.5 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/80 px-4 py-2 text-sm font-semibold text-foreground shadow-elevated transition hover:-translate-y-0.5 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <ArrowLeft className="h-4 w-4" />
           Voltar
@@ -180,108 +201,92 @@ export function WorkoutDetailPage() {
 
         <div className="mt-6 flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
           <div className="space-y-4">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className={cx('rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em]', getStatusClasses(workoutStatus))}>
-                {workoutStatus === 'completed' ? 'concluido' : workoutStatus === 'late' ? 'expirado' : 'programado'}
-              </span>
-              <span className="rounded-full bg-white/72 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                {workout.intensity ?? 'ritmo guiado'}
-              </span>
-            </div>
-
             <div className="space-y-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-primary">
-                {workout.scheduledWindowLabel}
-              </p>
-              <h1 className="fq-display text-4xl text-foreground md:text-5xl">
+              <h1 className="fq-display text-screen-title text-foreground">
                 {workout.title}
               </h1>
-              <p className="max-w-3xl text-base leading-8 text-muted-foreground">
+              <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
                 {workout.personalNote}
               </p>
             </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <span
+                className={cx(
+                  "rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-caps-wide",
+                  getStatusClasses(workoutStatus),
+                )}
+              >
+                {workoutStatus === "completed"
+                  ? "concluido"
+                  : workoutStatus === "late"
+                    ? "expirado"
+                    : "programado"}
+              </span>
+              <span className="rounded-full bg-white/70 px-4 py-1.5 text-xs font-semibold uppercase tracking-caps-wide text-muted-foreground">
+                {workout.intensity ?? "ritmo guiado"}
+              </span>
+            </div>
 
             <div className="flex flex-wrap gap-2">
-              <span className="rounded-full bg-white/72 px-4 py-2 text-sm font-semibold text-foreground shadow-[0_10px_22px_rgba(36,49,44,0.05)]">
-                {formatDate(workoutDate, { weekday: 'long' })}
+              <span className="rounded-full bg-white/70 px-4 py-2 text-sm font-semibold text-foreground shadow-elevated">
+                {formatDate(workoutDate, { weekday: "long" })}
               </span>
-              <span className="rounded-full bg-white/72 px-4 py-2 text-sm font-semibold text-foreground shadow-[0_10px_22px_rgba(36,49,44,0.05)]">
+              <span className="rounded-full bg-white/70 px-4 py-2 text-sm font-semibold text-foreground shadow-elevated">
                 {workout.exercises.length} exercicios
               </span>
-              <span className="rounded-full bg-white/72 px-4 py-2 text-sm font-semibold text-foreground shadow-[0_10px_22px_rgba(36,49,44,0.05)]">
+              <div className="inline-flex items-center gap-1 rounded-full bg-white/70 px-4 py-2 text-sm font-semibold text-foreground shadow-elevated">
+                <div className=" text-warning">
+                  <Trophy className="h-5 w-5" />
+                </div>
                 +{workout.starsReward ?? 0} estrelas
-              </span>
+              </div>
             </div>
           </div>
 
           <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
-            <FqButton variant="outline" tone="neutral" onClick={() => history.push(studentRoutes.workouts)}>
+            <FqButton
+              variant="outline"
+              tone="neutral"
+              onClick={() => history.push(studentRoutes.workouts)}
+            >
               Voltar para a agenda
             </FqButton>
-            <FqButton leftIcon="play" onClick={startWorkout} isDisabled={!canStartSelectedWorkout}>
-              {workoutStatus === 'completed' ? 'Treino concluido' : workoutStatus === 'late' ? 'Treino expirado' : 'Iniciar treino'}
+            <FqButton
+              leftIcon="play"
+              onClick={startWorkout}
+              isDisabled={!canStartSelectedWorkout}
+            >
+              {workoutStatus === "completed"
+                ? "Treino concluido"
+                : workoutStatus === "late"
+                  ? "Treino expirado"
+                  : "Iniciar treino"}
             </FqButton>
           </div>
         </div>
       </div>
 
-      {workoutStatus === 'late' ? (
-        <div className="rounded-[28px] border border-warning/30 bg-warning/10 px-5 py-4 text-sm font-medium text-warning-foreground">
-          A janela deste treino foi encerrada. O aluno pode consultar os detalhes, mas nao iniciar a sessao.
+      {workoutStatus === "late" ? (
+        <div className="rounded-2xl border border-warning/30 bg-warning/10 px-5 py-4 text-sm font-medium text-warning-foreground">
+          A janela deste treino foi encerrada. O aluno pode consultar os
+          detalhes, mas nao iniciar a sessao.
         </div>
       ) : null}
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <div className="rounded-[28px] border border-border/70 bg-white/76 p-5 shadow-[0_18px_44px_rgba(36,49,44,0.06)]">
-          <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/12 text-primary">
-            <Target className="h-5 w-5" />
-          </div>
-          <p className="mt-4 text-sm font-semibold text-muted-foreground">Aderencia</p>
-          <p className="mt-1 text-3xl font-semibold tracking-tight text-foreground">{workout.adherencePct}%</p>
-          <p className="mt-2 text-sm text-muted-foreground">{getAdherenceLabel(workout.adherencePct)}</p>
-        </div>
-
-        <div className="rounded-[28px] border border-border/70 bg-white/76 p-5 shadow-[0_18px_44px_rgba(36,49,44,0.06)]">
-          <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-secondary/12 text-secondary">
-            <CheckCircle2 className="h-5 w-5" />
-          </div>
-          <p className="mt-4 text-sm font-semibold text-muted-foreground">Execucoes</p>
-          <p className="mt-1 text-3xl font-semibold tracking-tight text-foreground">{workout.completionCount}</p>
-          <p className="mt-2 text-sm text-muted-foreground">Sessoes concluidas deste treino</p>
-        </div>
-
-        <div className="rounded-[28px] border border-border/70 bg-white/76 p-5 shadow-[0_18px_44px_rgba(36,49,44,0.06)]">
-          <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-tertiary/20 text-foreground">
-            <Clock3 className="h-5 w-5" />
-          </div>
-          <p className="mt-4 text-sm font-semibold text-muted-foreground">Duracao</p>
-          <p className="mt-1 text-3xl font-semibold tracking-tight text-foreground">{workout.estimatedDurationMin} min</p>
-          <p className="mt-2 text-sm text-muted-foreground">Estimativa para executar com ritmo constante</p>
-        </div>
-
-        <div className="rounded-[28px] border border-border/70 bg-white/76 p-5 shadow-[0_18px_44px_rgba(36,49,44,0.06)]">
-          <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-warning/15 text-warning">
-            <Trophy className="h-5 w-5" />
-          </div>
-          <p className="mt-4 text-sm font-semibold text-muted-foreground">Recompensa</p>
-          <p className="mt-1 text-3xl font-semibold tracking-tight text-foreground">+{workout.starsReward ?? 0}</p>
-          <p className="mt-2 text-sm text-muted-foreground">Estrelas liberadas ao concluir a sessao</p>
-        </div>
-      </div>
-
-      <div className="grid gap-5 xl:grid-cols-[minmax(0,1.55fr)_minmax(320px,0.95fr)]">
-        <div className="overflow-hidden rounded-[32px] border border-border/70 bg-white/76 shadow-[0_22px_52px_rgba(36,49,44,0.08)]">
+      <div className="grid gap-5 xl:fq-grid-main-sidebar">
+        <div className="overflow-hidden rounded-2xl border border-border/70 bg-white/80 shadow-deep">
           <div className="border-b border-border/70 px-5 py-5 md:px-6">
             <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
               <div className="space-y-2">
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary">
-                  Exercise flow
+                <p className="text-xs font-semibold uppercase tracking-caps-wide text-primary">
+                  Detalhes do treino
                 </p>
-                <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+                <h2 className="text-section-title font-semibold tracking-tight text-foreground">
                   Ordem do treino
                 </h2>
-                <p className="max-w-2xl text-sm leading-7 text-muted-foreground">
-                  Cada exercicio recebeu uma leitura visual nova para facilitar a execucao, revisar detalhes e entrar em sessao sem atrito.
+                <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
+                  Cada exercicio recebeu uma leitura visual nova para facilitar
+                  a execucao, revisar detalhes e entrar em sessao sem atrito.
                 </p>
               </div>
 
@@ -296,54 +301,45 @@ export function WorkoutDetailPage() {
               <article
                 key={exercise.id}
                 className={cx(
-                  'rounded-[28px] border p-4 shadow-[0_16px_40px_rgba(36,49,44,0.05)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_22px_48px_rgba(36,49,44,0.08)] md:p-5',
+                  "rounded-2xl border p-4 shadow-overlay transition duration-200 hover:-translate-y-0.5 hover:shadow-deep md:p-5",
                   getExerciseStatusClasses(exercise.status),
                 )}
               >
-                <div className="grid gap-4 lg:grid-cols-[132px_minmax(0,1fr)] xl:grid-cols-[132px_minmax(0,1fr)_auto] xl:items-start">
+                <div className="flex md:flex-row gap-4 lg:fq-grid-thumb-content xl:fq-grid-thumb-content-auto xl:items-start">
                   <ExercisePreviewVisual
                     exercise={exercise}
-                    className="h-44 w-full lg:h-[172px] lg:w-[132px]"
+                    className="h-44 w-full lg:h-43 lg:w-33"
                   />
 
-                  <div className="space-y-3">
+                  <div className="flex-1 space-y-3">
                     <div className="space-y-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        <h3 className="text-lg font-semibold tracking-tight text-foreground">
+                        <h3 className="text-card-title font-semibold tracking-tight text-foreground">
                           {exercise.name}
                         </h3>
-                        <span className={cx(
-                          'rounded-full px-3 py-1 text-[0.72rem] font-semibold uppercase tracking-[0.18em]',
-                          exercise.status === 'done'
-                            ? 'bg-primary/12 text-primary'
-                            : exercise.status === 'current'
-                              ? 'bg-secondary/14 text-secondary'
-                              : 'bg-muted text-muted-foreground',
-                        )}>
-                          {exercise.status === 'done' ? 'feito' : exercise.status === 'current' ? 'agora' : 'proximo'}
-                        </span>
                       </div>
 
-                      <p className="text-sm leading-7 text-muted-foreground">
-                        {exercise.note ?? 'Execucao limpa, ritmo constante e descanso respeitado.'}
+                      <p className="text-sm leading-relaxed text-muted-foreground">
+                        {exercise.note ??
+                          "Execucao limpa, ritmo constante e descanso respeitado."}
                       </p>
                     </div>
 
                     <div className="flex flex-wrap gap-2">
-                      <span className="rounded-full bg-white/78 px-3 py-1.5 text-xs font-semibold text-foreground shadow-[0_8px_18px_rgba(36,49,44,0.05)]">
+                      <span className="rounded-full bg-white/80 px-3 py-1.5 text-xs font-semibold text-foreground shadow-card">
                         {exercise.sets} series
                       </span>
-                      <span className="rounded-full bg-white/78 px-3 py-1.5 text-xs font-semibold text-foreground shadow-[0_8px_18px_rgba(36,49,44,0.05)]">
+                      <span className="rounded-full bg-white/80 px-3 py-1.5 text-xs font-semibold text-foreground shadow-card">
                         {exercise.reps} reps
                       </span>
-                      <span className="rounded-full bg-white/78 px-3 py-1.5 text-xs font-semibold text-foreground shadow-[0_8px_18px_rgba(36,49,44,0.05)]">
+                      <span className="rounded-full bg-white/80 px-3 py-1.5 text-xs font-semibold text-foreground shadow-card">
                         {formatLoad(exercise.suggestedLoadKg)}
                       </span>
-                      <span className="rounded-full bg-white/78 px-3 py-1.5 text-xs font-semibold text-foreground shadow-[0_8px_18px_rgba(36,49,44,0.05)]">
+                      <span className="rounded-full bg-white/80 px-3 py-1.5 text-xs font-semibold text-foreground shadow-card">
                         {exercise.restSec}s descanso
                       </span>
                       {exercise.muscleGroup ? (
-                        <span className="rounded-full bg-white/78 px-3 py-1.5 text-xs font-semibold text-foreground shadow-[0_8px_18px_rgba(36,49,44,0.05)]">
+                        <span className="rounded-full bg-white/80 px-3 py-1.5 text-xs font-semibold text-foreground shadow-card">
                           {exercise.muscleGroup}
                         </span>
                       ) : null}
@@ -354,7 +350,7 @@ export function WorkoutDetailPage() {
                     <button
                       type="button"
                       onClick={() => setSelectedExerciseId(exercise.id)}
-                      className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-white/78 px-4 py-2 text-sm font-semibold text-foreground shadow-[0_10px_24px_rgba(36,49,44,0.06)] transition hover:-translate-y-0.5 hover:border-primary/25 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-white/80 px-4 py-2 text-sm font-semibold text-foreground shadow-elevated transition hover:-translate-y-0.5 hover:border-primary/25 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     >
                       <Sparkles className="h-4 w-4" />
                       Detalhes
@@ -365,10 +361,12 @@ export function WorkoutDetailPage() {
                         href={exercise.supportMedia.url}
                         target="_blank"
                         rel="noreferrer"
-                        className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-white/78 px-4 py-2 text-sm font-semibold text-foreground shadow-[0_10px_24px_rgba(36,49,44,0.06)] transition hover:-translate-y-0.5 hover:border-destructive/25 hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-white/80 px-4 py-2 text-sm font-semibold text-foreground shadow-elevated transition hover:-translate-y-0.5 hover:border-destructive/25 hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       >
                         <PlayCircle className="h-4 w-4" />
-                        {exercise.supportMedia.label === 'Guia do exercicio' ? 'Guia' : 'Demo'}
+                        {exercise.supportMedia.label === "Guia do exercicio"
+                          ? "Guia"
+                          : "Demo"}
                       </a>
                     ) : null}
                   </div>
@@ -379,90 +377,14 @@ export function WorkoutDetailPage() {
         </div>
 
         <aside className="space-y-5">
-          <div className="overflow-hidden rounded-[30px] border border-border/70 bg-white/76 p-5 shadow-[0_20px_48px_rgba(36,49,44,0.08)]">
-            <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <Activity className="h-4 w-4 text-primary" />
-              Leitura da sessao
-            </div>
-
-            <div className="mt-5 space-y-4">
-              <div className="rounded-[24px] bg-muted/45 p-4">
-                <p className="text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-                  Foco principal
-                </p>
-                <p className="mt-2 text-base font-semibold text-foreground">
-                  {workout.focusLabel}
-                </p>
-              </div>
-
-              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
-                <div className="rounded-[24px] bg-muted/45 p-4">
-                  <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-                    <Dumbbell className="h-4 w-4 text-secondary" />
-                    Volume
-                  </div>
-                  <p className="mt-2 text-sm leading-7 text-muted-foreground">
-                    {workout.exercises.reduce((total, exercise) => total + exercise.sets, 0)} series no total
-                  </p>
-                </div>
-
-                <div className="rounded-[24px] bg-muted/45 p-4">
-                  <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-                    <Flame className="h-4 w-4 text-warning" />
-                    Janela
-                  </div>
-                  <p className="mt-2 text-sm leading-7 text-muted-foreground">
-                    {workout.scheduledWindowLabel}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="overflow-hidden rounded-[30px] border border-border/70 bg-white/76 p-5 shadow-[0_20px_48px_rgba(36,49,44,0.08)]">
+          <div className="overflow-hidden rounded-2xl border border-border/70 bg-white/80 p-5 shadow-deep">
             <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
               <Sparkles className="h-4 w-4 text-secondary" />
-              Coach note
+              Nota do personal trainer
             </div>
-            <p className="mt-4 text-sm leading-7 text-muted-foreground">
+            <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
               {workout.personalNote}
             </p>
-          </div>
-
-          <div className="overflow-hidden rounded-[30px] border border-border/70 bg-white/76 p-5 shadow-[0_20px_48px_rgba(36,49,44,0.08)]">
-            <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <Trophy className="h-4 w-4 text-warning" />
-              Historico recente
-            </div>
-
-            <div className="mt-5 space-y-3">
-              {workout.recentHistory.length === 0 ? (
-                <div className="rounded-[24px] border border-dashed border-border bg-muted/35 p-4 text-sm leading-7 text-muted-foreground">
-                  As proximas sessoes concluidas vao aparecer aqui com horario, duracao e aderencia.
-                </div>
-              ) : (
-                workout.recentHistory.map((entry) => (
-                  <button
-                    key={entry.sessionId}
-                    type="button"
-                    onClick={() => history.push(`${studentRoutes.workouts}/completed/${entry.sessionId}`)}
-                    className="block w-full rounded-[24px] border border-border/70 bg-white/72 p-4 text-left shadow-[0_12px_28px_rgba(36,49,44,0.05)] transition hover:-translate-y-0.5 hover:border-primary/22 hover:shadow-[0_18px_36px_rgba(36,49,44,0.08)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                  >
-                    <div className="flex items-center justify-between gap-3">
-                      <div>
-                        <p className="text-sm font-semibold text-foreground">{entry.title}</p>
-                        <p className="mt-1 text-xs text-muted-foreground">
-                          {formatDateTime(entry.completedAt)} • {formatDuration(entry.durationSec)}
-                        </p>
-                      </div>
-                      <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-                        {entry.adherencePct}%
-                      </span>
-                    </div>
-                  </button>
-                ))
-              )}
-            </div>
           </div>
         </aside>
       </div>
@@ -472,10 +394,10 @@ export function WorkoutDetailPage() {
         exercise={selectedExercise}
         onOpenChange={(open) => {
           if (!open) {
-            setSelectedExerciseId(null)
+            setSelectedExerciseId(null);
           }
         }}
       />
     </section>
-  )
+  );
 }

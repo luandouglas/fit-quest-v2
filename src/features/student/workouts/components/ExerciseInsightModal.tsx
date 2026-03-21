@@ -118,7 +118,7 @@ export function ExerciseInsightModal({
   const content = (
     <div className="space-y-5 px-1 pb-2">
       <div className="space-y-3">
-        <div className="flex flex-wrap items-center gap-2 text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+        <div className="flex flex-wrap items-center gap-2 text-caption font-semibold uppercase tracking-caps-wide text-muted-foreground">
           <span>Exercise detail</span>
           <span className="h-1 w-1 rounded-full bg-muted-foreground/40" />
           <span>
@@ -131,13 +131,13 @@ export function ExerciseInsightModal({
         </div>
 
         <div className="flex flex-wrap gap-2">
-          <span className="rounded-full bg-primary/12 px-3 py-1 text-xs font-semibold text-primary">
+          <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
             {exercise.sets} series
           </span>
-          <span className="rounded-full bg-secondary/12 px-3 py-1 text-xs font-semibold text-secondary">
+          <span className="rounded-full bg-secondary/10 px-3 py-1 text-xs font-semibold text-secondary">
             {exercise.reps} reps
           </span>
-          <span className="rounded-full bg-tertiary/18 px-3 py-1 text-xs font-semibold text-foreground">
+          <span className="rounded-full bg-tertiary/20 px-3 py-1 text-xs font-semibold text-foreground">
             {formatLoad(exercise)}
           </span>
           {exercise.muscleGroup ? (
@@ -149,7 +149,7 @@ export function ExerciseInsightModal({
       </div>
 
       {exercise.supportMedia ? (
-        <section className="fq-gradient-soft-danger overflow-hidden rounded-[28px] border border-destructive/18 shadow-[0_18px_40px_rgba(198,90,88,0.08)]">
+        <section className="fq-gradient-soft-danger overflow-hidden rounded-2xl border border-destructive/20 shadow-overlay">
           <div className="flex items-center justify-between px-5 pb-3 pt-5">
             <div className="flex items-center gap-3">
               <div className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-destructive text-destructive-foreground">
@@ -186,15 +186,15 @@ export function ExerciseInsightModal({
         </section>
       ) : null}
 
-      <section className="rounded-[28px] border border-border/70 bg-white/76 p-5 shadow-[0_18px_40px_rgba(36,49,44,0.06)]">
+      <section className="rounded-2xl border border-border/70 bg-white/80 p-5 shadow-overlay">
         <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
           <Dumbbell className="h-4 w-4 text-primary" />
           Foco do movimento
         </div>
 
         <div className="mt-4 grid gap-3 md:grid-cols-3">
-          <div className="rounded-2xl bg-muted/45 p-4">
-            <p className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+          <div className="rounded-2xl bg-muted/50 p-4">
+            <p className="text-caption font-semibold uppercase tracking-caps-wide text-muted-foreground">
               Grupo alvo
             </p>
             <p className="mt-2 text-sm font-semibold text-foreground">
@@ -202,8 +202,8 @@ export function ExerciseInsightModal({
             </p>
           </div>
 
-          <div className="rounded-2xl bg-muted/45 p-4">
-            <p className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+          <div className="rounded-2xl bg-muted/50 p-4">
+            <p className="text-caption font-semibold uppercase tracking-caps-wide text-muted-foreground">
               Equipamento
             </p>
             <p className="mt-2 text-sm font-semibold text-foreground">
@@ -211,8 +211,8 @@ export function ExerciseInsightModal({
             </p>
           </div>
 
-          <div className="rounded-2xl bg-muted/45 p-4">
-            <p className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+          <div className="rounded-2xl bg-muted/50 p-4">
+            <p className="text-caption font-semibold uppercase tracking-caps-wide text-muted-foreground">
               Descanso
             </p>
             <p className="mt-2 text-sm font-semibold text-foreground">
@@ -222,7 +222,7 @@ export function ExerciseInsightModal({
         </div>
       </section>
 
-      <section className="rounded-[28px] border border-border/70 bg-white/76 p-5 shadow-[0_18px_40px_rgba(36,49,44,0.06)]">
+      <section className="rounded-2xl border border-border/70 bg-white/80 p-5 shadow-overlay">
         <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
           <Info className="h-4 w-4 text-secondary" />
           Como executar
@@ -234,17 +234,17 @@ export function ExerciseInsightModal({
               key={`${exercise.id}-step-${index}`}
               className="flex items-start gap-3"
             >
-              <span className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-secondary/14 text-sm font-semibold text-secondary">
+              <span className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-secondary/15 text-sm font-semibold text-secondary">
                 {index + 1}
               </span>
-              <p className="text-sm leading-7 text-foreground/88">{step}</p>
+              <p className="text-sm leading-relaxed text-foreground/90">{step}</p>
             </li>
           ))}
         </ol>
       </section>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <section className="fq-gradient-soft-warning rounded-[28px] border border-warning/28 p-5">
+        <section className="fq-gradient-soft-warning rounded-2xl border border-warning/30 p-5">
           <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
             <Flame className="h-4 w-4 text-warning" />
             Coach tips
@@ -254,7 +254,7 @@ export function ExerciseInsightModal({
             {coachTips.map((tip, index) => (
               <li
                 key={`${exercise.id}-tip-${index}`}
-                className="flex items-start gap-3 text-sm leading-6 text-foreground/88"
+                className="flex items-start gap-3 text-sm leading-6 text-foreground/90"
               >
                 <span className="mt-2 h-1.5 w-1.5 rounded-full bg-warning" />
                 <span>{tip}</span>
@@ -263,7 +263,7 @@ export function ExerciseInsightModal({
           </ul>
         </section>
 
-        <section className="fq-gradient-soft-danger rounded-[28px] border border-destructive/18 p-5">
+        <section className="fq-gradient-soft-danger rounded-2xl border border-destructive/20 p-5">
           <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
             <TimerReset className="h-4 w-4 text-destructive" />
             Evite isso
@@ -273,7 +273,7 @@ export function ExerciseInsightModal({
             {commonMistakes.map((mistake, index) => (
               <li
                 key={`${exercise.id}-mistake-${index}`}
-                className="flex items-start gap-3 text-sm leading-6 text-foreground/88"
+                className="flex items-start gap-3 text-sm leading-6 text-foreground/90"
               >
                 <span className="mt-2 h-1.5 w-1.5 rounded-full bg-destructive" />
                 <span>{mistake}</span>
@@ -284,12 +284,12 @@ export function ExerciseInsightModal({
       </div>
 
       {exercise.note ? (
-        <section className="fq-gradient-soft-primary rounded-[28px] border border-primary/16 p-5">
+        <section className="fq-gradient-soft-primary rounded-2xl border border-primary/15 p-5">
           <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
             <Info className="h-4 w-4 text-primary" />
             Nota rapida
           </div>
-          <p className={cx("mt-3 text-sm leading-7 text-foreground/88")}>
+          <p className={cx("mt-3 text-sm leading-relaxed text-foreground/90")}>
             {exercise.note}
           </p>
         </section>
@@ -305,7 +305,7 @@ export function ExerciseInsightModal({
         side="bottom"
         title={exercise.name}
         description="Tudo o que voce precisa para executar com mais confianca, ritmo e consistencia."
-        className="h-[min(88vh,860px)] max-w-md sm:max-w-2xl"
+        className="fq-h-modal-lg max-w-md sm:max-w-2xl"
       >
         {content}
       </FqDrawer>
@@ -318,8 +318,8 @@ export function ExerciseInsightModal({
       onOpenChange={onOpenChange}
       title={exercise.name}
       description="Tudo o que voce precisa para executar com mais confianca, ritmo e consistencia."
-      className="max-h-[88vh] w-[min(920px,92vw)] rounded-[28px] border-border/70 bg-card p-5 shadow-[0_28px_80px_rgba(15,23,42,0.18)]"
-      bodyClassName="max-h-[calc(88vh-96px)]"
+      className="fq-max-h-modal w-full max-w-modal-xl rounded-2xl border-border/70 bg-card p-5 shadow-deep"
+      bodyClassName="fq-max-h-modal-body"
     >
       {content}
     </FqModal>

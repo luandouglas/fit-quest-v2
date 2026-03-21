@@ -33,7 +33,7 @@ export function FqModal({
         <Dialog.Overlay className="fixed inset-0 z-50 bg-zinc-900/50 backdrop-blur-sm" />
         <Dialog.Content
           className={cx(
-            'fixed left-1/2 top-1/2 z-[60] overflow-hidden w-[min(560px,92vw)] -translate-x-1/2 -translate-y-1/2 rounded-xl border border-zinc-200 bg-white p-5 shadow-xl',
+            'fixed left-1/2 top-1/2 z-modal overflow-hidden w-full max-w-modal -translate-x-1/2 -translate-y-1/2 rounded-lg border border-zinc-200 bg-white p-5 shadow-xl',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
             className,
           )}
@@ -43,7 +43,7 @@ export function FqModal({
           <header className="mb-4 flex items-start justify-between gap-4 border-b border-zinc-100 pb-3">
             <div>
               {title ? (
-                <Dialog.Title className="text-lg font-semibold text-zinc-900">{title}</Dialog.Title>
+                <Dialog.Title className="text-card-title font-semibold text-foreground">{title}</Dialog.Title>
               ) : null}
               {description ? (
                 <Dialog.Description className="text-sm text-zinc-500">
@@ -55,7 +55,7 @@ export function FqModal({
               <FqIconButton icon="x" label="Fechar modal" />
             </Dialog.Close>
           </header>
-          <div className={cx('max-h-[55vh] overflow-x-hidden overflow-y-auto pr-2', bodyClassName)}>{children}</div>
+          <div className={cx('fq-max-h-panel overflow-x-hidden overflow-y-auto pr-2', bodyClassName)}>{children}</div>
           {footer ? <footer className="mt-4 border-t border-zinc-100 pt-3">{footer}</footer> : null}
         </Dialog.Content>
       </Dialog.Portal>

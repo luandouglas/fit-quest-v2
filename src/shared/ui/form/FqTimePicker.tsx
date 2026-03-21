@@ -26,12 +26,12 @@ export function FqTimePicker({
 
   return (
     <label className="flex w-full flex-col gap-1.5" htmlFor={inputId}>
-      {label ? <span className="text-sm font-medium text-zinc-700">{label}</span> : null}
+      {label ? <span className="text-label font-medium text-foreground">{label}</span> : null}
       <input
         id={inputId}
         type="time"
         className={cx(
-          'h-10 w-full rounded-xl border border-zinc-300 bg-white px-3 text-sm text-zinc-900 outline-none transition',
+          'h-10 w-full rounded-lg border border-zinc-300 bg-white px-3 text-sm text-zinc-900 outline-none transition',
           'focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-60',
           errorMessage ? 'border-rose-500 focus-visible:ring-rose-500' : null,
           className,

@@ -32,7 +32,7 @@ export function ProgressHeroCard({
         </div>
 
         <div className="space-y-2">
-          <FqText as="h2" variant="title" className="text-xl sm:text-2xl">
+          <FqText as="h2" variant="title" className="text-section-title">
             Progresso precisa responder com clareza se voce esta melhorando.
           </FqText>
           <FqText as="p" className="max-w-2xl text-sm text-muted-foreground">
@@ -56,7 +56,7 @@ export function ProgressHeroCard({
           {answers.map((answer) => (
             <div
               key={answer.id}
-              className="rounded-[calc(var(--radius)+4px)] border border-border/75 bg-background/75 p-4"
+              className="rounded-xl border border-border/70 bg-background/80 p-4"
             >
               <div className="flex items-center justify-between gap-3">
                 <FqText as="p" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -80,7 +80,7 @@ export function ProgressHeroCard({
           {feedback.map((item) => (
             <div
               key={item}
-              className="rounded-[calc(var(--radius)+4px)] border border-border/75 bg-background/72 px-4 py-3"
+              className="rounded-xl border border-border/70 bg-background/70 px-4 py-3"
             >
               <FqText as="p" className="text-sm text-foreground">
                 {item}

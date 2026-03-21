@@ -133,7 +133,7 @@ export function GamificationPage() {
           title="Microacao que vale progresso"
           description="Hidratacao bem registrada ajuda a fechar o dia, protege o streak e ainda rende estrelas dentro da rotina do aluno."
           footer={
-            <div className="rounded-[calc(var(--radius)+4px)] border border-border/75 bg-background/72 p-4">
+            <div className="rounded-xl border border-border/70 bg-background/70 p-4">
               <FqText as="p" className="text-sm font-semibold text-foreground">
                 Agua dentro da gamificacao
               </FqText>
@@ -145,7 +145,7 @@ export function GamificationPage() {
         />
       ) : null}
 
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
+      <div className="grid gap-4 xl:fq-grid-balanced-wider">
         <GamificationObjectivesCard
           items={data.pendingObjectives}
           completedDailyMissions={data.completedDailyMissions}
@@ -167,35 +167,35 @@ export function GamificationPage() {
       <GamificationActivityCard heatmap={data.overview.activityHeatmap} timeline={data.ledgerTimeline} />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <div className="rounded-[calc(var(--radius)+8px)] border border-border/80 bg-card/90 p-5 shadow-[0_18px_42px_rgba(60,73,66,0.08)]">
+        <div className="rounded-2xl border border-border/80 bg-card/90 p-5 shadow-overlay">
           <FqText as="p" className="text-xs text-muted-foreground">
             XP treino
           </FqText>
-          <FqText as="p" className="mt-2 text-2xl font-semibold text-foreground">
+          <FqText as="p" className="mt-2 text-card-title font-semibold text-foreground">
             {data.overview.xpBreakdown.workout}
           </FqText>
         </div>
-        <div className="rounded-[calc(var(--radius)+8px)] border border-border/80 bg-card/90 p-5 shadow-[0_18px_42px_rgba(60,73,66,0.08)]">
+        <div className="rounded-2xl border border-border/80 bg-card/90 p-5 shadow-overlay">
           <FqText as="p" className="text-xs text-muted-foreground">
             XP cardio
           </FqText>
-          <FqText as="p" className="mt-2 text-2xl font-semibold text-foreground">
+          <FqText as="p" className="mt-2 text-card-title font-semibold text-foreground">
             {data.overview.xpBreakdown.run}
           </FqText>
         </div>
-        <div className="rounded-[calc(var(--radius)+8px)] border border-border/80 bg-card/90 p-5 shadow-[0_18px_42px_rgba(60,73,66,0.08)]">
+        <div className="rounded-2xl border border-border/80 bg-card/90 p-5 shadow-overlay">
           <FqText as="p" className="text-xs text-muted-foreground">
             XP nutricao
           </FqText>
-          <FqText as="p" className="mt-2 text-2xl font-semibold text-foreground">
+          <FqText as="p" className="mt-2 text-card-title font-semibold text-foreground">
             {data.overview.xpBreakdown.nutrition}
           </FqText>
         </div>
-        <div className="rounded-[calc(var(--radius)+8px)] border border-border/80 bg-card/90 p-5 shadow-[0_18px_42px_rgba(60,73,66,0.08)]">
+        <div className="rounded-2xl border border-border/80 bg-card/90 p-5 shadow-overlay">
           <FqText as="p" className="text-xs text-muted-foreground">
             XP hidratacao
           </FqText>
-          <FqText as="p" className="mt-2 text-2xl font-semibold text-foreground">
+          <FqText as="p" className="mt-2 text-card-title font-semibold text-foreground">
             {data.overview.xpBreakdown.hydration}
           </FqText>
         </div>

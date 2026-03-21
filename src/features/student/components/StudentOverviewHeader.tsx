@@ -34,7 +34,7 @@ export function StudentOverviewHeader({
 
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2">
-              <FqText as="h1" variant="title" className="text-xl">
+              <FqText as="h1" variant="title" className="text-section-title">
                 Olá, {profile.firstName}
               </FqText>
               <FqLevelBadge level={Math.max(dailyProgress.streakDays, 1)} label="Streak" />

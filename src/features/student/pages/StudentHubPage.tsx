@@ -186,7 +186,7 @@ function StudentHubPageContent() {
           label="do dia"
         />
         <div className="mt-2 sm:mt-0">
-          <h1 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+          <h1 className="text-sm font-semibold tracking-tight text-foreground">
             {viewModel.salutation}
           </h1>
           <p className="mt-0.5 text-sm text-muted-foreground">{dashboard.dailyProgress.focusLabel}</p>
@@ -212,7 +212,7 @@ function StudentHubPageContent() {
       <div className="space-y-2.5">
         <h2 className="fq-subtle-label">Seu dia</h2>
 
-        <ul className="divide-y divide-border/60 overflow-hidden rounded-2xl border border-border/70 bg-card/92 shadow-[0_12px_28px_rgba(60,73,66,0.06)]">
+        <ul className="divide-y divide-border/60 overflow-hidden rounded-2xl border border-border/70 bg-card/90 shadow-float">
           {checklist.map((item) => {
             const done = item.status === 'completed'
             const inProgress = item.status === 'in_progress'
@@ -221,10 +221,10 @@ function StudentHubPageContent() {
                 <span
                   className={
                     done
-                      ? 'inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-success/12 text-success'
+                      ? 'inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-success/10 text-success'
                       : inProgress
-                        ? 'inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/12 text-primary'
-                        : 'inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-warning/12 text-warning'
+                        ? 'inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary'
+                        : 'inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-warning/10 text-warning'
                   }
                 >
                   <FqIcon name={done ? 'check' : item.icon} size={16} />
@@ -275,8 +275,8 @@ function StudentHubPageContent() {
 
       {/* ─── 3b. Day complete celebration ─────────────────── */}
       {allDone && (
-        <div className="fq-soft-reveal flex flex-col items-center gap-1.5 rounded-2xl border border-success/20 bg-success/6 px-5 py-5 text-center">
-          <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-success/14 text-success">
+        <div className="fq-soft-reveal flex flex-col items-center gap-1.5 rounded-2xl border border-success/20 bg-success/5 px-5 py-5 text-center">
+          <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-success/15 text-success">
             <FqIcon name="check" size={20} />
           </span>
           <p className="text-sm font-semibold text-success">Dia completo!</p>
@@ -323,30 +323,30 @@ function StudentHubPageContent() {
 
       {/* ─── 5. Footer: streak + XP + level ──────────────── */}
       <div className="grid grid-cols-3 gap-2.5">
-        <div className="flex flex-col items-center gap-1.5 rounded-2xl border border-border/70 bg-card/92 px-3 py-3 shadow-[0_6px_16px_rgba(60,73,66,0.03)]">
+        <div className="flex flex-col items-center gap-1.5 rounded-2xl border border-border/70 bg-card/90 px-3 py-3 shadow-card">
           <span
-            className={`inline-flex h-8 w-8 items-center justify-center rounded-full ${dashboard.gamificationProfile.streakDays > 0 ? 'bg-success/12 text-success' : 'bg-muted/60 text-muted-foreground'}`}
+            className={`inline-flex h-8 w-8 items-center justify-center rounded-full ${dashboard.gamificationProfile.streakDays > 0 ? 'bg-success/10 text-success' : 'bg-muted/60 text-muted-foreground'}`}
           >
             <FqIcon name="flame" size={16} />
           </span>
-          <p className="text-base font-semibold leading-tight text-foreground">{dashboard.gamificationProfile.streakDays}</p>
-          <p className="text-[0.65rem] text-muted-foreground">Streak</p>
+          <p className="text-sm font-semibold leading-tight text-foreground">{dashboard.gamificationProfile.streakDays}</p>
+          <p className="text-caption text-muted-foreground">Streak</p>
         </div>
 
-        <div className="flex flex-col items-center gap-1.5 rounded-2xl border border-border/70 bg-card/92 px-3 py-3 shadow-[0_6px_16px_rgba(60,73,66,0.03)]">
-          <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-star/12 text-star">
+        <div className="flex flex-col items-center gap-1.5 rounded-2xl border border-border/70 bg-card/90 px-3 py-3 shadow-card">
+          <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-star/10 text-star">
             <FqIcon name="star" size={16} />
           </span>
-          <p className="text-base font-semibold leading-tight text-foreground">{dashboard.dailyProgress.xpEarned}</p>
-          <p className="text-[0.65rem] text-muted-foreground">XP hoje</p>
+          <p className="text-sm font-semibold leading-tight text-foreground">{dashboard.dailyProgress.xpEarned}</p>
+          <p className="text-caption text-muted-foreground">XP hoje</p>
         </div>
 
-        <div className="flex flex-col items-center gap-1.5 rounded-2xl border border-border/70 bg-card/92 px-3 py-3 shadow-[0_6px_16px_rgba(60,73,66,0.03)]">
-          <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gamification/12 text-gamification">
+        <div className="flex flex-col items-center gap-1.5 rounded-2xl border border-border/70 bg-card/90 px-3 py-3 shadow-card">
+          <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gamification/10 text-gamification">
             <FqIcon name="trophy" size={16} />
           </span>
-          <p className="text-base font-semibold leading-tight text-foreground">Lv {dashboard.gamificationProfile.level}</p>
-          <p className="text-[0.65rem] text-muted-foreground">{viewModel.nextLevelXpRemaining} XP p/ subir</p>
+          <p className="text-sm font-semibold leading-tight text-foreground">Lv {dashboard.gamificationProfile.level}</p>
+          <p className="text-caption text-muted-foreground">{viewModel.nextLevelXpRemaining} XP p/ subir</p>
         </div>
       </div>
 

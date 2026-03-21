@@ -57,11 +57,11 @@ export function FqTextarea({
 
   return (
     <label className="flex w-full flex-col gap-2" htmlFor={textareaId}>
-      {label ? <span className="text-sm font-medium text-foreground">{label}</span> : null}
+      {label ? <span className="text-label font-medium text-foreground">{label}</span> : null}
       <textarea
         id={textareaId}
         className={cx(
-          'w-full resize-y rounded-xl text-foreground outline-none transition duration-200 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-60',
+          'w-full resize-y rounded-lg text-foreground outline-none transition duration-200 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-60',
           'focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-background',
           sizeMap[size],
           variantMap[variant],

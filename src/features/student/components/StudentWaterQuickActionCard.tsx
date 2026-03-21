@@ -102,7 +102,7 @@ export function StudentWaterQuickActionCard({
         isDisabled: isPending,
       }))}
       customSlot={
-        <div className="rounded-[calc(var(--radius)+4px)] border border-border/75 bg-background/72 p-4">
+        <div className="rounded-xl border border-border/70 bg-background/70 p-4">
           <FqText as="p" className="text-sm font-semibold text-foreground">
             Volume customizado
           </FqText>
@@ -122,7 +122,7 @@ export function StudentWaterQuickActionCard({
                 void handleSubmitCustomAmount()
               }}
               isLoading={isPending}
-              className="sm:min-w-[150px]"
+              className="sm:min-w-38"
             >
               Registrar
             </FqButton>

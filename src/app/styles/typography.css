@@ -1,8 +1,35 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
+/* ── Typography design tokens ── */
 :root {
-  --fq-font-sans: "DM Sans", "Avenir Next", "Segoe UI", sans-serif;
-  --fq-font-display: "DM Sans", "Avenir Next", "Segoe UI", sans-serif;
+  /* Font families */
+  --fq-font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --fq-font-heading: "Inter", system-ui, -apple-system, sans-serif;
+
+  /* Font sizes */
+  --fq-font-2xs: 0.6875rem;        /* 11px */
+  --fq-font-caption: 0.75rem;      /* 12px */
+  --fq-font-description: 0.8125rem;  /* 13px */
+  --fq-font-body: 0.875rem;        /* 14px */
+  --fq-font-button: 0.875rem;      /* 14px */
+  --fq-font-label: 0.8125rem;      /* 13px */
+  --fq-font-card-title: 0.9375rem;  /* 15px */
+  --fq-font-section-title: 1rem;    /* 16px */
+  --fq-font-subtitle: 1rem;         /* 16px */
+  --fq-font-screen-title: 1.125rem; /* 18px */
+  --fq-font-highlight: 1.125rem;   /* 18px */
+  --fq-font-display: 1.125rem;     /* 18px */
+
+  /* Line heights */
+  --fq-lh-2xs: 0.875rem;           /* 14px */
+  --fq-lh-caption: 1rem;           /* 16px */
+  --fq-lh-description: 1.125rem;     /* 18px */
+  --fq-lh-body: 1.25rem;           /* 20px */
+  --fq-lh-card-title: 1.25rem;      /* 20px */
+  --fq-lh-section-title: 1.375rem;  /* 22px */
+  --fq-lh-subtitle: 1.375rem;       /* 22px */
+  --fq-lh-screen-title: 1.5rem;    /* 24px */
+  --fq-lh-display: 1.5rem;         /* 24px */
 }
 
 html,
@@ -17,24 +44,27 @@ input,
 textarea,
 select {
   font-family: var(--fq-font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 h1,
 h2,
 h3,
 h4 {
-  font-family: var(--fq-font-sans);
+  font-family: var(--fq-font-heading);
   letter-spacing: -0.02em;
   margin: 0;
 }
 
 .fq-headline {
-  font-size: clamp(1.35rem, 2.2vw, 1.9rem);
-  font-weight: 700;
+  font-size: var(--fq-font-screen-title);
+  line-height: var(--fq-lh-screen-title);
+  font-weight: 600;
 }
 
 .fq-display {
-  font-family: var(--fq-font-display);
-  font-weight: 700;
-  letter-spacing: -0.055em;
+  font-family: var(--fq-font-heading);
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }

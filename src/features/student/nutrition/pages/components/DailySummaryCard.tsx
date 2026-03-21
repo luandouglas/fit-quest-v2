@@ -33,7 +33,7 @@ export function DailySummaryCard({ day, mealCompletionPct, isDayComplete, pendin
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="space-y-2">
             <p className="text-sm font-medium text-muted-foreground">Resumo do dia</p>
-            <h2 className="text-xl font-semibold text-foreground">Sua adesao alimentar de hoje</h2>
+            <h2 className="text-sm font-semibold text-foreground">Sua adesao alimentar de hoje</h2>
             <p className="text-sm text-muted-foreground">
               {isDayComplete
                 ? 'Dia alimentar fechado com macros e hidratacao no alvo.'
@@ -41,12 +41,12 @@ export function DailySummaryCard({ day, mealCompletionPct, isDayComplete, pendin
             </p>
           </div>
 
-          <FqTag tone={isDayComplete ? 'success' : 'secondary'} className="rounded-lg px-2 py-1 text-[11px] normal-case tracking-normal">
+          <FqTag tone={isDayComplete ? 'success' : 'secondary'} className="rounded-lg px-2 py-1 text-2xs normal-case tracking-normal">
             {isDayComplete ? 'Dia completo' : `${mealCompletionPct}% concluido`}
           </FqTag>
         </div>
 
-        <div className="grid gap-4 lg:grid-cols-[220px_minmax(0,1fr)]">
+        <div className="grid gap-4 lg:fq-grid-label-content">
           <FqGoalRing
             value={mealCompletionPct}
             max={100}
@@ -72,16 +72,16 @@ export function DailySummaryCard({ day, mealCompletionPct, isDayComplete, pendin
               <div className="rounded-xl border border-border/80 bg-background/80 px-3 py-2.5">
                 <div className="flex items-center gap-2">
                   <FqIcon name="star" className="text-gamification" size={14} />
-                  <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">Estrelas do dia</p>
+                  <p className="text-xs uppercase tracking-caps text-muted-foreground">Estrelas do dia</p>
                 </div>
-                <p className="mt-2 text-xl font-semibold text-foreground">+{day.starsEarned ?? 0}</p>
+                <p className="mt-2 text-sm font-semibold text-foreground">+{day.starsEarned ?? 0}</p>
               </div>
               <div className="rounded-xl border border-border/80 bg-background/80 px-3 py-2.5">
                 <div className="flex items-center gap-2">
                   <FqIcon name="flask" className="text-secondary" size={14} />
-                  <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">Agua</p>
+                  <p className="text-xs uppercase tracking-caps text-muted-foreground">Agua</p>
                 </div>
-                <p className="mt-2 text-xl font-semibold text-foreground">{day.consumed.waterMl} ml</p>
+                <p className="mt-2 text-sm font-semibold text-foreground">{day.consumed.waterMl} ml</p>
               </div>
             </div>
           </div>

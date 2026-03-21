@@ -29,7 +29,7 @@ export function FqXPBar({
   return (
     <div
       className={cx(
-        'fq-gradient-surface w-full rounded-[calc(var(--radius)+6px)] border border-border/75 p-4 shadow-[0_12px_28px_rgba(36,49,44,0.05)]',
+        'fq-gradient-surface w-full rounded-lg border border-border/70 p-4 shadow-float',
         className,
       )}
       data-testid={testId}
@@ -50,18 +50,18 @@ export function FqXPBar({
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-full border border-border/55 bg-muted/85 shadow-[inset_0_1px_2px_rgba(36,49,44,0.06)]">
+      <div className="overflow-hidden rounded-full border border-border/50 bg-muted/90 shadow-inset-soft">
         <div
           role="progressbar"
           aria-valuemin={0}
           aria-valuemax={safeTarget}
           aria-valuenow={safeCurrent}
-          className="relative h-2.5 rounded-full bg-[linear-gradient(90deg,var(--primary)_0%,color-mix(in_srgb,var(--secondary)_30%,var(--primary))_100%)] transition-[width] duration-300 ease-out"
+          className="relative h-2.5 rounded-full fq-progress-xp transition-width duration-300 ease-out"
           style={{ width: `${percent}%` }}
         >
           <span
             aria-hidden="true"
-            className="absolute inset-y-0 right-0 w-12 bg-[linear-gradient(90deg,transparent_0%,color-mix(in_srgb,var(--card)_28%,transparent)_100%)]"
+            className="absolute inset-y-0 right-0 w-12 fq-progress-shimmer"
           />
         </div>
       </div>

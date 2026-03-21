@@ -8,7 +8,7 @@ type FqListProps = FqBaseProps & Omit<HTMLAttributes<HTMLUListElement>, 'style' 
 export function FqList({ className, testId, children, ...rest }: FqListProps) {
   return (
     <ul
-      className={cx('divide-y divide-zinc-100 overflow-hidden rounded-xl border border-zinc-200 bg-white', className)}
+      className={cx('divide-y divide-zinc-100 overflow-hidden rounded-lg border border-zinc-200 bg-white', className)}
      
       data-testid={testId}
       {...rest}

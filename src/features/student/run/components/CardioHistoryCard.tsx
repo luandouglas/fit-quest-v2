@@ -33,7 +33,7 @@ export function CardioHistoryCard({ history, onOpenSummary }: CardioHistoryCardP
     <FqCard className="border-border bg-card">
       <div className="space-y-4">
         <div>
-          <FqText as="h2" className="text-lg font-semibold text-foreground">
+          <FqText as="h2" className="text-card-title font-semibold text-foreground">
             Histórico de cardio
           </FqText>
           <FqText as="p" className="text-sm text-muted-foreground">

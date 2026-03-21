@@ -13,7 +13,7 @@ export function StudentWorkoutTodayCard({ dashboard, onOpenWorkout }: StudentWor
   if (!workout) {
     return (
       <FqCard className="border-border bg-card">
-        <FqText as="h2" className="text-base font-semibold text-foreground">
+        <FqText as="h2" className="text-sm font-semibold text-foreground">
           Treino do dia
         </FqText>
         <FqText as="p" className="mt-2 text-sm text-muted-foreground">
@@ -31,7 +31,7 @@ export function StudentWorkoutTodayCard({ dashboard, onOpenWorkout }: StudentWor
       <div className="space-y-4">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <FqText as="h2" className="text-base font-semibold text-foreground">
+            <FqText as="h2" className="text-sm font-semibold text-foreground">
               Treino do dia
             </FqText>
             <FqText as="p" className="text-sm text-muted-foreground">

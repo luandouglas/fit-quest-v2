@@ -15,7 +15,7 @@ export function ProfileAchievementsCard({ achievements }: ProfileAchievementsCar
       {achievements.length > 0 ? (
         <div className="grid gap-3 sm:grid-cols-2">
           {achievements.map((achievement) => (
-            <div key={achievement.id} className="space-y-2 rounded-[calc(var(--radius)+4px)] border border-border/75 bg-muted/10 p-2">
+            <div key={achievement.id} className="space-y-2 rounded-xl border border-border/70 bg-muted/10 p-2">
               <FqAchievementCard
                 title={achievement.title}
                 description={achievement.description}
@@ -37,7 +37,7 @@ export function ProfileAchievementsCard({ achievements }: ProfileAchievementsCar
           ))}
         </div>
       ) : (
-        <div className="rounded-[calc(var(--radius)+4px)] border border-dashed border-border/80 bg-muted/10 p-4">
+        <div className="rounded-xl border border-dashed border-border/80 bg-muted/10 p-4">
           <FqText as="p" className="text-sm text-muted-foreground">
             Suas conquistas vao aparecer aqui conforme treino, cardio, agua e nutricao forem sendo concluídos.
           </FqText>

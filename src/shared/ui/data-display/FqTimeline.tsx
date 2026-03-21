@@ -34,7 +34,7 @@ export function FqTimeline({
 }: FqTimelineProps) {
   return (
     <ul
-      className={cx('space-y-4 rounded-xl border border-border bg-card p-4', className)}
+      className={cx('space-y-4 rounded-lg border border-border bg-card p-4', className)}
      
       data-testid={testId}
       {...rest}
@@ -45,7 +45,7 @@ export function FqTimeline({
         return (
           <li key={item.id} className="relative pl-6">
             <span className={cx('absolute left-0 top-1.5 h-2.5 w-2.5 rounded-full', timelineToneMap[tone])} />
-            {index < items.length - 1 ? <span className="absolute left-[4px] top-4 h-[calc(100%-0.5rem)] w-px bg-border" /> : null}
+            {index < items.length - 1 ? <span className="absolute left-1 top-4 fq-h-page-fill w-px bg-border" /> : null}
             <p className="text-sm font-semibold text-card-foreground">{item.title}</p>
             {item.description ? <p className="text-sm text-muted-foreground">{item.description}</p> : null}
             {item.time ? <p className="text-xs text-muted-foreground">{item.time}</p> : null}

@@ -1219,7 +1219,7 @@ export function PersonalWorkoutWizardCard({
 
   return (
     <>
-      <FqCard className="border-border bg-card lg:col-span-12 dark:border-primary/25 dark:bg-card/95 dark:shadow-[0_18px_48px_rgba(2,8,20,0.5)]">
+      <FqCard className="border-border bg-card lg:col-span-12 dark:border-primary/25 dark:bg-card/95 dark:shadow-deep">
         <div className="space-y-4">
           <div className="grid grid-cols-4 gap-2">
             {wizardSteps.map((step, index) => (
@@ -1228,7 +1228,7 @@ export function PersonalWorkoutWizardCard({
                 className={cx(
                   "h-1.5 rounded-full transition-colors",
                   index <= currentStep
-                    ? "bg-primary shadow-[0_0_10px_rgba(249,115,22,0.45)]"
+                    ? "bg-primary shadow-glow-secondary"
                     : "bg-border/80 dark:bg-border",
                 )}
               />
@@ -1247,13 +1247,13 @@ export function PersonalWorkoutWizardCard({
                   </div>
                   <FqText
                     as="p"
-                    className="text-xl font-semibold text-foreground"
+                    className="text-sm font-semibold text-foreground"
                   >
                     Nome do treino
                   </FqText>
                   <FqText
                     as="p"
-                    className="text-sm text-muted-foreground dark:text-foreground/75"
+                    className="text-sm text-muted-foreground dark:text-foreground/80"
                   >
                     Defina nome, descricao e para qual sexo o treino foi
                     pensado.
@@ -1307,13 +1307,13 @@ export function PersonalWorkoutWizardCard({
                 <div className="space-y-1 text-center">
                   <FqText
                     as="p"
-                    className="text-xl font-semibold text-foreground"
+                    className="text-sm font-semibold text-foreground"
                   >
                     Grupos musculares
                   </FqText>
                   <FqText
                     as="p"
-                    className="text-sm text-muted-foreground dark:text-foreground/75"
+                    className="text-sm text-muted-foreground dark:text-foreground/80"
                   >
                     Clique no corpo ou nos botoes abaixo para selecionar.
                   </FqText>
@@ -1362,7 +1362,7 @@ export function PersonalWorkoutWizardCard({
                   </div>
                 </div>
                 {muscleGroups.length > 0 ? (
-                  <div className="rounded-xl border border-primary/25 bg-primary/8 p-3 dark:bg-primary/12">
+                  <div className="rounded-xl border border-primary/25 bg-primary/10 p-3 dark:bg-primary/10">
                     <FqText
                       as="p"
                       className="mb-2 text-xs font-medium text-muted-foreground dark:text-foreground/80"
@@ -1395,13 +1395,13 @@ export function PersonalWorkoutWizardCard({
                   </div>
                   <FqText
                     as="p"
-                    className="text-xl font-semibold text-foreground"
+                    className="text-sm font-semibold text-foreground"
                   >
                     Intensidade
                   </FqText>
                   <FqText
                     as="p"
-                    className="text-sm text-muted-foreground dark:text-foreground/75"
+                    className="text-sm text-muted-foreground dark:text-foreground/80"
                   >
                     Ajuste nivel, estrelas e duracao estimada.
                   </FqText>
@@ -1486,19 +1486,19 @@ export function PersonalWorkoutWizardCard({
                   </div>
                   <FqText
                     as="p"
-                    className="text-xl font-semibold text-foreground"
+                    className="text-sm font-semibold text-foreground"
                   >
                     Exercicios
                   </FqText>
                   <FqText
                     as="p"
-                    className="text-sm text-muted-foreground dark:text-foreground/75"
+                    className="text-sm text-muted-foreground dark:text-foreground/80"
                   >
                     Selecione exercicios com IA ou adicione manualmente.
                   </FqText>
                 </div>
 
-                <div className="rounded-xl border border-primary/25 bg-primary/8 p-3 text-sm text-foreground dark:bg-primary/12">
+                <div className="rounded-xl border border-primary/25 bg-primary/10 p-3 text-sm text-foreground dark:bg-primary/10">
                   Mostrando exercicios apenas para os grupos selecionados:{" "}
                   {muscleGroups.length > 0
                     ? muscleGroups.map(getMuscleGroupLabel).join(", ")
@@ -1550,7 +1550,7 @@ export function PersonalWorkoutWizardCard({
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <FqText
                         as="p"
-                        className="text-base font-semibold text-foreground"
+                        className="text-sm font-semibold text-foreground"
                       >
                         Biblioteca de exercicios
                       </FqText>
@@ -1642,13 +1642,13 @@ export function PersonalWorkoutWizardCard({
                               <article
                                 key={`library-${exercise.id}`}
                                 className={cx(
-                                  "overflow-hidden rounded-xl border bg-card transition hover:border-primary/45 hover:shadow-sm",
+                                  "overflow-hidden rounded-xl border bg-card transition hover:border-primary/50 hover:shadow-sm",
                                   isMarked
-                                    ? "border-primary shadow-[0_0_0_1px_rgba(249,115,22,0.35)]"
+                                    ? "border-primary ring-1 ring-secondary/35"
                                     : "border-border",
                                 )}
                               >
-                                <div className="relative aspect-video w-full bg-muted/45">
+                                <div className="relative aspect-video w-full bg-muted/50">
                                   {exercise.thumbnail_url ? (
                                     <img
                                       src={exercise.thumbnail_url}
@@ -1667,7 +1667,7 @@ export function PersonalWorkoutWizardCard({
                                       "absolute right-2 top-2 inline-flex h-8 items-center gap-1 rounded-full border px-2.5 text-xs font-semibold transition",
                                       isMarked
                                         ? "border-primary bg-primary text-primary-foreground"
-                                        : "border-border/80 bg-background/90 text-foreground hover:border-primary/45 hover:text-primary",
+                                        : "border-border/80 bg-background/90 text-foreground hover:border-primary/50 hover:text-primary",
                                     )}
                                     onClick={() =>
                                       handleToggleLibraryExercise(exercise.id)
@@ -1718,7 +1718,7 @@ export function PersonalWorkoutWizardCard({
                                   <div className="flex items-center justify-between gap-2">
                                     <FqText
                                       as="p"
-                                      className="text-[11px] text-muted-foreground"
+                                      className="text-2xs text-muted-foreground"
                                     >
                                       {exercise.views
                                         ? `${formatCompactNumber(exercise.views)} visualizacoes`
@@ -1734,7 +1734,7 @@ export function PersonalWorkoutWizardCard({
                                           href={exercise.source_url}
                                           target="_blank"
                                           rel="noreferrer"
-                                          className="rounded-lg border border-border px-2 py-1 text-[11px] font-medium text-muted-foreground transition hover:border-primary/35 hover:text-primary"
+                                          className="rounded-lg border border-border px-2 py-1 text-2xs font-medium text-muted-foreground transition hover:border-primary/35 hover:text-primary"
                                           onClick={(event) =>
                                             event.stopPropagation()
                                           }
@@ -1800,7 +1800,7 @@ export function PersonalWorkoutWizardCard({
                   <div className="border-b border-border px-4 py-3">
                     <FqText
                       as="p"
-                      className="text-base font-semibold text-foreground"
+                      className="text-sm font-semibold text-foreground"
                     >
                       Exercicios ({selectedExercises.length})
                     </FqText>
@@ -1817,7 +1817,7 @@ export function PersonalWorkoutWizardCard({
                       </div>
                       <FqText
                         as="p"
-                        className="text-lg font-semibold text-foreground"
+                        className="text-card-title font-semibold text-foreground"
                       >
                         Nenhum exercicio ainda
                       </FqText>
@@ -1877,7 +1877,7 @@ export function PersonalWorkoutWizardCard({
                             <div className="flex-1 space-y-2">
                               <FqText
                                 as="p"
-                                className="text-base font-semibold text-foreground"
+                                className="text-sm font-semibold text-foreground"
                               >
                                 {exercise.name}
                               </FqText>
@@ -1990,7 +1990,7 @@ export function PersonalWorkoutWizardCard({
                         <FqText as="p" className="text-xs text-muted-foreground">
                           Exercicios
                         </FqText>
-                        <FqText as="p" className="mt-1 text-xl font-semibold text-success">
+                        <FqText as="p" className="mt-1 text-sm font-semibold text-success">
                           {selectedExercises.length}
                         </FqText>
                       </div>
@@ -1998,7 +1998,7 @@ export function PersonalWorkoutWizardCard({
                         <FqText as="p" className="text-xs text-muted-foreground">
                           Sets totais
                         </FqText>
-                        <FqText as="p" className="mt-1 text-xl font-semibold text-foreground">
+                        <FqText as="p" className="mt-1 text-sm font-semibold text-foreground">
                           {selectedExercises.reduce((total, ex) => total + ex.sets, 0)}
                         </FqText>
                       </div>
@@ -2006,7 +2006,7 @@ export function PersonalWorkoutWizardCard({
                         <FqText as="p" className="text-xs text-muted-foreground">
                           Duracao estimada
                         </FqText>
-                        <FqText as="p" className="mt-1 text-xl font-semibold text-primary">
+                        <FqText as="p" className="mt-1 text-sm font-semibold text-primary">
                           {estimatedDurationMin} min
                         </FqText>
                       </div>
@@ -2014,7 +2014,7 @@ export function PersonalWorkoutWizardCard({
                         <FqText as="p" className="text-xs text-muted-foreground">
                           Estrelas
                         </FqText>
-                        <FqText as="p" className="mt-1 text-xl font-semibold text-warning">
+                        <FqText as="p" className="mt-1 text-sm font-semibold text-warning">
                           {starsReward}
                         </FqText>
                       </div>
@@ -2057,7 +2057,7 @@ export function PersonalWorkoutWizardCard({
                                   ) : null}
                                 </div>
                               </div>
-                              <span className="rounded-full bg-muted px-2 py-0.5 text-[0.65rem] text-muted-foreground">
+                              <span className="rounded-full bg-muted px-2 py-0.5 text-2xs text-muted-foreground">
                                 {getMuscleGroupLabel(exercise.bodyRegion)}
                               </span>
                             </div>
@@ -2071,7 +2071,7 @@ export function PersonalWorkoutWizardCard({
                         <FqText as="p" className="text-xs text-muted-foreground">
                           Titulo do treino
                         </FqText>
-                        <FqText as="p" className="mt-1 text-base font-semibold text-foreground">
+                        <FqText as="p" className="mt-1 text-sm font-semibold text-foreground">
                           {title}
                         </FqText>
                         {description.trim() ? (
@@ -2208,7 +2208,7 @@ export function PersonalWorkoutWizardCard({
             ? "Configure os filtros para gerar sugestoes personalizadas."
             : "Clique em um exercicio para adicionar ao treino."
         }
-        className="w-[min(740px,94vw)]"
+        className="w-full max-w-modal-lg"
       >
         {assistantModalStep === "filters" ? (
           <div className="space-y-3">
@@ -2297,7 +2297,7 @@ export function PersonalWorkoutWizardCard({
                 Sem mais sugestoes disponiveis. Gere novas sugestoes.
               </div>
             ) : (
-              <div className="max-h-[48vh] space-y-2 overflow-y-auto pr-1">
+              <div className="fq-max-h-scroll space-y-2 overflow-y-auto pr-1">
                 {assistantSuggestions.map((exercise) => (
                   <button
                     key={exercise.id}
@@ -2323,7 +2323,7 @@ export function PersonalWorkoutWizardCard({
                       <div className="flex-1">
                         <FqText
                           as="p"
-                          className="text-base font-semibold text-foreground"
+                          className="text-sm font-semibold text-foreground"
                         >
                           {exercise.name_en?.trim() || exercise.name}
                         </FqText>

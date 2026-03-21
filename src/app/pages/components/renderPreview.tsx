@@ -403,7 +403,7 @@ export function renderComponentPreview({
 
     case 'FqPage':
       return (
-        <FqPage className="min-h-[240px] rounded-xl border border-zinc-200 bg-zinc-50 p-4">
+        <FqPage className="min-h-60 rounded-xl border border-zinc-200 bg-zinc-50 p-4">
           {asString(props.children, 'Page content')}
         </FqPage>
       )

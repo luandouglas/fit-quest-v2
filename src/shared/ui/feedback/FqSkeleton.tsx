@@ -11,7 +11,7 @@ type FqSkeletonProps = FqBaseProps &
 const roundedMap: Record<NonNullable<FqSkeletonProps['rounded']>, string> = {
   sm: 'rounded',
   md: 'rounded-md',
-  lg: 'rounded-xl',
+  lg: 'rounded-lg',
   full: 'rounded-full',
 }
 

@@ -41,7 +41,7 @@ export function FqButton({
     <button
       type="button"
       className={cx(
-        'inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition duration-200 disabled:cursor-not-allowed disabled:opacity-55',
+        'inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition duration-200 disabled:cursor-not-allowed disabled:opacity-55',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
         fqButtonSizeMap[resolvedSize],
         fqToneVariantMap[resolvedTone][resolvedVariant],

@@ -25,7 +25,7 @@ export function NotificationsHeroCard({ viewModel }: NotificationsHeroCardProps)
               {viewModel.contextSummary.unreadCount > 0 ? `${viewModel.contextSummary.unreadCount} sinal(is) ativo(s)` : 'Rotina em paz'}
             </FqTag>
             <div>
-              <FqText as="h1" variant="title" className="text-lg">
+              <FqText as="h1" variant="title">
                 Alertas e lembretes
               </FqText>
               <FqText as="p" className="mt-1 text-sm text-muted-foreground">
@@ -37,11 +37,11 @@ export function NotificationsHeroCard({ viewModel }: NotificationsHeroCardProps)
             </div>
           </div>
 
-          <div className="min-w-[220px] max-w-[320px] rounded-[calc(var(--radius)+6px)] border border-border/75 bg-muted/10 p-4">
+          <div className="min-w-55 max-w-80 rounded-xl border border-border/70 bg-muted/10 p-4">
             <FqText as="p" className="fq-subtle-label">
               Cobertura da rotina
             </FqText>
-            <FqText as="p" className="mt-2 text-2xl font-semibold text-foreground">
+            <FqText as="p" className="mt-2 text-card-title font-semibold text-foreground">
               {coverageValue}%
             </FqText>
             <FqText as="p" className="mt-1 text-xs text-muted-foreground">

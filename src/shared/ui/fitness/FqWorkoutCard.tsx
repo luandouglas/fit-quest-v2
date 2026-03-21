@@ -33,13 +33,13 @@ export function FqWorkoutCard({
 }: FqWorkoutCardProps) {
   return (
     <article
-      className={cx('rounded-xl border border-zinc-200 bg-white p-4 shadow-sm', className)}
+      className={cx('rounded-lg border border-zinc-200 bg-white p-4 shadow-sm', className)}
      
       data-testid={testId}
       {...rest}
     >
       <div className="mb-3 flex items-center justify-between gap-2">
-        <h3 className="text-base font-semibold text-zinc-900">{title}</h3>
+        <h3 className="text-sm font-semibold text-zinc-900">{title}</h3>
         <FqBadge tone={levelToneMap[level]}>{level}</FqBadge>
       </div>
       <div className="space-y-1 text-sm text-zinc-600">

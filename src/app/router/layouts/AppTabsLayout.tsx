@@ -20,6 +20,7 @@ import {
 import { nutritionistNavigationItems } from "@/features/nutritionist/presentation";
 import { personalNavigationItems } from "@/features/personal/presentation";
 import { useNotificationsInbox } from "@/features/student/application";
+import { shouldHideStudentExperienceChrome } from "@/features/student/navigation";
 import { studentNavigationItems } from "@/features/student/presentation";
 import { FitQuestTabBar } from "@/components/navigation/FitQuestTabBar";
 import {
@@ -63,7 +64,7 @@ function getSidebarTheme(role: AuthUserRole): SidebarTheme {
       headerAvatar: "bg-secondary/15 text-secondary",
       hoverItem: "hover:bg-secondary/10 hover:text-foreground",
       activeItem:
-        "border border-secondary/18 bg-secondary/10 text-foreground shadow-[0_12px_26px_rgba(120,146,174,0.12)]",
+        "border border-secondary/20 bg-secondary/10 text-foreground shadow-btn-secondary",
       mobileTop: "bg-sidebar/95",
     };
   }
@@ -74,7 +75,7 @@ function getSidebarTheme(role: AuthUserRole): SidebarTheme {
       headerAvatar: "bg-tertiary/15 text-tertiary",
       hoverItem: "hover:bg-tertiary/10 hover:text-foreground",
       activeItem:
-        "border border-tertiary/20 bg-tertiary/12 text-foreground shadow-[0_12px_26px_rgba(210,173,132,0.12)]",
+        "border border-tertiary/20 bg-tertiary/10 text-foreground shadow-btn-warning",
       mobileTop: "bg-sidebar/95",
     };
   }
@@ -84,7 +85,7 @@ function getSidebarTheme(role: AuthUserRole): SidebarTheme {
     headerAvatar: "bg-primary/15 text-primary",
     hoverItem: "hover:bg-primary/10 hover:text-foreground",
     activeItem:
-      "border border-primary/18 bg-primary/10 text-foreground shadow-[0_12px_26px_rgba(95,141,118,0.12)]",
+      "border border-primary/20 bg-primary/10 text-foreground shadow-btn-primary",
     mobileTop: "bg-sidebar/95",
   };
 }
@@ -187,7 +188,7 @@ function SidebarNav({
           title={isCollapsed ? item.label : undefined}
           aria-label={item.label}
           className={cx(
-            "flex items-center rounded-[calc(var(--radius)+2px)] border border-transparent px-3 py-3 text-sm font-medium transition",
+            "flex items-center rounded-lg border border-transparent px-3 py-3 text-sm font-medium transition",
             isCollapsed ? "justify-center" : "justify-between",
             "text-muted-foreground hover:text-foreground",
             theme.hoverItem,
@@ -251,7 +252,7 @@ function MobileSidebar({
 
       <aside
         className={cx(
-          "fixed bottom-0 left-0 top-0 z-50 flex w-[88vw] max-w-[360px] flex-col overflow-y-auto overscroll-contain border-r border-border/70 text-foreground shadow-2xl transition-transform duration-300 ease-out lg:hidden",
+          "fixed bottom-0 left-0 top-0 z-50 flex fq-sidebar-w flex-col overflow-y-auto overscroll-contain border-r border-border/70 text-foreground shadow-2xl transition-transform duration-300 ease-out lg:hidden",
           theme.mobileTop,
           isOpen ? "translate-x-0" : "-translate-x-full",
         )}
@@ -393,34 +394,46 @@ export function AppTabsLayout({
     () => getRoleMenu(role, unreadCount),
     [role, unreadCount],
   );
+  const hideStudentChrome =
+    role === "STUDENT" && shouldHideStudentExperienceChrome(location.pathname);
+
   return (
     <div className="flex h-full overflow-hidden bg-background">
-      <FqSidebar
-        config={getSidebarConfig(role)}
-        pathname={location.pathname}
-        onNavigate={(path) => history.push(path)}
-        isCollapsed={isDesktopSidebarCollapsed}
-        onToggleCollapse={handleToggleDesktopSidebar}
-      />
-      <MobileSidebar
-        items={sidebarItems}
-        role={role}
-        unreadCount={unreadCount}
-        isOpen={isMobileSidebarOpen}
-        onClose={() => setIsMobileSidebarOpen(false)}
-        onOpenNotifications={() => {
-          setIsMobileSidebarOpen(false);
-          history.push("/tabs/notifications");
-        }}
-      />
+      {!hideStudentChrome ? (
+        <>
+          <FqSidebar
+            config={getSidebarConfig(role)}
+            pathname={location.pathname}
+            onNavigate={(path) => history.push(path)}
+            isCollapsed={isDesktopSidebarCollapsed}
+            onToggleCollapse={handleToggleDesktopSidebar}
+          />
+          <MobileSidebar
+            items={sidebarItems}
+            role={role}
+            unreadCount={unreadCount}
+            isOpen={isMobileSidebarOpen}
+            onClose={() => setIsMobileSidebarOpen(false)}
+            onOpenNotifications={() => {
+              setIsMobileSidebarOpen(false);
+              history.push("/tabs/notifications");
+            }}
+          />
+        </>
+      ) : null}
 
       <main className="fq-smooth-scroll min-w-0 flex-1 overflow-y-auto">
         <div
           className={cx(
-            "mx-auto w-full max-w-7xl px-4 pt-4 md:px-6 md:pt-5 lg:px-8 lg:pt-6",
-            role === "STUDENT" || role === "PERSONAL"
-              ? "pb-[calc(env(safe-area-inset-bottom,0px)+9rem)] md:pb-32 lg:pb-8"
-              : "pb-28 md:pb-32 lg:pb-8",
+            hideStudentChrome
+              ? "mx-auto w-full max-w-7xl px-0 pt-0"
+              : "mx-auto w-full max-w-7xl px-4 pt-4 md:px-6 md:pt-5 lg:px-8 lg:pt-6",
+            !hideStudentChrome &&
+              (role === "STUDENT" || role === "PERSONAL")
+              ? "fq-pb-safe-tabs"
+              : !hideStudentChrome
+                ? "pb-28 md:pb-32 lg:pb-8"
+                : null,
           )}
         >
           <Switch>
@@ -442,11 +455,13 @@ export function AppTabsLayout({
         </div>
       </main>
 
-      <MobileBottomNav
-        pathname={location.pathname}
-        onNavigate={(path) => history.push(path)}
-        role={role}
-      />
+      {!hideStudentChrome ? (
+        <MobileBottomNav
+          pathname={location.pathname}
+          onNavigate={(path) => history.push(path)}
+          role={role}
+        />
+      ) : null}
     </div>
   );
 }

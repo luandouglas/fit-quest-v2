@@ -20,7 +20,7 @@ export function FqBadge({
   return (
     <span
       className={cx(
-        'inline-flex items-center rounded-full px-3 py-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.16em] shadow-[0_8px_18px_rgba(36,49,44,0.04)]',
+        'inline-flex items-center rounded-full px-3 py-1.5 text-caption font-semibold uppercase tracking-caps shadow-card',
         fqBadgeToneMap[tone],
         className,
       )}

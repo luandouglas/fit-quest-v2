@@ -25,7 +25,7 @@ export function StudentAlertsCard({ alerts, onNavigate, onOpenInbox }: StudentAl
       <div className="space-y-4">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <FqText as="h2" className="text-base font-semibold text-foreground">
+            <FqText as="h2" className="text-sm font-semibold text-foreground">
               Alertas úteis de hoje
             </FqText>
             <FqText as="p" className="text-sm text-muted-foreground">
@@ -50,7 +50,7 @@ export function StudentAlertsCard({ alerts, onNavigate, onOpenInbox }: StudentAl
             {alerts.map((alert) => (
               <div
                 key={alert.id}
-                className="rounded-[calc(var(--radius)+6px)] border border-border/75 bg-background/70 p-4"
+                className="rounded-xl border border-border/70 bg-background/70 p-4"
               >
                 <div className="flex items-start gap-3">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-border/70 bg-card">

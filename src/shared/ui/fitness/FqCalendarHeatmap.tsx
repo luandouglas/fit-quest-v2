@@ -46,7 +46,7 @@ export function FqCalendarHeatmap({
 }: FqCalendarHeatmapProps) {
   return (
     <div
-      className={cx('w-full space-y-2 rounded-xl border border-zinc-200 bg-white p-4', className)}
+      className={cx('w-full space-y-2 rounded-lg border border-zinc-200 bg-white p-4', className)}
      
       data-testid={testId}
       {...rest}

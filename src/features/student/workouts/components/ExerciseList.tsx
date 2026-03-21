@@ -15,7 +15,7 @@ export function ExerciseList({ exercises, onSetCurrent, onToggleDone }: Exercise
       <FqCard className="border-border bg-card">
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-foreground">Exercícios</h3>
+            <h3 className="text-card-title font-semibold text-foreground">Exercícios</h3>
             <FqText as="p" className="text-sm text-muted-foreground">
               {exercises.length} no total
             </FqText>

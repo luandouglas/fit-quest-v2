@@ -26,7 +26,7 @@ export function FqPopover({
         <Popover.Content
           side={side}
           className={cx(
-            'z-[80] w-64 rounded-xl border border-zinc-200 bg-white p-3 shadow-xl',
+            'z-dropdown w-64 rounded-lg border border-zinc-200 bg-white p-3 shadow-xl',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1',
             className,
           )}

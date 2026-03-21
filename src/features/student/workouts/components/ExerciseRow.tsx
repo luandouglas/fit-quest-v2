@@ -11,7 +11,7 @@ type ExerciseRowProps = {
 
 const stateClassMap = {
   done: 'border-success/35 bg-success/5',
-  current: 'border-secondary/45 bg-secondary/5',
+  current: 'border-secondary/50 bg-secondary/5',
   upcoming: 'border-border bg-background',
 } as const
 
@@ -22,7 +22,7 @@ export function ExerciseRow({ exercise, onSetCurrent, onToggleDone }: ExerciseRo
   return (
     <article
       className={cx(
-        'flex flex-col gap-3 rounded-xl border px-3 py-3 transition md:grid md:grid-cols-[44px_minmax(0,1fr)_120px_auto] md:items-center md:gap-4 md:px-4',
+        'flex flex-col gap-3 rounded-xl border px-3 py-3 transition md:grid md:fq-grid-icon-content-action md:items-center md:gap-4 md:px-4',
         !isDone ? 'hover:border-border hover:bg-accent/35' : null,
         stateClassMap[exercise.status],
       )}
@@ -46,7 +46,7 @@ export function ExerciseRow({ exercise, onSetCurrent, onToggleDone }: ExerciseRo
 
       <div className="min-w-0 space-y-1">
         <div className="flex items-start justify-between gap-2 md:block">
-          <p className={cx('truncate text-base font-semibold text-foreground', isDone ? 'line-through opacity-70' : null)}>
+          <p className={cx('truncate text-sm font-semibold text-foreground', isDone ? 'line-through opacity-70' : null)}>
             {exercise.name}
           </p>
           <p className="inline-flex items-center gap-1 text-xs text-muted-foreground md:hidden">

@@ -12,10 +12,10 @@ type FqTextProps = FqBaseProps &
   }
 
 const variantClassMap: Record<FqTextVariant, string> = {
-  title: 'text-2xl font-semibold tracking-tight text-zinc-900',
-  subtitle: 'text-lg font-medium text-zinc-700',
-  body: 'text-sm text-zinc-700',
-  caption: 'text-xs text-zinc-500',
+  title: 'text-section-title font-semibold tracking-tight text-foreground',
+  subtitle: 'text-card-title font-medium text-muted-foreground',
+  body: 'text-body text-muted-foreground',
+  caption: 'text-caption text-muted-foreground',
 }
 
 const variantTagMap: Record<FqTextVariant, FqTextProps['as']> = {

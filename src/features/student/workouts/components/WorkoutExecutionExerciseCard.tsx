@@ -28,18 +28,18 @@ export function WorkoutExecutionExerciseCard({
   return (
     <div
       className={cx(
-        'rounded-[20px] border p-4 transition-colors',
+        'rounded-2xl border p-4 transition-colors',
         isCompleted
-          ? 'border-success/18 bg-success/6'
+          ? 'border-success/20 bg-success/5'
           : isActive
-            ? 'border-primary/24 bg-primary/10'
-            : 'border-border/75 bg-background/70',
+            ? 'border-primary/25 bg-primary/10'
+            : 'border-border/70 bg-background/70',
       )}
     >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0 space-y-2">
           <div className="flex flex-wrap items-center gap-2">
-            <FqText as="p" className="text-base font-semibold text-foreground">
+            <FqText as="p" className="text-sm font-semibold text-foreground">
               {exercise.order}. {exercise.name}
             </FqText>
             <FqTag tone={statusTone}>{statusLabel}</FqTag>

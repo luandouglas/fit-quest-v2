@@ -24,10 +24,10 @@ export function StudentSectionRail({ activePath }: StudentSectionRailProps) {
             to={item.path}
             exact={item.exact}
             className={cx(
-              'fq-raise-hover min-w-[130px] rounded-[26px] border px-4 py-3 transition',
+              'fq-raise-hover min-w-32 rounded-2xl border px-4 py-3 transition',
               isActive
-                ? 'border-primary/20 bg-primary/10 text-foreground shadow-[0_12px_24px_rgba(95,141,118,0.12)]'
-                : 'border-border/75 bg-card/75 text-muted-foreground',
+                ? 'border-primary/20 bg-primary/10 text-foreground shadow-btn-primary'
+                : 'border-border/70 bg-card/80 text-muted-foreground',
             )}
           >
             <div className="flex items-center gap-3">

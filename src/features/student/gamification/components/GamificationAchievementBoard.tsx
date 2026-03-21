@@ -31,7 +31,7 @@ function AchievementGroup({
           {items.map((item) => (
             <div
               key={item.id}
-              className="space-y-2 rounded-[calc(var(--radius)+4px)] border border-border/70 bg-muted/10 p-2"
+              className="space-y-2 rounded-xl border border-border/70 bg-muted/10 p-2"
             >
               <FqAchievementCard
                 title={item.title}
@@ -59,7 +59,7 @@ function AchievementGroup({
           ))}
         </div>
       ) : (
-        <div className="rounded-[calc(var(--radius)+4px)] border border-dashed border-border/80 bg-muted/10 p-4">
+        <div className="rounded-xl border border-dashed border-border/80 bg-muted/10 p-4">
           <FqText as="p" className="text-sm text-muted-foreground">
             Sem dados suficientes para essa faixa de conquistas ainda.
           </FqText>

@@ -121,7 +121,7 @@ export function NotificationsPage() {
 
       <NotificationsHeroCard viewModel={viewModel} />
 
-      <div className="grid gap-5 xl:grid-cols-[minmax(0,1.08fr)_minmax(320px,0.92fr)]">
+      <div className="grid gap-5 xl:fq-grid-main-sidebar-tight">
         <div className="space-y-5">
           <div className="fq-shell-panel px-4 py-5 md:px-6">
             <div className="flex flex-wrap items-center justify-between gap-3">
@@ -147,7 +147,7 @@ export function NotificationsPage() {
           </div>
 
           {uiState === 'empty' ? (
-            <div className="rounded-[calc(var(--radius)+8px)] border border-dashed border-border/75 bg-card/75 px-4 py-8">
+            <div className="rounded-2xl border border-dashed border-border/70 bg-card/80 px-4 py-8">
               <FqEmptyState
                 icon="check"
                 title="Sem alertas ativos"

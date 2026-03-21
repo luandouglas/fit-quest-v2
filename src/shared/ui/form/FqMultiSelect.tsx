@@ -43,7 +43,7 @@ export function FqMultiSelect({
 
   return (
     <label className="flex w-full flex-col gap-1.5" htmlFor={selectId}>
-      {label ? <span className="text-sm font-medium text-zinc-700">{label}</span> : null}
+      {label ? <span className="text-label font-medium text-foreground">{label}</span> : null}
       <select
         id={selectId}
         multiple
@@ -55,7 +55,7 @@ export function FqMultiSelect({
           onChange?.(event)
         }}
         className={cx(
-          'min-h-32 w-full rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none transition',
+          'min-h-32 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none transition',
           'focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1',
           'disabled:cursor-not-allowed disabled:opacity-60',
           errorMessage ? 'border-rose-500 focus-visible:ring-rose-500' : null,

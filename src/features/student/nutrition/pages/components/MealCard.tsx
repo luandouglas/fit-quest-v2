@@ -44,7 +44,7 @@ export function MealCard({
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="space-y-1">
             <div className="flex flex-wrap items-center gap-2">
-              <p className="text-base font-semibold text-foreground">{meal.name}</p>
+              <p className="text-sm font-semibold text-foreground">{meal.name}</p>
               <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
                 <FqIcon name="clock" size={13} />
                 {meal.time}
@@ -53,33 +53,33 @@ export function MealCard({
             <p className="text-sm text-muted-foreground">{itemsPreview}</p>
           </div>
 
-          <FqTag tone={statusToneMap[meal.status]} className="rounded-lg px-2.5 py-1 text-[11px] normal-case tracking-normal">
+          <FqTag tone={statusToneMap[meal.status]} className="rounded-lg px-2.5 py-1 text-2xs normal-case tracking-normal">
             {statusLabelMap[meal.status]}
           </FqTag>
         </div>
 
         <div className="grid gap-2 rounded-2xl bg-accent/80 p-3 sm:grid-cols-4">
           <div className="space-y-1">
-            <p className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground">Kcal</p>
+            <p className="text-2xs uppercase tracking-caps text-muted-foreground">Kcal</p>
             <p className="text-sm font-semibold text-foreground">{mealMacro.calories}</p>
           </div>
           <div className="space-y-1">
-            <p className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground">Proteina</p>
+            <p className="text-2xs uppercase tracking-caps text-muted-foreground">Proteina</p>
             <p className="text-sm font-semibold text-foreground">{mealMacro.protein}g</p>
           </div>
           <div className="space-y-1">
-            <p className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground">Carbo</p>
+            <p className="text-2xs uppercase tracking-caps text-muted-foreground">Carbo</p>
             <p className="text-sm font-semibold text-foreground">{mealMacro.carbs}g</p>
           </div>
           <div className="space-y-1">
-            <p className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground">Gordura</p>
+            <p className="text-2xs uppercase tracking-caps text-muted-foreground">Gordura</p>
             <p className="text-sm font-semibold text-foreground">{mealMacro.fat}g</p>
           </div>
         </div>
 
         {meal.note ? (
           <div className="rounded-2xl border border-border/80 bg-background/70 px-3 py-2.5">
-            <p className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground">Observacao</p>
+            <p className="text-2xs uppercase tracking-caps text-muted-foreground">Observacao</p>
             <p className="mt-1 text-sm text-foreground">{meal.note}</p>
           </div>
         ) : null}

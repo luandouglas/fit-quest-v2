@@ -66,7 +66,7 @@ export function ProfileNotificationsCard({
           <FqTag tone={getPushTagTone(pushState.permission)}>{getPushTagLabel(pushState.permission)}</FqTag>
         </div>
 
-        <div className="rounded-[calc(var(--radius)+4px)] border border-border/75 bg-muted/10 p-4">
+        <div className="rounded-xl border border-border/70 bg-muted/10 p-4">
           <FqText as="p" className="text-sm font-semibold text-foreground">
             {headline}
           </FqText>

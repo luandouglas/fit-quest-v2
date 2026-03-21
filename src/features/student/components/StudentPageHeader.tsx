@@ -35,7 +35,7 @@ export function StudentPageHeader({
           <FqText as="p" className="fq-subtle-label">
             {eyebrow}
           </FqText>
-          <FqText as="h1" variant="title" className="text-lg md:text-xl">
+          <FqText as="h1" variant="title" className="text-section-title">
             {title}
           </FqText>
           <FqText as="p" className="max-w-3xl text-sm leading-relaxed text-muted-foreground">

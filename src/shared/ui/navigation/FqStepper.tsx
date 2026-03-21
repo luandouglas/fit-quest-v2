@@ -43,7 +43,7 @@ export function FqStepper({ steps, activeStep, className, testId, ...rest }: FqS
           <li
             key={step.id}
             className={cx(
-              'rounded-xl border p-3 transition-colors',
+              'rounded-lg border p-3 transition-colors',
               state === 'done' && 'border-success/40 bg-success/10',
               state === 'active' && 'border-primary/40 bg-primary/10',
               state === 'upcoming' && 'border-border bg-card',

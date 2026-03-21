@@ -1,77 +1,133 @@
 import { type FormEvent, useEffect, useMemo, useState } from "react";
 import { Link, useHistory, useLocation } from "react-router-dom";
 
-import { appRoutePaths } from "@/app/router/routes";
-import { relationshipService } from "@/shared/services/relationshipService";
-import { useAuth } from "@/shared/hooks";
+import { appRoutePaths } from "@/app/router/routes/pathnames";
+import { SignUpFlowHeader } from "@/features/auth/components/signup/SignUpFlowHeader";
+import { SignUpRoleSelection } from "@/features/auth/components/signup/SignUpRoleSelection";
+import { SignUpStepContent } from "@/features/auth/components/signup/SignUpStepContent";
 import {
-  FqButton,
-  FqIcon,
-  FqIconButton,
-  FqInput,
-  FqSelect,
-  FqTag,
-  FqText,
-} from "@/shared/ui";
+  defaultStudentAnswers,
+  getCurrentStepState,
+  getEquipmentLabel,
+  getFlowSteps,
+  isAuthUserRole,
+  isEmailValid,
+  mapStudentGoalToProfileGoal,
+  type StudentAnswers,
+} from "@/features/auth/components/signup/signUpFlow";
+import { useAuth } from "@/shared/hooks";
+import { profileService } from "@/shared/services/profileService";
+import { relationshipService } from "@/shared/services/relationshipService";
+import { FqButton, FqIcon, FqText } from "@/shared/ui/primitives";
 import type { AuthUserRole } from "@/shared/types";
-
-const MIN_PASSWORD_LENGTH = 6;
-
-const roleOptions = [
-  { label: "Aluno", value: "STUDENT" },
-  { label: "Personal", value: "PERSONAL" },
-  { label: "Nutricionista", value: "NUTRITIONIST" },
-];
-
-function isEmailValid(value: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-}
 
 export function SignUpPage() {
   const history = useHistory();
   const location = useLocation();
-  const params = useMemo(() => new URLSearchParams(location.search), [location.search]);
-  const inviteCode = params.get("invite")?.trim() ?? "";
-  const forcedRole = params.get("role")?.trim().toUpperCase();
-  const [name, setName] = useState("");
-  const [role, setRole] = useState<AuthUserRole>(
-    forcedRole === "PERSONAL" || forcedRole === "NUTRITIONIST"
-      ? (forcedRole as AuthUserRole)
-      : "STUDENT",
+  const params = useMemo(
+    () => new URLSearchParams(location.search),
+    [location.search],
   );
+  const inviteCode = params.get("invite")?.trim() ?? "";
+  const forcedRoleParam = params.get("role")?.trim().toUpperCase() ?? "";
+  const forcedRole = isAuthUserRole(forcedRoleParam) ? forcedRoleParam : null;
+  const roleLocked = Boolean(inviteCode || forcedRole);
+  const [selectedRole, setSelectedRole] = useState<AuthUserRole | null>(
+    inviteCode ? "STUDENT" : forcedRole,
+  );
+  const [hasConfirmedRole, setHasConfirmedRole] = useState(roleLocked);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [studentAnswers, setStudentAnswers] = useState<StudentAnswers>(
+    defaultStudentAnswers,
+  );
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const { register, clearError, error, status } = useAuth();
 
-  const passwordMismatch =
-    confirmPassword.trim().length > 0 && password !== confirmPassword;
-
-  const isDisabled = useMemo(() => {
-    return (
-      name.trim().length < 3 ||
-      !isEmailValid(email.trim()) ||
-      password.trim().length < MIN_PASSWORD_LENGTH ||
-      password !== confirmPassword ||
-      status === "loading"
-    );
-  }, [confirmPassword, email, name, password, status]);
+  const activeRole = selectedRole ?? "STUDENT";
+  const steps = getFlowSteps(activeRole);
+  const currentStepMeta = steps[currentStep];
+  const currentStepState = useMemo(
+    () =>
+      getCurrentStepState({
+        hasConfirmedRole,
+        selectedRole,
+        activeRole,
+        currentStepId: currentStepMeta?.id,
+        name,
+        email,
+        password,
+        confirmPassword,
+        studentAnswers,
+      }),
+    [
+      activeRole,
+      confirmPassword,
+      currentStepMeta,
+      email,
+      hasConfirmedRole,
+      name,
+      password,
+      selectedRole,
+      studentAnswers,
+    ],
+  );
+  const isLastStep = hasConfirmedRole && currentStep === steps.length - 1;
+  const isBusy = status === "loading";
 
   useEffect(() => {
     clearError();
   }, [clearError]);
 
+  useEffect(() => {
+    if (!hasConfirmedRole) {
+      setCurrentStep(0);
+      return;
+    }
+
+    setCurrentStep((currentValue) => Math.min(currentValue, steps.length - 1));
+  }, [hasConfirmedRole, steps.length]);
+
+  async function persistStudentSetup() {
+    if (activeRole !== "STUDENT") {
+      return;
+    }
+
+    try {
+      await profileService.updateProfile({
+        name: name.trim(),
+        goal: mapStudentGoalToProfileGoal(studentAnswers.goals[0]),
+        gym: studentAnswers.equipment
+          ? getEquipmentLabel(studentAnswers.equipment)
+          : undefined,
+        goals: studentAnswers.workoutsPerWeek
+          ? {
+              workoutsPerWeek: Number(studentAnswers.workoutsPerWeek),
+            }
+          : undefined,
+      });
+    } catch {
+      // Non-blocking: account creation should succeed even if onboarding persistence fails.
+    }
+  }
+
   async function handleSignUp() {
-    if (isDisabled) return;
+    if (!currentStepState.valid || !selectedRole) {
+      return;
+    }
 
     try {
       await register({
         name: name.trim(),
-        role: inviteCode ? "STUDENT" : role,
+        role: inviteCode ? "STUDENT" : selectedRole,
         email: email.trim(),
         password: password.trim(),
       });
+
+      await persistStudentSetup();
 
       if (inviteCode) {
         await relationshipService.acceptInviteByCodeOrId({
@@ -87,22 +143,55 @@ export function SignUpPage() {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     clearError();
-    void handleSignUp();
+
+    if (!hasConfirmedRole) {
+      if (selectedRole) {
+        setHasConfirmedRole(true);
+        setCurrentStep(0);
+      }
+      return;
+    }
+
+    if (!currentStepState.valid) {
+      return;
+    }
+
+    if (isLastStep) {
+      void handleSignUp();
+      return;
+    }
+
+    setCurrentStep((currentValue) => currentValue + 1);
+  }
+
+  function handleBack() {
+    clearError();
+
+    if (!hasConfirmedRole) {
+      history.push(appRoutePaths.login);
+      return;
+    }
+
+    if (currentStep > 0) {
+      setCurrentStep((currentValue) => currentValue - 1);
+      return;
+    }
+
+    if (!roleLocked) {
+      setHasConfirmedRole(false);
+      return;
+    }
+
+    history.push(appRoutePaths.login);
   }
 
   return (
-    <div className="h-full overflow-y-auto overscroll-y-contain bg-background px-4 py-4 sm:px-6 sm:py-6">
-      <div className="mx-auto grid max-w-6xl overflow-visible rounded-[32px] border border-border/70 bg-card shadow-[0_20px_60px_rgba(36,49,44,0.12)] lg:min-h-[calc(100dvh-2rem-var(--sat,0px))] lg:overflow-hidden lg:grid-cols-[1fr_0.95fr]">
-        <aside
-          className="relative hidden border-r border-border/60 px-10 py-10 lg:flex lg:flex-col lg:justify-between"
-          style={{
-            backgroundImage:
-              "linear-gradient(180deg, color-mix(in srgb, var(--primary) 10%, var(--card)), color-mix(in srgb, var(--background) 94%, transparent))",
-          }}
-        >
-          <div className="space-y-8">
-            <div className="inline-flex items-center gap-3 text-primary">
-              <span className="inline-flex h-11 w-11 items-center justify-center rounded-[16px] bg-foreground text-background">
+    <div className="flex min-h-dvh overflow-y-auto overscroll-y-contain bg-background px-4 py-5 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-4xl">
+        <div className="rounded-2xl border border-border/80 bg-card/90 p-5 shadow-deep sm:p-6 lg:p-8">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-foreground text-background">
                 <FqIcon name="star" size={18} className="text-star" />
               </span>
 
@@ -114,187 +203,77 @@ export function SignUpPage() {
                   as="p"
                   className="text-sm font-semibold text-foreground"
                 >
-                  Simples para começar, forte para evoluir
+                  Cadastro rapido
                 </FqText>
               </div>
             </div>
 
-            <div className="max-w-[28rem] space-y-4">
-              <FqTag tone="primary">Cadastro rápido</FqTag>
-
-              <FqText
-                as="h3"
-                className="fq-display text-[42px] leading-[1] text-foreground"
-              >
-                Seu primeiro passo em uma rotina mais consistente.
-              </FqText>
-
-              <FqText className="max-w-[34ch] text-base leading-7 text-muted-foreground">
-                Crie sua conta, escolha seu perfil e entre em uma experiência
-                organizada, clara e pronta para acompanhar sua evolução.
-              </FqText>
-            </div>
+            <Link
+              to={appRoutePaths.login}
+              className="text-sm font-medium text-primary hover:underline"
+            >
+              Entrar
+            </Link>
           </div>
 
-          <div className="grid gap-3">
-            <div className="fq-soft-block px-4 py-4">
-              <FqText as="p" className="fq-subtle-label">
-                Perfil definido
-              </FqText>
-              <FqText
-                as="p"
-                className="mt-2 text-sm font-semibold leading-6 text-foreground"
-              >
-                A experiência inicial já começa ajustada para aluno, personal ou
-                nutricionista.
-              </FqText>
-            </div>
-
-            <div className="fq-soft-block px-4 py-4">
-              <FqText as="p" className="fq-subtle-label">
-                Acesso direto
-              </FqText>
-              <FqText
-                as="p"
-                className="mt-2 text-sm font-semibold leading-6 text-foreground"
-              >
-                Cadastro enxuto, sem excesso de informação e com foco em começar
-                rápido.
-              </FqText>
-            </div>
-          </div>
-        </aside>
-
-        <main className="flex min-h-full items-start justify-center px-5 py-6 sm:px-8 sm:py-8 lg:items-center lg:px-12 lg:py-12">
-          <div className="safe-bottom w-full max-w-[440px] space-y-6 pb-4 sm:space-y-8 sm:pb-0">
-            <div className="flex items-center gap-3 text-primary lg:hidden">
-              <span className="inline-flex h-11 w-11 items-center justify-center rounded-[16px] bg-foreground text-background">
-                <FqIcon name="star" size={18} className="text-star" />
-              </span>
-
-              <div className="space-y-0.5">
-                <FqText as="p" className="fq-subtle-label">
-                  FitQuest
-                </FqText>
-                <FqText
-                  as="p"
-                  className="text-sm font-semibold text-foreground"
-                >
-                  Simples para começar, forte para evoluir
-                </FqText>
-              </div>
-            </div>
-
-            <header className="space-y-3">
-
-              <FqText
-                as="h1"
-                className="fq-display text-[clamp(2.2rem,4vw,3.2rem)] leading-[0.95] text-foreground"
-              >
-                Crie sua conta
-              </FqText>
-
-              <FqText className="text-base leading-7 text-muted-foreground">
-                Escolha seu perfil e comece sua jornada no FitQuest de forma
-                leve, rápida e organizada.
-              </FqText>
-            </header>
-
-            <form className="space-y-4" onSubmit={handleSubmit}>
-              <FqInput
-                label="Nome"
-                placeholder="Seu nome completo"
-                value={name}
-                onChange={(event) => setName(event.currentTarget.value)}
-                autoComplete="name"
-                className="h-14 text-base"
-                errorMessage={
-                  name.trim().length > 0 && name.trim().length < 3
-                    ? "Informe pelo menos 3 caracteres."
-                    : undefined
-                }
+          <div className="mt-6 space-y-6">
+            {hasConfirmedRole && currentStepMeta ? (
+              <SignUpFlowHeader
+                role={activeRole}
+                currentStep={currentStep}
+                totalSteps={steps.length}
+                title={currentStepMeta.title}
+                hint={currentStepMeta.hint}
+                onBack={handleBack}
               />
+            ) : null}
 
-              <FqSelect
-                label="Perfil"
-                value={role}
-                onChange={(event) =>
-                  setRole(event.currentTarget.value as AuthUserRole)
-                }
-                options={roleOptions}
-                className="h-14 text-base"
-                helperText="Isso define sua área inicial após o login."
-                isDisabled={Boolean(inviteCode || forcedRole)}
-              />
+            <form className="space-y-5" onSubmit={handleSubmit}>
+              <section className="rounded-2xl border border-border/80 bg-background/70 p-5 sm:p-6">
+                {!hasConfirmedRole ? (
+                  <SignUpRoleSelection
+                    selectedRole={selectedRole}
+                    roleLocked={roleLocked}
+                    inviteCode={inviteCode}
+                    forcedRole={forcedRole}
+                    onSelectRole={setSelectedRole}
+                  />
+                ) : (
+                  <SignUpStepContent
+                    role={activeRole}
+                    currentStepId={currentStepMeta?.id}
+                    studentAnswers={studentAnswers}
+                    setStudentAnswers={setStudentAnswers}
+                    name={name}
+                    email={email}
+                    password={password}
+                    confirmPassword={confirmPassword}
+                    showPassword={showPassword}
+                    onNameChange={setName}
+                    onEmailChange={setEmail}
+                    onPasswordChange={setPassword}
+                    onConfirmPasswordChange={setConfirmPassword}
+                    onToggleShowPassword={() =>
+                      setShowPassword((currentValue) => !currentValue)
+                    }
+                    isEmailValid={isEmailValid}
+                  />
+                )}
+              </section>
 
-              {inviteCode ? (
-                <div className="rounded-[calc(var(--radius)+4px)] border border-primary/20 bg-primary/8 p-4">
-                  <FqText as="p" className="text-sm font-medium text-primary">
-                    Cadastro por convite do personal. Sua conta sera criada como
-                    aluno e a anamnese inicial ficara pendente para acompanhamento.
+              {currentStepState.message ? (
+                <div className="rounded-2xl border border-warning/25 bg-warning/10 p-4">
+                  <FqText
+                    as="p"
+                    className="text-sm font-medium text-foreground"
+                  >
+                    {currentStepState.message}
                   </FqText>
                 </div>
               ) : null}
 
-              <FqInput
-                type="email"
-                label="E-mail"
-                placeholder="seu@email.com"
-                value={email}
-                onChange={(event) => setEmail(event.currentTarget.value)}
-                autoComplete="email"
-                className="h-14 text-base"
-                errorMessage={
-                  email.trim().length > 0 && !isEmailValid(email.trim())
-                    ? "Informe um e-mail válido."
-                    : undefined
-                }
-              />
-
-              <div className="relative">
-                <FqInput
-                  type={showPassword ? "text" : "password"}
-                  label="Senha"
-                  placeholder="********"
-                  value={password}
-                  onChange={(event) => setPassword(event.currentTarget.value)}
-                  autoComplete="new-password"
-                  className="h-14 pr-12 text-base"
-                  errorMessage={
-                    password.trim().length > 0 &&
-                    password.trim().length < MIN_PASSWORD_LENGTH
-                      ? "Use 6 ou mais caracteres."
-                      : undefined
-                  }
-                />
-
-                <FqIconButton
-                  icon={showPassword ? "eyeOff" : "eye"}
-                  label={showPassword ? "Ocultar senha" : "Mostrar senha"}
-                  onClick={() =>
-                    setShowPassword((currentValue) => !currentValue)
-                  }
-                  className="absolute right-2 top-[40px] text-muted-foreground hover:bg-accent"
-                />
-              </div>
-
-              <FqInput
-                type={showPassword ? "text" : "password"}
-                label="Confirmar senha"
-                placeholder="********"
-                value={confirmPassword}
-                onChange={(event) =>
-                  setConfirmPassword(event.currentTarget.value)
-                }
-                autoComplete="new-password"
-                className="h-14 text-base"
-                errorMessage={
-                  passwordMismatch ? "As senhas não coincidem." : undefined
-                }
-              />
-
               {error ? (
-                <div className="rounded-[calc(var(--radius)+4px)] border border-destructive/30 bg-destructive/8 p-4">
+                <div className="rounded-2xl border border-destructive/30 bg-destructive/10 p-4">
                   <FqText
                     as="p"
                     className="text-sm font-medium text-destructive"
@@ -304,31 +283,41 @@ export function SignUpPage() {
                 </div>
               ) : null}
 
-              <div className="space-y-4 pt-2">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
                 <FqButton
                   type="submit"
                   tone="primary"
                   size="lg"
-                  isLoading={status === "loading"}
-                  isDisabled={isDisabled}
-                  className="w-full text-base"
+                  isLoading={isBusy}
+                  isDisabled={!currentStepState.valid || isBusy}
+                  className="w-full min-w-55 text-sm sm:w-auto"
                 >
-                  Criar conta
+                  {!hasConfirmedRole
+                    ? "Continuar cadastro"
+                    : isLastStep
+                      ? inviteCode
+                        ? "Criar conta e vincular"
+                        : "Criar conta"
+                      : "Continuar"}
                 </FqButton>
-
-                <p className="text-center text-sm text-muted-foreground">
-                  Já tem conta?{" "}
-                  <Link
-                    to={appRoutePaths.login}
-                    className="font-medium text-primary hover:underline"
-                  >
-                    Entrar
-                  </Link>
-                </p>
               </div>
+
+              {hasConfirmedRole && !roleLocked ? (
+                <div className="sm:hidden">
+                  <FqButton
+                    type="button"
+                    variant="ghost"
+                    tone="neutral"
+                    onClick={handleBack}
+                    className="w-full"
+                  >
+                    Voltar
+                  </FqButton>
+                </div>
+              ) : null}
             </form>
           </div>
-        </main>
+        </div>
       </div>
     </div>
   );

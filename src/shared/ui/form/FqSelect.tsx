@@ -68,7 +68,7 @@ export function FqSelect({
 
   return (
     <label className="flex w-full flex-col gap-2" htmlFor={selectId}>
-      {label ? <span className="text-sm font-medium text-foreground">{label}</span> : null}
+      {label ? <span className="text-label font-medium text-foreground">{label}</span> : null}
       <span className="relative flex items-center">
         {leftIcon ? (
           <span className="pointer-events-none absolute left-3 text-muted-foreground">
@@ -78,7 +78,7 @@ export function FqSelect({
         <select
           id={selectId}
           className={cx(
-            'w-full appearance-none rounded-xl text-foreground outline-none transition duration-200 disabled:cursor-not-allowed disabled:opacity-60',
+            'w-full appearance-none rounded-lg text-foreground outline-none transition duration-200 disabled:cursor-not-allowed disabled:opacity-60',
             'focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-background',
             sizeMap[size],
             variantMap[variant],

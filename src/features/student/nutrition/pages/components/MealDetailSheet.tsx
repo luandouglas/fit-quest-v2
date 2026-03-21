@@ -62,7 +62,7 @@ export function MealDetailSheet({
       <div className="space-y-4 pb-3">
         <div className="flex items-center justify-between gap-2">
           <p className="text-sm text-muted-foreground">Status atual</p>
-          <FqTag tone={statusToneMap[meal.status]} className="rounded-lg px-2 py-1 text-[11px] normal-case tracking-normal">
+          <FqTag tone={statusToneMap[meal.status]} className="rounded-lg px-2 py-1 text-caption normal-case tracking-normal">
             {statusLabelMap[meal.status]}
           </FqTag>
         </div>

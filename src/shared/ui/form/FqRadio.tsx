@@ -33,8 +33,8 @@ export function FqRadio({
         {...rest}
       />
       <span className="flex flex-col">
-        <span className="text-sm font-medium text-zinc-800">{label}</span>
-        {description ? <span className="text-xs text-zinc-500">{description}</span> : null}
+        <span className="text-body font-medium text-foreground">{label}</span>
+        {description ? <span className="text-caption text-muted-foreground">{description}</span> : null}
       </span>
     </label>
   )

@@ -248,7 +248,7 @@ export function ProgressPage() {
 
       <ProgressComparisonGrid items={data.comparisonCards} />
 
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
+      <div className="grid gap-4 xl:fq-grid-balanced-wide">
         <ProgressActivityChartCard
           points={data.activityPoints}
           weightHistory={data.overview.weightHistory}
@@ -262,9 +262,9 @@ export function ProgressPage() {
         />
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,0.78fr)_minmax(0,1.22fr)]">
-        <div className="rounded-[calc(var(--radius)+8px)] border border-border/80 bg-card/90 p-5 shadow-[0_18px_42px_rgba(60,73,66,0.08)]">
-          <FqText as="h2" className="text-base font-semibold text-foreground">
+      <div className="grid gap-4 xl:fq-grid-balanced-wider-inverse">
+        <div className="rounded-2xl border border-border/80 bg-card/90 p-5 shadow-overlay">
+          <FqText as="h2" className="text-sm font-semibold text-foreground">
             Controle de peso
           </FqText>
           <FqText as="p" className="mt-1 text-sm text-muted-foreground">

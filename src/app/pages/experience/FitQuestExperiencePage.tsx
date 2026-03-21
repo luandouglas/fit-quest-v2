@@ -537,13 +537,13 @@ function SectionShell({
   return (
     <section
       id={id}
-      className="overflow-hidden rounded-[28px] border border-border/70 bg-card shadow-[0_22px_70px_-40px_rgba(2,6,23,0.65)]"
+      className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-dramatic"
     >
       <header className="border-b border-border/80 bg-gradient-to-r from-surface-subtle to-card px-5 py-4 sm:px-6 sm:py-5">
-        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary">
+        <p className="text-xs font-semibold uppercase tracking-caps-wide text-primary">
           {eyebrow}
         </p>
-        <h2 className="mt-1 text-2xl font-bold tracking-tight text-foreground">
+        <h2 className="mt-1 text-section-title font-bold tracking-tight text-foreground">
           {title}
         </h2>
         <p className="mt-2 max-w-3xl text-sm text-muted-foreground">
@@ -583,7 +583,7 @@ function SelectableCard({
       >
         <FqIcon name={icon} size={16} />
       </span>
-      <p className="mt-3 text-base font-semibold">{title}</p>
+      <p className="mt-3 text-sm font-semibold">{title}</p>
       <p className="mt-1 text-sm text-muted-foreground">{description}</p>
     </button>
   );
@@ -613,7 +613,7 @@ function LandingSection({ isStandalone }: { isStandalone: boolean }) {
         <div className="pointer-events-none absolute -left-12 top-6 h-28 w-28 rounded-full bg-primary/10 blur-xl" />
         <div className="pointer-events-none absolute bottom-2 right-10 h-24 w-24 rounded-full bg-warning/20 blur-xl" />
 
-        <div className="grid gap-7 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="grid gap-7 lg:fq-grid-split-11-9">
           <div>
             <FqTag
               tone="primary"
@@ -623,10 +623,10 @@ function LandingSection({ isStandalone }: { isStandalone: boolean }) {
               Nota 4.9/5 por 28 mil atletas
             </FqTag>
 
-            <h3 className="mt-5 text-3xl font-black leading-tight text-foreground sm:text-4xl">
+            <h3 className="mt-5 text-screen-title font-bold leading-tight text-foreground">
               Construa sequencias. Ganhe estrelas. Cumpra seu plano.
             </h3>
-            <p className="mt-4 max-w-xl text-base text-muted-foreground sm:text-lg">
+            <p className="mt-4 max-w-xl text-sm text-muted-foreground">
               FitQuest combina treino guiado por treinador, inteligencia
               nutricional e ciclos de recompensa para manter alunos consistentes
               semana apos semana.
@@ -673,7 +673,7 @@ function LandingSection({ isStandalone }: { isStandalone: boolean }) {
                 )}
               >
                 <div className="mb-2 flex items-center justify-between">
-                  <span className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                  <span className="text-xs font-semibold uppercase tracking-caps-wide text-muted-foreground">
                     Tela {index + 1}
                   </span>
                   <FqIcon name="star" size={13} className="text-star" />
@@ -700,7 +700,7 @@ function LandingSection({ isStandalone }: { isStandalone: boolean }) {
               <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-primary/15 text-primary">
                 <FqIcon name={feature.icon} size={16} />
               </span>
-              <h4 className="mt-3 text-base font-semibold text-foreground">
+              <h4 className="mt-3 text-sm font-semibold text-foreground">
                 {feature.title}
               </h4>
               <p className="mt-1 text-sm text-muted-foreground">
@@ -997,7 +997,7 @@ export function FitQuestExperiencePage({
 
   return (
     <section className="space-y-7 pb-10 lg:space-y-8">
-      <header className="fq-gradient-hero-warm relative overflow-hidden rounded-[30px] border border-border/70 bg-card p-6 shadow-[0_24px_80px_-45px_rgba(15,23,42,0.8)] sm:p-8">
+      <header className="fq-gradient-hero-warm relative overflow-hidden rounded-2xl border border-border/70 bg-card p-6 shadow-dramatic sm:p-8">
         <div className="pointer-events-none absolute -left-14 top-0 h-36 w-36 rounded-full bg-primary/15 blur-2xl" />
         <div className="pointer-events-none absolute -right-10 bottom-0 h-32 w-32 rounded-full bg-warning/25 blur-2xl" />
 
@@ -1009,11 +1009,11 @@ export function FitQuestExperiencePage({
           >
             Suite de produto FitQuest
           </FqTag>
-          <h1 className="mt-4 max-w-4xl text-3xl font-black tracking-tight text-foreground sm:text-4xl">
+          <h1 className="mt-4 max-w-4xl text-screen-title font-bold tracking-tight text-foreground">
             Entrega completa de UI para landing, coaching, onboarding,
             analytics, recompensas e configuracoes de perfil.
           </h1>
-          <p className="mt-3 max-w-3xl text-sm text-muted-foreground sm:text-base">
+          <p className="mt-3 max-w-3xl text-sm text-muted-foreground">
             Cada secao abaixo e uma tela dedicada com interacoes reais,
             desenhada com linguagem visual vibrante e responsiva.
           </p>
@@ -1049,7 +1049,7 @@ export function FitQuestExperiencePage({
           <div className="grid gap-4 sm:grid-cols-3 lg:col-span-8">
             <FqCard className="border-border bg-background">
               <p className="text-sm text-muted-foreground">Alunos ativos</p>
-              <p className="mt-2 text-3xl font-black text-foreground">42</p>
+              <p className="mt-2 text-card-title font-semibold text-foreground">42</p>
               <p className="mt-2 inline-flex items-center gap-1 text-sm text-success">
                 <FqIcon name="arrowRight" size={14} />
                 +6 nesta semana
@@ -1057,7 +1057,7 @@ export function FitQuestExperiencePage({
             </FqCard>
             <FqCard className="border-border bg-background">
               <p className="text-sm text-muted-foreground">Adesao media</p>
-              <p className="mt-2 text-3xl font-black text-foreground">88%</p>
+              <p className="mt-2 text-card-title font-semibold text-foreground">88%</p>
               <p className="mt-2 inline-flex items-center gap-1 text-sm text-warning">
                 <FqIcon name="chart" size={14} />4 alunos abaixo de 75%
               </p>
@@ -1066,7 +1066,7 @@ export function FitQuestExperiencePage({
               <p className="text-sm text-muted-foreground">
                 Planos para revisar
               </p>
-              <p className="mt-2 text-3xl font-black text-foreground">9</p>
+              <p className="mt-2 text-card-title font-semibold text-foreground">9</p>
               <p className="mt-2 inline-flex items-center gap-1 text-sm text-secondary">
                 <FqIcon name="clock" size={14} />3 para hoje
               </p>
@@ -1074,7 +1074,7 @@ export function FitQuestExperiencePage({
           </div>
 
           <FqCard className="border-border bg-background lg:col-span-4">
-            <p className="text-base font-semibold text-foreground">
+            <p className="text-sm font-semibold text-foreground">
               Foco do coach para hoje
             </p>
             <ul className="mt-3 space-y-3">
@@ -1089,7 +1089,7 @@ export function FitQuestExperiencePage({
                   <p className="mt-1 text-sm text-muted-foreground">
                     {item.action}
                   </p>
-                  <p className="mt-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+                  <p className="mt-2 text-xs font-semibold uppercase tracking-caps-wide text-primary">
                     {item.due}
                   </p>
                 </li>
@@ -1099,8 +1099,8 @@ export function FitQuestExperiencePage({
         </div>
 
         <div className="mt-4 overflow-hidden rounded-2xl border border-border">
-          <table className="w-full min-w-[680px] border-collapse bg-card text-left">
-            <thead className="bg-accent/70 text-xs uppercase tracking-[0.16em] text-muted-foreground">
+          <table className="w-full min-w-170 border-collapse bg-card text-left">
+            <thead className="bg-accent/70 text-xs uppercase tracking-caps-wide text-muted-foreground">
               <tr>
                 <th className="px-4 py-3 font-semibold">Aluno</th>
                 <th className="px-4 py-3 font-semibold">Meta</th>
@@ -1150,9 +1150,9 @@ export function FitQuestExperiencePage({
         title="Fluxo inicial para meta, biotipo, nivel e equipamentos"
         description="Fluxo em etapas com controles de pular/voltar, selecoes claras e saida legivel para o coach."
       >
-        <div className="grid gap-5 lg:grid-cols-[0.34fr_0.66fr]">
+        <div className="grid gap-5 lg:fq-grid-split-1-2">
           <aside className="rounded-2xl border border-border bg-background p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+            <p className="text-xs font-semibold uppercase tracking-caps-wide text-muted-foreground">
               Progresso das etapas
             </p>
             <ol className="mt-4 space-y-3">
@@ -1183,7 +1183,7 @@ export function FitQuestExperiencePage({
             </ol>
 
             <div className="mt-5 rounded-xl border border-dashed border-border p-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+              <p className="text-xs font-semibold uppercase tracking-caps-wide text-muted-foreground">
                 Resumo
               </p>
               <p className="mt-2 text-sm text-foreground">
@@ -1359,9 +1359,9 @@ export function FitQuestExperiencePage({
         title="UI mobile de treinos com sequencia, estrelas e conquistas"
         description="Layout compacto focado em mobile, com sessao em destaque, retorno de recompensas e marcos."
       >
-        <div className="mx-auto grid max-w-5xl gap-5 lg:grid-cols-[0.44fr_0.56fr]">
-          <div className="mx-auto w-full max-w-[350px] rounded-[34px] border border-border bg-background p-3 shadow-[0_20px_55px_-35px_rgba(2,6,23,0.75)]">
-            <div className="rounded-[28px] border border-border bg-card p-4">
+        <div className="mx-auto grid max-w-5xl gap-5 lg:fq-grid-split-4-6">
+          <div className="mx-auto w-full max-w-88 rounded-2xl border border-border bg-background p-3 shadow-dramatic">
+            <div className="rounded-2xl border border-border bg-card p-4">
               <div className="flex items-center justify-between">
                 <p className="text-sm font-semibold text-foreground">
                   Treino de hoje
@@ -1375,10 +1375,10 @@ export function FitQuestExperiencePage({
               </div>
 
               <div className="mt-4 rounded-2xl bg-gradient-to-br from-primary/15 via-secondary/10 to-warning/20 p-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                <p className="text-xs font-semibold uppercase tracking-caps-wide text-muted-foreground">
                   Missao de membros superiores
                 </p>
-                <p className="mt-1 text-xl font-black text-foreground">
+                <p className="mt-1 text-sm font-bold text-foreground">
                   Sessao de 42 min
                 </p>
                 <div className="mt-3 flex items-center gap-2">
@@ -1395,7 +1395,7 @@ export function FitQuestExperiencePage({
               </div>
 
               <div className="mt-4 space-y-2">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                <p className="text-xs font-semibold uppercase tracking-caps-wide text-muted-foreground">
                   Conquistas de hoje
                 </p>
                 <article className="flex items-center justify-between rounded-xl border border-border bg-background px-3 py-2.5">
@@ -1431,12 +1431,12 @@ export function FitQuestExperiencePage({
           <div className="grid content-start gap-3 sm:grid-cols-2">
             <FqCard className="border-border bg-background">
               <p className="text-sm text-muted-foreground">Estrelas semanais</p>
-              <p className="mt-1 text-2xl font-black text-foreground">248</p>
+              <p className="mt-1 text-card-title font-semibold text-foreground">248</p>
               <p className="mt-1 text-sm text-warning">+36 desde segunda</p>
             </FqCard>
             <FqCard className="border-border bg-background">
               <p className="text-sm text-muted-foreground">Sequencia atual</p>
-              <p className="mt-1 text-2xl font-black text-foreground">
+              <p className="mt-1 text-card-title font-semibold text-foreground">
                 18 dias
               </p>
               <p className="mt-1 text-sm text-destructive">
@@ -1449,7 +1449,7 @@ export function FitQuestExperiencePage({
               </p>
               <div className="mt-3 grid gap-2 sm:grid-cols-3">
                 <div className="rounded-xl border border-border bg-card p-3">
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                  <p className="text-xs font-semibold uppercase tracking-caps-wide text-muted-foreground">
                     Desbloqueado
                   </p>
                   <p className="mt-1 text-sm font-semibold text-foreground">
@@ -1460,7 +1460,7 @@ export function FitQuestExperiencePage({
                   </p>
                 </div>
                 <div className="rounded-xl border border-border bg-card p-3">
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                  <p className="text-xs font-semibold uppercase tracking-caps-wide text-muted-foreground">
                     Em progresso
                   </p>
                   <p className="mt-1 text-sm font-semibold text-foreground">
@@ -1471,7 +1471,7 @@ export function FitQuestExperiencePage({
                   </p>
                 </div>
                 <div className="rounded-xl border border-border bg-card p-3">
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                  <p className="text-xs font-semibold uppercase tracking-caps-wide text-muted-foreground">
                     Proxima recompensa
                   </p>
                   <p className="mt-1 text-sm font-semibold text-foreground">
@@ -1496,7 +1496,7 @@ export function FitQuestExperiencePage({
         <div className="grid gap-4 xl:grid-cols-12">
           <article className="rounded-2xl border border-border bg-background p-4 xl:col-span-8">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <p className="text-base font-semibold text-foreground">
+              <p className="text-sm font-semibold text-foreground">
                 Tendencia de peso (kg)
               </p>
               <FqTag tone="success" leftIcon="check">
@@ -1507,7 +1507,7 @@ export function FitQuestExperiencePage({
             <div className="mt-4 overflow-x-auto">
               <svg
                 viewBox="0 0 640 220"
-                className="h-[220px] min-w-[640px] w-full"
+                className="h-55 min-w-160 w-full"
                 role="img"
                 aria-label="Grafico de linha de tendencia de peso"
               >
@@ -1569,7 +1569,7 @@ export function FitQuestExperiencePage({
           <div className="grid gap-4 sm:grid-cols-2 xl:col-span-4 xl:grid-cols-1">
             <article className="rounded-2xl border border-border bg-background p-4">
               <p className="text-sm text-muted-foreground">IMC atual</p>
-              <p className="mt-1 text-3xl font-black text-foreground">25.9</p>
+              <p className="mt-1 text-card-title font-semibold text-foreground">25.9</p>
               <p className="mt-1 text-sm text-success">
                 Movendo para a faixa saudavel
               </p>
@@ -1577,7 +1577,7 @@ export function FitQuestExperiencePage({
               <div className="mt-4 overflow-x-auto">
                 <svg
                   viewBox="0 0 640 140"
-                  className="h-[120px] min-w-[640px] w-full"
+                  className="h-30 min-w-160 w-full"
                   role="img"
                   aria-label="Grafico de linha de tendencia de IMC"
                 >
@@ -1638,7 +1638,7 @@ export function FitQuestExperiencePage({
                 className="rounded-2xl border border-border bg-background p-4"
               >
                 <p className="text-sm text-muted-foreground">{measure.label}</p>
-                <p className="mt-2 text-2xl font-black text-foreground">
+                <p className="mt-2 text-card-title font-semibold text-foreground">
                   {measure.current}
                   <span className="ml-1 text-sm font-semibold text-muted-foreground">
                     {measure.unit}
@@ -1757,14 +1757,14 @@ export function FitQuestExperiencePage({
                     handleDropExercise(day.key);
                   }}
                   className={cx(
-                    "min-h-[190px] rounded-xl border p-3 transition",
+                    "min-h-48 rounded-xl border p-3 transition",
                     hoveredDay === day.key
                       ? "border-primary bg-primary/5"
                       : "border-border bg-background",
                   )}
                 >
                   <div className="mb-2 flex items-center justify-between">
-                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                    <p className="text-xs font-semibold uppercase tracking-caps-wide text-muted-foreground">
                       {day.label}
                     </p>
                     <span className="text-xs font-semibold text-muted-foreground">
@@ -1800,7 +1800,7 @@ export function FitQuestExperiencePage({
                               <FqIcon name="x" size={12} />
                             </button>
                           </div>
-                          <p className="mt-1 text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+                          <p className="mt-1 text-caption uppercase tracking-caps text-muted-foreground">
                             {workoutFocusLabelMap[exercise.focus]}
                           </p>
                         </article>
@@ -1808,7 +1808,7 @@ export function FitQuestExperiencePage({
                     })}
 
                     {planBoard[day.key].length === 0 ? (
-                      <div className="rounded-lg border border-dashed border-border p-2 text-center text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+                      <div className="rounded-lg border border-dashed border-border p-2 text-center text-caption uppercase tracking-caps text-muted-foreground">
                         Solte o exercicio aqui
                       </div>
                     ) : null}
@@ -1826,7 +1826,7 @@ export function FitQuestExperiencePage({
         title="Biblioteca com mapa muscular, categorias e favoritos"
         description="Alvo muscular visual, filtros por categoria e favoritos rapidos para curadoria da biblioteca."
       >
-        <div className="grid gap-4 lg:grid-cols-[0.34fr_0.66fr]">
+        <div className="grid gap-4 lg:fq-grid-split-1-2">
           <aside className="rounded-2xl border border-border bg-background p-4">
             <div className="flex items-center justify-between">
               <p className="text-sm font-semibold text-foreground">
@@ -1914,7 +1914,7 @@ export function FitQuestExperiencePage({
                         <p className="text-sm font-semibold text-foreground">
                           {exercise.name}
                         </p>
-                        <p className="mt-1 text-xs uppercase tracking-[0.15em] text-muted-foreground">
+                        <p className="mt-1 text-xs uppercase tracking-caps text-muted-foreground">
                           {libraryCategoryLabelMap[exercise.muscle]} |{" "}
                           {exerciseLevelLabelMap[exercise.level]}
                         </p>
@@ -1964,9 +1964,9 @@ export function FitQuestExperiencePage({
         title="Chat de IA para suporte de personal e nutricionista"
         description="Duas conversas por papel, com sugestoes rapidas, campo controlado e contexto do historico."
       >
-        <div className="grid gap-4 lg:grid-cols-[0.3fr_0.7fr]">
+        <div className="grid gap-4 lg:fq-grid-split-3-7">
           <aside className="rounded-2xl border border-border bg-background p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+            <p className="text-xs font-semibold uppercase tracking-caps-wide text-muted-foreground">
               Modo de assistente
             </p>
             <div className="mt-3 space-y-2">
@@ -2002,7 +2002,7 @@ export function FitQuestExperiencePage({
               ))}
             </div>
 
-            <p className="mt-5 text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+            <p className="mt-5 text-xs font-semibold uppercase tracking-caps-wide text-muted-foreground">
               Prompts rapidos
             </p>
             <div className="mt-2 space-y-2">
@@ -2021,7 +2021,7 @@ export function FitQuestExperiencePage({
 
           <div className="rounded-2xl border border-border bg-background p-4">
             <div className="flex items-center justify-between border-b border-border pb-3">
-              <p className="text-base font-semibold text-foreground">
+              <p className="text-sm font-semibold text-foreground">
                 {activeProfessionalRole === "personal"
                   ? "IA do Treinador"
                   : "IA da Nutricionista"}
@@ -2031,12 +2031,12 @@ export function FitQuestExperiencePage({
               </FqTag>
             </div>
 
-            <div className="mt-4 max-h-[320px] space-y-2 overflow-y-auto pr-1">
+            <div className="mt-4 max-h-80 space-y-2 overflow-y-auto pr-1">
               {messagesByRole[activeProfessionalRole].map((message) => (
                 <article
                   key={message.id}
                   className={cx(
-                    "max-w-[84%] rounded-2xl px-3 py-2.5 text-sm",
+                    "max-w-chat-bubble rounded-2xl px-3 py-2.5 text-sm",
                     message.sender === "coach"
                       ? "bg-secondary/15 text-foreground"
                       : "ml-auto bg-primary text-primary-foreground",
@@ -2045,7 +2045,7 @@ export function FitQuestExperiencePage({
                   <p>{message.text}</p>
                   <p
                     className={cx(
-                      "mt-1 text-[11px] uppercase tracking-[0.16em]",
+                      "mt-1 text-caption uppercase tracking-caps-wide",
                       message.sender === "coach"
                         ? "text-muted-foreground"
                         : "text-primary-foreground/80",
@@ -2086,10 +2086,10 @@ export function FitQuestExperiencePage({
         <div className="grid gap-4 xl:grid-cols-12">
           <aside className="space-y-3 rounded-2xl border border-border bg-background p-4 xl:col-span-4">
             <div className="rounded-xl bg-gradient-to-br from-primary/20 via-secondary/15 to-warning/20 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+              <p className="text-xs font-semibold uppercase tracking-caps-wide text-muted-foreground">
                 Saldo atual
               </p>
-              <p className="mt-2 text-3xl font-black text-foreground">
+              <p className="mt-2 text-card-title font-semibold text-foreground">
                 {fitPoints} pts
               </p>
               <p className="text-sm font-semibold text-warning">
@@ -2148,7 +2148,7 @@ export function FitQuestExperiencePage({
                   key={reward.id}
                   className="rounded-2xl border border-border bg-background p-4"
                 >
-                  <p className="text-base font-semibold text-foreground">
+                  <p className="text-sm font-semibold text-foreground">
                     {reward.title}
                   </p>
                   <p className="mt-1 text-sm text-muted-foreground">
@@ -2198,14 +2198,14 @@ export function FitQuestExperiencePage({
         title="Perfil e configuracoes com tema claro/escuro"
         description="Gestao de perfil do coach, preferencias de notificacao e troca instantanea de tema."
       >
-        <div className="grid gap-4 lg:grid-cols-[0.42fr_0.58fr]">
+        <div className="grid gap-4 lg:fq-grid-split-4-6b">
           <aside className="rounded-2xl border border-border bg-background p-4">
             <div className="flex items-center gap-3">
               <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
                 {profileData.name.charAt(0)}
               </span>
               <div>
-                <p className="text-base font-semibold text-foreground">
+                <p className="text-sm font-semibold text-foreground">
                   {profileData.name}
                 </p>
                 <p className="text-sm text-muted-foreground">
@@ -2216,7 +2216,7 @@ export function FitQuestExperiencePage({
 
             <div className="mt-5 space-y-3">
               <article className="rounded-xl border border-border bg-card p-3">
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                <p className="text-xs font-semibold uppercase tracking-caps-wide text-muted-foreground">
                   Tema
                 </p>
                 <div className="mt-2 flex items-center justify-between">
@@ -2233,10 +2233,10 @@ export function FitQuestExperiencePage({
               </article>
 
               <article className="rounded-xl border border-border bg-card p-3">
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                <p className="text-xs font-semibold uppercase tracking-caps-wide text-muted-foreground">
                   Nivel da conta
                 </p>
-                <p className="mt-2 text-2xl font-black text-foreground">
+                <p className="mt-2 text-card-title font-semibold text-foreground">
                   Treinador Pro
                 </p>
                 <p className="text-sm text-muted-foreground">
@@ -2293,7 +2293,7 @@ export function FitQuestExperiencePage({
             </form>
 
             <div className="rounded-2xl border border-border bg-background p-4">
-              <p className="text-base font-semibold text-foreground">
+              <p className="text-sm font-semibold text-foreground">
                 Configuracoes de notificacao
               </p>
               <div className="mt-3 space-y-3">

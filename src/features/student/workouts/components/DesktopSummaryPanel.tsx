@@ -42,11 +42,11 @@ export function DesktopSummaryPanel({
 
           <div className="grid grid-cols-2 gap-2">
             <div className="rounded-xl bg-accent p-3 text-center">
-              <p className="text-lg font-semibold text-foreground">{stars}</p>
+              <p className="text-card-title font-semibold text-foreground">{stars}</p>
               <p className="text-xs text-muted-foreground">Estrelas</p>
             </div>
             <div className="rounded-xl bg-accent p-3 text-center">
-              <p className="text-lg font-semibold text-foreground">{totalDurationMin}</p>
+              <p className="text-card-title font-semibold text-foreground">{totalDurationMin}</p>
               <p className="text-xs text-muted-foreground">Minutos</p>
             </div>
           </div>

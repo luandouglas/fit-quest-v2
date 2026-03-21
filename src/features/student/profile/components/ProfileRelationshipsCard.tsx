@@ -21,7 +21,7 @@ function LinkedProfessionalCard({
   value: StudentRelationshipsOverview['personal']
 }) {
   return (
-    <div className="rounded-[calc(var(--radius)+4px)] border border-border/75 bg-muted/20 p-4">
+    <div className="rounded-xl border border-border/70 bg-muted/20 p-4">
       <FqText as="p" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
         {title}
       </FqText>
@@ -63,7 +63,7 @@ export function ProfileRelationshipsCard({
             <LinkedProfessionalCard title="Nutricionista vinculado" value={overview?.nutritionist ?? null} />
           </div>
 
-          <div className="rounded-[calc(var(--radius)+4px)] border border-border/75 bg-background/72 p-4">
+          <div className="rounded-xl border border-border/70 bg-background/70 p-4">
             <FqInput
               label="Codigo ou ID do profissional"
               value={inviteCodeOrId}
@@ -89,7 +89,7 @@ export function ProfileRelationshipsCard({
               overview.pendingInvites.map((invite) => (
                 <div
                   key={invite.id}
-                  className="rounded-[calc(var(--radius)+4px)] border border-border/75 bg-muted/20 p-4"
+                  className="rounded-xl border border-border/70 bg-muted/20 p-4"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div>
@@ -119,7 +119,7 @@ export function ProfileRelationshipsCard({
                 </div>
               ))
             ) : (
-              <div className="rounded-[calc(var(--radius)+4px)] border border-dashed border-border/80 bg-muted/10 p-4">
+              <div className="rounded-xl border border-dashed border-border/80 bg-muted/10 p-4">
                 <FqText as="p" className="text-sm text-muted-foreground">
                   Sem convites pendentes.
                 </FqText>

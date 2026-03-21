@@ -63,7 +63,7 @@ export function FqTabs({
      
       data-testid={testId}
     >
-      <Tabs.List className="inline-flex rounded-xl bg-zinc-100 p-1">
+      <Tabs.List className="inline-flex rounded-lg bg-zinc-100 p-1">
         {items?.map((item) => (
           <FqTabItem key={item.value} value={item.value}>
             {item.label}
@@ -76,7 +76,7 @@ export function FqTabs({
         <Tabs.Content
           key={item.value}
           value={item.value}
-          className="mt-4 rounded-xl border border-zinc-200 bg-white p-4 focus-visible:outline-none"
+          className="mt-4 rounded-lg border border-zinc-200 bg-white p-4 focus-visible:outline-none"
         >
           {item.content}
         </Tabs.Content>

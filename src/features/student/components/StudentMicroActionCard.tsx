@@ -48,7 +48,7 @@ export function StudentMicroActionCard({
             <FqText as="p" className="fq-subtle-label">
               {eyebrow}
             </FqText>
-            <FqText as="h2" className="mt-2 text-base font-semibold text-foreground">
+            <FqText as="h2" className="mt-2 text-sm font-semibold text-foreground">
               {title}
             </FqText>
             <FqText as="p" className="text-sm text-muted-foreground">
@@ -58,7 +58,7 @@ export function StudentMicroActionCard({
           <FqTag tone={statusTone}>{statusLabel}</FqTag>
         </div>
 
-        <div className="space-y-2 rounded-[calc(var(--radius)+4px)] border border-border/75 bg-background/72 p-4">
+        <div className="space-y-2 rounded-xl border border-border/70 bg-background/70 p-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <FqText as="p" className="text-sm font-semibold text-foreground">
               Progresso atual
@@ -80,7 +80,7 @@ export function StudentMicroActionCard({
               leftIcon={preset.icon}
               tone={preset.tone ?? 'secondary'}
               variant="outline"
-              className="min-h-[56px]"
+              className="min-h-14"
               onClick={preset.onClick}
               isDisabled={preset.isDisabled}
             >

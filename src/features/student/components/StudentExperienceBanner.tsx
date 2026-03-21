@@ -119,7 +119,7 @@ export function StudentExperienceBanner() {
     <>
       <div className="space-y-4">
         <FqCard className="fq-soft-reveal overflow-hidden border-border/80 bg-card/95">
-          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <div className="grid gap-5 lg:fq-grid-main-fixed">
             <div className="space-y-4">
               <div className="flex flex-wrap items-center gap-2">
                 <FqTag tone="primary">{section?.label ?? 'Jornada diária'}</FqTag>
@@ -137,7 +137,7 @@ export function StudentExperienceBanner() {
                 <FqText as="p" className="fq-subtle-label">
                   Rotina guiada
                 </FqText>
-                <FqText as="h2" className="fq-display text-2xl leading-[1.05] text-foreground md:text-[2.35rem]">
+                <FqText as="h2" className="fq-display text-screen-title leading-tight text-foreground">
                   {uiState === 'ready' && dashboard
                     ? dashboard.dailyProgress.focusLabel
                     : section?.description ?? 'Central do aluno'}
@@ -153,7 +153,7 @@ export function StudentExperienceBanner() {
                     <FqText as="p" className="fq-subtle-label">
                       Hoje
                     </FqText>
-                    <FqText as="p" className="mt-2 text-base font-semibold text-foreground">
+                    <FqText as="p" className="mt-2 text-sm font-semibold text-foreground">
                       {dashboard.dailyProgress.completedBlocks}/{dashboard.dailyProgress.totalBlocks} blocos concluídos
                     </FqText>
                   </div>
@@ -161,7 +161,7 @@ export function StudentExperienceBanner() {
                     <FqText as="p" className="fq-subtle-label">
                       Água
                     </FqText>
-                    <FqText as="p" className="mt-2 text-base font-semibold text-foreground">
+                    <FqText as="p" className="mt-2 text-sm font-semibold text-foreground">
                       {dashboard.waterProgress.consumedMl}/{dashboard.waterProgress.targetMl} ml
                     </FqText>
                   </div>
@@ -169,7 +169,7 @@ export function StudentExperienceBanner() {
                     <FqText as="p" className="fq-subtle-label">
                       XP do dia
                     </FqText>
-                    <FqText as="p" className="mt-2 text-base font-semibold text-foreground">
+                    <FqText as="p" className="mt-2 text-sm font-semibold text-foreground">
                       {dashboard.dailyProgress.xpEarned} XP
                     </FqText>
                   </div>

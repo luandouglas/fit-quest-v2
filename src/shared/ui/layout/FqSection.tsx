@@ -20,14 +20,14 @@ export function FqSection({
 }: FqSectionProps) {
   return (
     <section
-      className={cx('space-y-4 rounded-xl border border-zinc-200 bg-white p-5', className)}
+      className={cx('space-y-3 rounded-lg border border-zinc-200 bg-white p-4', className)}
      
       data-testid={testId}
       {...rest}
     >
       {title || description ? (
         <header className="space-y-1">
-          {title ? <h2 className="text-lg font-semibold text-zinc-900">{title}</h2> : null}
+          {title ? <h2 className="text-section-title font-semibold text-foreground">{title}</h2> : null}
           {description ? <p className="text-sm text-zinc-500">{description}</p> : null}
         </header>
       ) : null}

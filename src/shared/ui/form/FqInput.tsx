@@ -28,8 +28,8 @@ const sizeMap: Record<FqSize, string> = {
 }
 
 const variantMap: Record<FqVariant, string> = {
-  solid: 'border border-transparent bg-muted/80 hover:bg-muted/95',
-  outline: 'border border-input/90 bg-card/90 shadow-[0_8px_18px_rgba(36,49,44,0.04)] backdrop-blur',
+  solid: 'border border-transparent bg-muted/80 hover:bg-muted/90',
+  outline: 'border border-input/90 bg-card/90 shadow-card backdrop-blur',
   ghost: 'border-transparent bg-transparent',
 }
 
@@ -66,7 +66,7 @@ export function FqInput({
 
   return (
     <label className="flex w-full flex-col gap-2" htmlFor={inputId}>
-      {label ? <span className="text-sm font-medium text-foreground">{label}</span> : null}
+      {label ? <span className="text-label font-medium text-foreground">{label}</span> : null}
       <span className="relative flex items-center">
         {leftIcon ? (
           <span className="pointer-events-none absolute left-3 text-muted-foreground">
@@ -76,7 +76,7 @@ export function FqInput({
         <input
           id={inputId}
           className={cx(
-            'w-full rounded-[calc(var(--radius)+2px)] text-foreground outline-none transition duration-200 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-60',
+            'w-full rounded-lg text-foreground outline-none transition duration-200 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-60',
             'focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
             sizeMap[size],
             variantMap[variant],

@@ -27,7 +27,7 @@ export function FqExerciseItem({
   return (
     <div
       className={cx(
-        'flex items-center justify-between rounded-xl border border-zinc-200 bg-white px-4 py-3',
+        'flex items-center justify-between rounded-lg border border-zinc-200 bg-white px-4 py-3',
         className,
       )}
      
