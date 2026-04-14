@@ -33,6 +33,10 @@ jobs:
         with:
           node-version: 23.9.0
           cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
 
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
@@ -49,7 +53,7 @@ jobs:
           VITE_FIREBASE_MEASUREMENT_ID: G-LE3SNZPQJ7
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: dist
 
